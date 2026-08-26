@@ -1,0 +1,2422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Virtual Office — GeoffHaward Christy</title>
+<meta name="description" content="An explorable virtual office. Every desk, screen and colleague is a piece of my work history." />
+<style>
+/* ============================================================
+   DESIGN TOKENS
+   Warm-lit office scene + cool dark HUD.
+   amber  = brand / navigation
+   signal = "this is interactive" (rings, hotspots, hovers)
+   ============================================================ */
+:root{
+  --ink:#080A0E;
+  --glass:rgba(14,17,24,.68);
+  --glass-2:rgba(22,26,35,.72);
+  --hair:rgba(255,255,255,.10);
+  --hair-2:rgba(255,255,255,.055);
+  --text:#EDF0F5;
+  --muted:#98A2B3;
+  --dim:#6A748A;
+  --amber:#F5A524;
+  --amber-soft:rgba(245,165,36,.14);
+  --signal:#7FB2FF;
+  --signal-soft:rgba(127,178,255,.15);
+  --radius:18px;
+  --radius-sm:11px;
+  --shadow:0 24px 60px rgba(0,0,0,.55);
+  --sans:ui-sans-serif,-apple-system,"Segoe UI",Inter,Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+  --ease:cubic-bezier(.22,.61,.36,1);
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;background:var(--ink);color:var(--text);font-family:var(--sans);
+  overflow:hidden;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+}
+canvas#scene{position:fixed;inset:0;display:block;touch-action:none;cursor:grab}
+canvas#scene.grabbing{cursor:grabbing}
+canvas#scene.pointing{cursor:pointer}
+button{font-family:inherit;color:inherit}
+::-webkit-scrollbar{width:9px;height:9px}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.14);border-radius:99px}
+::-webkit-scrollbar-track{background:transparent}
+
+.eyebrow{
+  font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--dim);
+}
+.glass{
+  background:var(--glass);border:1px solid var(--hair);border-radius:var(--radius);
+  box-shadow:var(--shadow);backdrop-filter:blur(20px) saturate(150%);
+  -webkit-backdrop-filter:blur(20px) saturate(150%);
+}
+
+/* ============================ TOP BAR ============================ */
+#hud{
+  position:fixed;top:0;left:0;right:0;z-index:20;padding:14px 16px;
+  display:flex;gap:12px;align-items:center;justify-content:space-between;
+  pointer-events:none;
+}
+#hud > *{pointer-events:auto}
+#brand{display:flex;align-items:center;gap:11px;padding:9px 15px 9px 11px}
+#mark{
+  width:32px;height:32px;border-radius:9px;flex:none;
+  background:linear-gradient(150deg,var(--amber),#C97A12);
+  display:grid;place-items:center;color:#1A1204;font-weight:800;font-size:13px;letter-spacing:-.02em;
+}
+#brand .n{font-size:13.5px;font-weight:650;letter-spacing:-.01em;line-height:1.2}
+#brand .r{font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:.04em}
+
+#nav{display:flex;align-items:center;gap:2px;padding:6px}
+#nav button{
+  background:none;border:0;padding:8px 12px;border-radius:11px;cursor:pointer;
+  font-size:12.5px;font-weight:520;color:var(--muted);white-space:nowrap;
+  transition:color .18s,background .18s;
+}
+#nav button:hover{color:var(--text);background:rgba(255,255,255,.06)}
+#nav button.on{color:#201604;background:var(--amber);font-weight:640}
+#nav .sep{width:1px;height:18px;background:var(--hair);margin:0 5px}
+
+#tools{display:flex;gap:8px}
+.icobtn{
+  width:38px;height:38px;border-radius:12px;cursor:pointer;display:grid;place-items:center;
+  background:var(--glass);border:1px solid var(--hair);box-shadow:var(--shadow);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  transition:background .18s,border-color .18s,transform .18s;
+}
+.icobtn:hover{background:var(--glass-2);border-color:rgba(255,255,255,.2);transform:translateY(-1px)}
+.icobtn svg{width:17px;height:17px;stroke:var(--text);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+
+/* ============================ CONTROL LEGEND ============================ */
+#legend{
+  position:fixed;left:16px;bottom:16px;z-index:15;padding:13px 15px;max-width:250px;
+  transition:opacity .35s,transform .35s;
+}
+#legend h4{margin:0 0 9px;font-family:var(--mono);font-size:9.5px;letter-spacing:.22em;
+  text-transform:uppercase;color:var(--dim);font-weight:500}
+#legend .row{display:flex;align-items:center;gap:9px;margin-top:7px;font-size:11.5px;color:var(--muted)}
+kbd{
+  font-family:var(--mono);font-size:10px;background:rgba(255,255,255,.07);
+  border:1px solid var(--hair);border-bottom-width:2px;border-radius:6px;padding:2.5px 6px;
+  color:var(--text);min-width:22px;text-align:center;display:inline-block;
+}
+#legend.hide{opacity:0;transform:translateY(12px);pointer-events:none}
+
+/* ============================ HOVER TOOLTIP ============================ */
+#tip{
+  position:fixed;z-index:30;pointer-events:none;opacity:0;transform:translate(-50%,-140%) scale(.94);
+  transition:opacity .13s,transform .13s var(--ease);
+  padding:8px 12px;border-radius:12px;white-space:nowrap;
+  background:rgba(10,12,17,.86);border:1px solid var(--hair);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  box-shadow:0 12px 30px rgba(0,0,0,.5);
+}
+#tip.on{opacity:1;transform:translate(-50%,-160%) scale(1)}
+#tip .t{font-size:12.5px;font-weight:600;letter-spacing:-.01em}
+#tip .s{font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--signal);margin-bottom:3px}
+
+/* ============================ INFO PANEL ============================ */
+#panel{
+  position:fixed;z-index:25;top:74px;right:16px;width:min(430px,calc(100vw - 32px));
+  max-height:calc(100vh - 108px);display:flex;flex-direction:column;
+  opacity:0;transform:translateX(26px) scale(.985);pointer-events:none;
+  transition:opacity .34s var(--ease),transform .34s var(--ease);
+}
+#panel.open{opacity:1;transform:none;pointer-events:auto}
+#panel header{
+  padding:20px 20px 16px;border-bottom:1px solid var(--hair-2);position:relative;flex:none;
+}
+#panel .kind{
+  display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:9.5px;
+  letter-spacing:.2em;text-transform:uppercase;color:var(--signal);
+  background:var(--signal-soft);border-radius:99px;padding:5px 10px;margin-bottom:11px;
+}
+#panel h2{margin:0;font-size:21px;line-height:1.22;letter-spacing:-.025em;font-weight:660;padding-right:34px}
+#panel .sub{margin:7px 0 0;font-size:12.5px;color:var(--muted);line-height:1.5}
+#close{
+  position:absolute;top:16px;right:16px;width:30px;height:30px;border-radius:9px;cursor:pointer;
+  background:rgba(255,255,255,.06);border:1px solid var(--hair);display:grid;place-items:center;
+  transition:background .16s,transform .16s;
+}
+#close:hover{background:rgba(255,255,255,.13);transform:rotate(90deg)}
+#close svg{width:13px;height:13px;stroke:var(--text);stroke-width:2;fill:none;stroke-linecap:round}
+#body{padding:18px 20px 22px;overflow-y:auto;overscroll-behavior:contain;flex:1 1 auto}
+
+.sec{margin-bottom:19px}
+.sec:last-child{margin-bottom:0}
+.sec > h3{
+  margin:0 0 9px;font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--dim);font-weight:500;
+}
+.sec p{margin:0;font-size:13.5px;line-height:1.62;color:#C9D1DE}
+.meta{display:grid;grid-template-columns:auto 1fr;gap:7px 16px;font-size:12.5px}
+.meta dt{font-family:var(--mono);font-size:10px;letter-spacing:.11em;text-transform:uppercase;color:var(--dim);padding-top:2px}
+.meta dd{margin:0;color:#DDE3EC}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tag{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.02em;padding:5px 9px;border-radius:8px;
+  background:rgba(255,255,255,.055);border:1px solid var(--hair-2);color:#C3CCDA;
+}
+.tag.hot{background:var(--amber-soft);border-color:rgba(245,165,36,.28);color:#F7C066}
+ul.list{margin:0;padding:0;list-style:none}
+ul.list li{
+  position:relative;padding-left:17px;font-size:13px;line-height:1.6;color:#C9D1DE;margin-bottom:6px;
+}
+ul.list li:last-child{margin-bottom:0}
+ul.list li::before{
+  content:"";position:absolute;left:2px;top:8.5px;width:5px;height:5px;border-radius:2px;
+  background:var(--signal);opacity:.75;
+}
+ul.list.amber li::before{background:var(--amber)}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.card{background:rgba(255,255,255,.035);border:1px solid var(--hair-2);border-radius:var(--radius-sm);padding:12px 13px}
+.card h4{margin:0 0 6px;font-size:11.5px;font-weight:600;color:var(--text);letter-spacing:-.005em}
+.card p{font-size:12.5px;line-height:1.55}
+.stat{display:flex;align-items:baseline;gap:8px;margin-top:8px}
+.stat b{font-family:var(--mono);font-size:19px;font-weight:600;color:var(--amber);letter-spacing:-.03em}
+.stat span{font-size:12px;color:var(--muted)}
+.tl{border-left:1px solid var(--hair);padding-left:15px;margin-left:3px}
+.tl .item{position:relative;padding-bottom:16px}
+.tl .item:last-child{padding-bottom:0}
+.tl .item::before{
+  content:"";position:absolute;left:-19px;top:5px;width:7px;height:7px;border-radius:99px;
+  background:var(--amber);box-shadow:0 0 0 3px rgba(245,165,36,.16);
+}
+.tl .when{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--dim);text-transform:uppercase}
+.tl .what{font-size:13.5px;font-weight:600;margin:3px 0 2px;letter-spacing:-.01em}
+.tl .who{font-size:12.5px;color:var(--muted)}
+.act{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+.btn{
+  display:inline-flex;align-items:center;gap:7px;padding:10px 15px;border-radius:11px;cursor:pointer;
+  font-size:12.5px;font-weight:600;border:1px solid var(--hair);background:rgba(255,255,255,.06);
+  color:var(--text);text-decoration:none;transition:background .18s,transform .18s,border-color .18s;
+}
+.btn:hover{background:rgba(255,255,255,.13);transform:translateY(-1px)}
+.btn.primary{background:var(--amber);color:#1B1204;border-color:transparent}
+.btn.primary:hover{background:#FFB53D}
+.btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.note{
+  font-size:11.5px;color:var(--dim);line-height:1.55;border-left:2px solid var(--hair);padding-left:11px;
+}
+
+/* ============================ INTRO ============================ */
+#intro{
+  position:fixed;inset:0;z-index:60;display:grid;place-items:center;padding:24px;
+  background:radial-gradient(120% 90% at 50% 40%,rgba(10,12,17,.55),rgba(6,7,10,.94));
+  backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);
+  transition:opacity .7s var(--ease),backdrop-filter .7s;
+}
+#intro.gone{opacity:0;pointer-events:none;backdrop-filter:blur(0)}
+#introCard{max-width:530px;width:100%;padding:34px 34px 28px;text-align:left}
+#introCard .eyebrow{margin-bottom:16px;display:block}
+#introCard h1{
+  margin:0;font-size:clamp(29px,5.4vw,42px);line-height:1.08;letter-spacing:-.035em;font-weight:680;
+}
+#introCard h1 em{font-style:normal;color:var(--amber)}
+#introCard .lede{margin:15px 0 0;font-size:14.5px;line-height:1.66;color:var(--muted);max-width:44ch}
+#introCard .keys{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:9px 18px;margin:26px 0 26px;
+  padding:17px 0;border-top:1px solid var(--hair-2);border-bottom:1px solid var(--hair-2);
+}
+#introCard .keys .row{display:flex;align-items:center;gap:9px;font-size:12px;color:var(--muted)}
+#introCard .cta{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+#introCard .hint{font-size:11.5px;color:var(--dim);font-family:var(--mono);letter-spacing:.03em}
+
+/* ============================ LOADER ============================ */
+#loader{position:fixed;inset:0;z-index:80;background:var(--ink);display:grid;place-items:center;
+  transition:opacity .5s;font-family:var(--mono)}
+#loader.gone{opacity:0;pointer-events:none}
+#loader .in{text-align:center}
+#bar{width:180px;height:2px;background:rgba(255,255,255,.1);border-radius:2px;overflow:hidden;margin:0 auto}
+#bar i{display:block;height:100%;width:0;background:var(--amber);transition:width .35s var(--ease)}
+#loader .lbl{margin-top:14px;font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--dim)}
+
+/* ============================ CLASSIC (FALLBACK) VIEW ============================ */
+#classic{
+  position:fixed;inset:0;z-index:70;background:var(--ink);overflow-y:auto;display:none;
+}
+#classic.on{display:block}
+#classic .wrap{max-width:760px;margin:0 auto;padding:32px 22px 90px}
+#classic .top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:34px}
+#classic h1{margin:0;font-size:clamp(26px,6vw,36px);letter-spacing:-.035em;line-height:1.1;font-weight:680}
+#classic .role{color:var(--muted);font-size:14px;margin-top:8px;line-height:1.55}
+#classic section{margin-bottom:34px}
+#classic section > h2{
+  font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--dim);
+  font-weight:500;margin:0 0 14px;padding-bottom:10px;border-bottom:1px solid var(--hair-2);
+}
+#classic .entry{padding:15px 0;border-bottom:1px solid var(--hair-2)}
+#classic .entry:last-child{border-bottom:0}
+#classic .entry h3{margin:0 0 4px;font-size:15px;letter-spacing:-.015em;font-weight:640}
+#classic .entry .m{font-family:var(--mono);font-size:10.5px;color:var(--dim);letter-spacing:.06em;margin-bottom:8px}
+#classic .entry p{margin:0 0 10px;font-size:13.5px;line-height:1.6;color:#C9D1DE}
+
+/* ============================ RESPONSIVE ============================ */
+@media (max-width:900px){
+  #nav{display:none}
+  #legend{display:none}
+  #brand .r{display:none}
+  #panel{
+    top:auto;bottom:0;right:0;left:0;width:100%;max-height:72vh;
+    border-radius:20px 20px 0 0;transform:translateY(30px);
+  }
+  #panel.open{transform:none}
+  #panel::before{
+    content:"";position:absolute;top:8px;left:50%;transform:translateX(-50%);
+    width:38px;height:4px;border-radius:99px;background:rgba(255,255,255,.22);
+  }
+  #panel header{padding-top:24px}
+  .split{grid-template-columns:1fr}
+  #introCard{padding:26px 22px 22px}
+  #introCard .keys{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){
+  *{transition-duration:.01ms !important;animation-duration:.01ms !important}
+}
+</style>
+</head>
+<body>
+<canvas id="scene"></canvas>
+
+<!-- ================= TOP BAR ================= -->
+<div id="hud">
+  <div id="brand" class="glass">
+    <div id="mark">GC</div>
+    <div>
+      <div class="n">GeoffHaward Christy</div>
+      <div class="r">Frontend Developer · Gujarat, IN</div>
+    </div>
+  </div>
+
+  <nav id="nav" class="glass">
+    <button data-goto="overview" class="on">Overview</button>
+    <button data-goto="about">About</button>
+    <button data-goto="projects">Projects</button>
+    <button data-goto="experience">Experience</button>
+    <button data-goto="skills">Skills</button>
+    <button data-goto="people">Collaborations</button>
+    <span class="sep"></span>
+    <button data-goto="contact">Contact</button>
+  </nav>
+
+  <div id="tools">
+    <button class="icobtn" id="btnHelp" title="Show controls" aria-label="Show controls">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.2a2.5 2.5 0 1 1 3.3 2.4c-.6.2-.9.8-.9 1.4v.4"/><path d="M12 17h.01"/></svg>
+    </button>
+    <button class="icobtn" id="btnClassic" title="Switch to text view" aria-label="Switch to text view">
+      <svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- ================= CONTROL LEGEND ================= -->
+<div id="legend" class="glass">
+  <h4>Controls</h4>
+  <div class="row"><kbd>Drag</kbd> Look around</div>
+  <div class="row"><kbd>Scroll</kbd> Zoom</div>
+  <div class="row"><kbd>Click</kbd> Inspect an object</div>
+  <div class="row"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> Walk the floor</div>
+  <div class="row"><kbd>Esc</kbd> Back to the room</div>
+</div>
+
+<!-- ================= HOVER TOOLTIP ================= -->
+<div id="tip"><div class="s"></div><div class="t"></div></div>
+
+<!-- ================= INFO PANEL ================= -->
+<aside id="panel" class="glass" role="dialog" aria-modal="false" aria-labelledby="panelTitle">
+  <header>
+    <span class="kind" id="panelKind">Project</span>
+    <h2 id="panelTitle">Title</h2>
+    <p class="sub" id="panelSub"></p>
+    <button id="close" aria-label="Close panel">
+      <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+  </header>
+  <div id="body"></div>
+</aside>
+
+<!-- ================= INTRO ================= -->
+<div id="intro">
+  <div id="introCard" class="glass">
+    <span class="eyebrow">Portfolio · Built as a place, not a page</span>
+    <h1>Welcome to my <em>virtual office</em>.</h1>
+    <p class="lede">Six workstations, a meeting room, a whiteboard and the people I shipped with — every object in here holds a piece of my work history. Click, explore, and discover.</p>
+    <div class="keys">
+      <div class="row"><kbd>Drag</kbd> Look around</div>
+      <div class="row"><kbd>Scroll</kbd> Zoom</div>
+      <div class="row"><kbd>Click</kbd> Interact</div>
+      <div class="row"><kbd>WASD</kbd> Move</div>
+    </div>
+    <div class="cta">
+      <button class="btn primary" id="btnExplore">
+        <svg viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg>
+        Explore the office
+      </button>
+      <button class="btn" id="btnSkip">Read the text version</button>
+    </div>
+  </div>
+</div>
+
+<!-- ================= LOADER ================= -->
+<div id="loader"><div class="in">
+  <div id="bar"><i></i></div>
+  <div class="lbl" id="loadLbl">Furnishing the office</div>
+</div></div>
+
+<!-- ================= CLASSIC / LOW-POWER FALLBACK ================= -->
+<div id="classic"><div class="wrap">
+  <div class="top">
+    <div>
+      <h1>GeoffHaward Christy</h1>
+      <div class="role">Frontend Developer · React, Angular, React Native, Next.js · Gandhinagar, Gujarat</div>
+    </div>
+    <button class="btn" id="btnBack3D">Back to 3D office</button>
+  </div>
+  <div id="classicBody"></div>
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+/* ==========================================================================
+   VIRTUAL OFFICE PORTFOLIO
+   ---------------------------------------------------------------------------
+   Single-file build. Sections below mirror the requested architecture:
+
+     data/      -> DATA           (edit this block only, to change content)
+     scene/     -> Lighting, OfficeScene, CameraController
+     components/-> makeDesk, makeChair, makeNPC, makeMeetingRoom, ...
+     App        -> boot(), animate()
+   ========================================================================== */
+
+/* ==========================================================================
+   1 · DATA  —  everything you'll ever want to edit lives here.
+   Anything wrapped in {{ }} is a placeholder waiting for your real value.
+   ========================================================================== */
+const DATA = {
+
+  owner: {
+    name: "GeoffHaward Christy",
+    role: "Frontend Developer",
+    location: "Gandhinagar / Ahmedabad, Gujarat, India",
+    years: "3 yrs 5 mos",
+    summary:
+      "I build the parts of enterprise software people actually touch all day — HR service portals, project management systems, dashboards and mobile apps. Mostly React and Angular on the front, Java Spring Boot REST APIs on the other side of the fence, which means I can debug a broken payload instead of just reporting it.",
+    pitch: [
+      "3 yrs 5 mos shipping production frontends across two product companies.",
+      "Comfortable across React, Angular, React Native, Next.js and Shopify Liquid.",
+      "Have built and consumed REST APIs in Java Spring Boot — not just integrated them.",
+      "Role-based access control, dashboards and Chrome Extensions in live products."
+    ],
+    resumeUrl: "{{link-to-your-resume.pdf}}"
+  },
+
+  contact: {
+    email: "{{your.email@example.com}}",
+    phone: "{{+91 XXXXX XXXXX}}",
+    linkedin: "{{linkedin.com/in/your-handle}}",
+    github: "{{github.com/your-handle}}",
+    note: "Open to frontend roles and freelance builds. Fastest reply is by email."
+  },
+
+  /* ---------- WORKSTATIONS -> projects. Order matches the desks on the floor. */
+  projects: [
+    {
+      id: "ws01", station: "Workstation 01",
+      name: "HR Service Center (HRSC)",
+      company: "Logieagle Private Limited",
+      role: "Frontend Developer",
+      duration: "2024 – 2025",
+      screen: "dashboard",
+      tech: ["React", "Redux Toolkit", "REST APIs", "Java Spring Boot", "RBAC", "SCSS"],
+      description:
+        "An internal HR service platform where employees raise requests — leave, documents, payroll queries — and HR routes, approves and closes them. Hundreds of daily tickets moving through a workflow that different roles see very differently.",
+      responsibilities: [
+        "Built the request lifecycle UI end to end: create, assign, escalate, resolve",
+        "Implemented role-based access control across routes, views and individual actions",
+        "Normalised API responses into a predictable Redux store shape",
+        "Handled loading, empty, error and permission-denied states as first-class screens",
+        "Worked directly with the backend team on payload contracts"
+      ],
+      features: [
+        "Multi-role dashboards (employee / HR / manager) off one codebase",
+        "Approval chains with status history",
+        "Document upload and preview",
+        "Filterable, paginated ticket tables"
+      ],
+      apis: ["Spring Boot REST endpoints", "JWT auth + refresh", "File upload / download", "Role & permission APIs"],
+      challenge:
+        "Permissions were sprawling. Role checks were being repeated inside components, so a single rule change meant hunting through the whole app.",
+      solution:
+        "Moved to a single permission map plus a guard wrapper, so a component asks 'can this user do X?' in one line and routes, buttons and menu items all read from the same source of truth.",
+      impact: "One rule change now touches one file instead of a dozen components, and permission bugs largely stopped reaching QA."
+    },
+    {
+      id: "ws02", station: "Workstation 02",
+      name: "Task Management Mobile App",
+      company: "Logieagle Private Limited",
+      role: "Mobile Developer (React Native)",
+      duration: "2024 – 2025",
+      screen: "mobile",
+      tech: ["React Native", "Redux Toolkit", "Firebase", "Notifee", "REST APIs"],
+      description:
+        "A cross-platform task app for teams already living inside the web product — assign work, track progress, get nudged when something is due.",
+      responsibilities: [
+        "Developed the mobile UI across both platforms",
+        "Integrated REST APIs and handled offline / retry behaviour",
+        "Implemented state management with Redux Toolkit",
+        "Added push notifications with Firebase and Notifee",
+        "Profiled and fixed list performance issues",
+        "Coordinated payload shape with backend developers"
+      ],
+      features: ["Task assignment and status flow", "Local + push reminders", "Deep links into a task", "Offline-tolerant list views"],
+      apis: ["Firebase Cloud Messaging", "Notifee local notifications", "Task & user REST APIs"],
+      challenge: "Long task lists stuttered on mid-range Android devices once a few hundred items loaded.",
+      solution: "Switched to windowed lists with stable keys, memoised row components, and moved date formatting out of render into selectors.",
+      impact: "Scrolling went from visibly janky to smooth on the cheap test devices, which is where most users actually were."
+    },
+    {
+      id: "ws03", station: "Workstation 03",
+      name: "Analytics Dashboard",
+      company: "Logieagle Private Limited",
+      role: "Frontend Developer",
+      duration: "2024 – 2025",
+      screen: "charts",
+      tech: ["React", "Redux", "Chart libraries", "REST APIs", "CSS Grid"],
+      description:
+        "The reporting surface on top of the operational data — the screen management opens first thing in the morning to see whether yesterday went well.",
+      responsibilities: [
+        "Built reusable chart and KPI card components",
+        "Implemented date-range, team and status filters that compose together",
+        "Wired export-to-CSV for every table view",
+        "Kept the layout readable from a 13\" laptop up to a wall-mounted display"
+      ],
+      features: ["Cross-filtering widgets", "Drill-down from summary into raw rows", "Saved filter presets", "Responsive grid layout"],
+      apis: ["Aggregation endpoints", "Paginated detail endpoints", "Export service"],
+      challenge: "Every filter change refetched every widget, so the dashboard flickered and hammered the API.",
+      solution: "Batched filter state into one debounced request cycle and cached responses by filter signature, so untouched widgets stopped refetching.",
+      impact: "Far fewer network calls per interaction and a dashboard that stopped flashing white between updates."
+    },
+    {
+      id: "ws04", station: "Workstation 04",
+      name: "Project Management System (PMS)",
+      company: "Evision IT Solution Pvt. Ltd.",
+      role: "Frontend Developer",
+      duration: "2022 – 2024",
+      screen: "kanban",
+      tech: ["Angular", "TypeScript", "RxJS", "Reactive Forms", "Java Spring Boot", "RBAC"],
+      description:
+        "Projects, sprints, timesheets and approvals for delivery teams — the system the company ran its own work on.",
+      responsibilities: [
+        "Built lazy-loaded feature modules for projects, tasks and timesheets",
+        "Wrote complex Reactive Forms with cross-field validation",
+        "Centralised HTTP error handling in interceptors",
+        "Implemented role-based menus and route guards",
+        "Contributed to Spring Boot REST endpoints where the frontend needed a better-shaped response"
+      ],
+      features: ["Sprint board with drag-and-drop", "Timesheet entry with approval flow", "Project health summaries", "Audit history per record"],
+      apis: ["Spring Boot REST", "Auth interceptor + guards", "Timesheet & approval services"],
+      challenge: "The initial bundle carried the whole application, so first load was slow for users who only ever opened one module.",
+      solution: "Split features into lazy-loaded routes and moved shared UI into a single shared module, so each area downloads only when it is opened.",
+      impact: "Noticeably faster first paint, and adding a new module stopped making every other page slower."
+    },
+    {
+      id: "ws05", station: "Workstation 05",
+      name: "Shopify Storefront Build",
+      company: "Evision IT Solution Pvt. Ltd.",
+      role: "Frontend Developer",
+      duration: "2022 – 2024",
+      screen: "shop",
+      tech: ["Shopify", "Liquid", "JavaScript", "HTML", "CSS"],
+      description:
+        "Custom Shopify theme work: sections merchants could rearrange themselves, without calling a developer for every banner change.",
+      responsibilities: [
+        "Built custom Liquid sections and schema-driven settings",
+        "Implemented product, collection and cart page customisations",
+        "Optimised images and above-the-fold loading",
+        "Fixed cross-browser and mobile layout issues"
+      ],
+      features: ["Merchant-editable sections", "Custom cart drawer", "Collection filtering", "Mobile-first product pages"],
+      apis: ["Shopify AJAX Cart API", "Storefront metafields"],
+      challenge: "Content changes kept coming back as developer tickets.",
+      solution: "Exposed the right settings through section schema so copy, ordering and imagery became merchant-editable in the theme editor.",
+      impact: "The client stopped needing a developer for routine content updates."
+    },
+    {
+      id: "ws06", station: "Workstation 06",
+      name: "Chrome Extension Toolkit",
+      company: "Logieagle Private Limited",
+      role: "Frontend Developer",
+      duration: "2024 – 2025",
+      screen: "code",
+      tech: ["JavaScript", "Chrome Extension APIs", "React", "Manifest V3"],
+      description:
+        "A browser extension that pulled the internal tooling into the tab the team was already working in, instead of another window to alt-tab to.",
+      responsibilities: [
+        "Built the popup and options UI in React",
+        "Wrote the content script / background service worker messaging layer",
+        "Handled auth token storage and expiry inside extension storage",
+        "Shipped through the packaging and review process"
+      ],
+      features: ["One-click capture from the active tab", "Persistent session across browser restarts", "Keyboard shortcuts", "Sync via chrome.storage"],
+      apis: ["chrome.storage", "chrome.tabs", "chrome.runtime messaging", "Internal REST APIs"],
+      challenge: "Manifest V3 removed the persistent background page the first design depended on.",
+      solution: "Re-architected around an event-driven service worker with state rehydrated from chrome.storage on every wake.",
+      impact: "The extension survived the MV3 migration without users noticing a behaviour change."
+    }
+  ],
+
+  /* ---------- SIDE PROJECT — the laptop in the lounge */
+  sideProject: {
+    id: "side",
+    name: "India Vehicle Comparison Platform",
+    company: "Personal project · in progress",
+    role: "Solo — product, frontend, backend",
+    duration: "2026 –",
+    tech: ["Next.js 14", "Node.js + Express", "PostgreSQL", "Tailwind CSS"],
+    description:
+      "A car comparison site built around one honest question: what mileage does this car actually give, versus the ARAI figure on the brochure? India-first, starting with Maruti, Hyundai, Tata, Honda, Toyota and Mahindra.",
+    features: [
+      "ARAI claim vs real-world user-reported mileage, side by side",
+      "Efficiency split by city, highway and speed band",
+      "Engine specs written in plain language",
+      "3-year total cost of ownership",
+      "\"Looks vs reality\" score and a middle-class buyer verdict"
+    ],
+    responsibilities: [
+      "Own PostgreSQL database for both spec data and user-submitted logs — no dependency on a third-party API staying alive",
+      "Data sourced from FuelEconomy.gov, CarQuery, NHTSA, VAHAN and V3Cars",
+      "Phase 1 deliberately scoped: cars only, no login, no payments, no app"
+    ],
+    impact: "Planned monetisation: dealership leads, featured listings and premium reports."
+  },
+
+  /* ---------- NPCs -> collaboration stories.
+     These are stand-in colleagues, not real named individuals. */
+  employees: [
+    {
+      id: "npc01", name: "Rohit Sharma", designation: "Senior Frontend Developer", department: "Engineering",
+      shirt: 0x4A6FA5, seatKey: "ws02",
+      projects: ["HR Service Center", "Analytics Dashboard", "Chrome Extension Toolkit"],
+      duration: "About 18 months, same pod",
+      mine: ["Feature ownership on HRSC modules", "Reusable component library work", "Code review on shared UI"],
+      theirs: ["Architecture decisions", "Review standards", "Mentoring on state management patterns"],
+      collab: "We split the frontend by feature area and met at the component library. Most of what I know about keeping a large React codebase from turning into spaghetti came out of his code reviews.",
+      tech: ["React", "Redux Toolkit", "TypeScript", "SCSS"]
+    },
+    {
+      id: "npc02", name: "Ankit Verma", designation: "Backend Developer", department: "Engineering",
+      shirt: 0x3F7D6B, seatKey: "ws01",
+      projects: ["HR Service Center", "Project Management System", "Analytics Dashboard"],
+      duration: "Roughly 2 years across two products",
+      mine: ["Frontend development", "API integration", "Defining the response shapes the UI actually needed"],
+      theirs: ["Spring Boot services", "Database design", "Auth and role model"],
+      collab: "The closest working relationship on this list. We agreed contracts before either side built anything, argued about pagination more than once, and I picked up enough Spring Boot to fix small endpoints myself instead of filing a ticket.",
+      tech: ["Java Spring Boot", "REST", "JWT", "PostgreSQL"]
+    },
+    {
+      id: "npc03", name: "Priya Nair", designation: "UI/UX Designer", department: "Design",
+      shirt: 0x8A5CA8, seatKey: "ws03",
+      projects: ["Analytics Dashboard", "Task Management Mobile App", "Shopify Storefront"],
+      duration: "About 14 months",
+      mine: ["Turning Figma into components", "Flagging states the design didn't cover", "Responsive behaviour"],
+      theirs: ["Design system", "Interaction design", "Usability calls with clients"],
+      collab: "I'd build the happy path, then come back with the list she hadn't seen yet — empty, loading, error, 400-characters-in-a-40-character-field. Those conversations improved both the design system and my eye for detail.",
+      tech: ["Figma", "Design tokens", "Responsive layout"]
+    },
+    {
+      id: "npc04", name: "Sneha Patel", designation: "QA Engineer", department: "Quality Assurance",
+      shirt: 0xC2703C, seatKey: "board",
+      projects: ["HR Service Center", "Project Management System", "Task Management Mobile App"],
+      duration: "Across most of both roles",
+      mine: ["Fixing what she found", "Reproducing on real devices", "Adding guard rails so a bug class stopped recurring"],
+      theirs: ["Test plans", "Regression suites", "Release sign-off"],
+      collab: "She tested the way real users behave — double-clicking submit, going back mid-flow, losing network halfway. A lot of my defensive UI habits are just her bug reports, internalised.",
+      tech: ["Manual + regression testing", "Android device testing", "Bug tracking"]
+    },
+    {
+      id: "npc05", name: "Manav Desai", designation: "Project Manager", department: "Delivery",
+      shirt: 0x5A6270, seatKey: "meeting",
+      projects: ["HR Service Center", "Project Management System", "Shopify Storefront"],
+      duration: "Full delivery cycles on three products",
+      mine: ["Estimates", "Sprint delivery", "Demoing frontend work to clients"],
+      theirs: ["Scope and priority", "Client communication", "Release planning"],
+      collab: "Daily standups, sprint planning, retros. He's the reason I learned to give an estimate with the risky part named out loud instead of a single optimistic number.",
+      tech: ["Agile / Scrum", "Jira", "Sprint planning"]
+    }
+  ],
+
+  /* ---------- WHITEBOARD -> skills */
+  skills: {
+    groups: [
+      { label: "Core frontend",   hot: true,  items: ["React", "Angular", "Next.js", "React Native", "JavaScript (ES6+)", "TypeScript"] },
+      { label: "State & data",    hot: false, items: ["Redux", "Redux Toolkit", "RxJS", "REST API integration", "Reactive Forms"] },
+      { label: "Styling",         hot: false, items: ["Tailwind CSS", "SCSS", "CSS Grid / Flexbox", "Responsive design"] },
+      { label: "Backend I touch", hot: false, items: ["Java Spring Boot", "Node.js + Express", "PostgreSQL", "REST design"] },
+      { label: "Platform",        hot: false, items: ["Shopify Liquid", "Chrome Extension APIs", "Firebase", "Git"] }
+    ],
+    workflow: [
+      "Read the API contract before writing a component",
+      "Build the state machine — loading, empty, error, denied — before the happy path looks pretty",
+      "Keep permissions in one map, never scattered across components",
+      "Reusable component first, one-off second",
+      "Test on the cheapest device anyone will actually use"
+    ],
+    architecture:
+      "The pattern I keep returning to: a thin API layer that normalises every response, a typed store shape that screens read from, and dumb presentational components that receive exactly what they render. It survives a redesign, and it survives a backend changing its mind."
+  },
+
+  /* ---------- MEETING ROOM -> experience & teamwork */
+  experience: {
+    roles: [
+      { when: "Mar 2024 – Nov 2025", what: "Frontend Developer", who: "Logieagle Private Limited",
+        points: ["HRSC and PMS enterprise modules", "React Native task app", "Analytics dashboard", "Chrome Extension", "RBAC across products"] },
+      { when: "May 2022 – Mar 2024", what: "Frontend Developer", who: "Evision IT Solution Pvt. Ltd.",
+        points: ["Angular project management system", "Shopify theme development", "Reactive Forms and RxJS-heavy modules", "First exposure to Spring Boot APIs"] }
+    ],
+    teamwork: [
+      "Agile / Scrum: daily standups, sprint planning, retrospectives",
+      "Estimation and sprint commitments with a PM",
+      "Demoing frontend work directly to clients",
+      "Cross-team API contract discussions before build starts",
+      "Code review, both directions"
+    ],
+    clients: "Enterprise HR and delivery teams, plus e-commerce merchants on the Shopify side."
+  },
+
+  /* ---------- BOOKSHELF -> education */
+  education: {
+    degree: "B.E. Computer Engineering",
+    school: "LDRP Institute of Technology and Research",
+    year: "2022",
+    score: "8.0 CGPA",
+    extra: [
+      "Graduated 2022, working full time from May of the same year",
+      "Kept learning on the job: Angular first, React after, React Native and Next.js since",
+      "Currently building a full-stack side project to keep the backend muscles honest"
+    ]
+  },
+
+  /* ---------- COFFEE MACHINE -> easter egg */
+  coffee: [
+    "Cup 1. Standard operating fuel.",
+    "Cup 2. The bug is reproducible now.",
+    "Cup 3. You've started refactoring something that worked fine.",
+    "Cup 4. Bold. Console.log-driven development begins.",
+    "Cup 5. It works. Nobody knows why. Ship it.",
+    "Cup 6. Please go home. The office is closing."
+  ]
+};
+
+/* ==========================================================================
+   2 · ENGINE  —  renderer, scene, lighting
+   ========================================================================== */
+const el = (id) => document.getElementById(id);
+const canvas = el('scene');
+
+const STATE = {
+  coarse: window.matchMedia('(pointer:coarse)').matches,
+  small: window.innerWidth < 900,
+  low: false,              // set true if fps tanks
+  ready: false,
+  hovered: null,
+  selected: null,
+  idle: 0,
+  coffee: 0,
+  webgl: true
+};
+STATE.mobile = STATE.coarse || STATE.small;
+
+let renderer, scene, camera, sun;
+try {
+  renderer = new THREE.WebGLRenderer({
+    canvas, antialias: !STATE.mobile, powerPreference: 'high-performance', alpha: false
+  });
+} catch (err) { STATE.webgl = false; }
+
+const CLOCK = new THREE.Clock();
+const RAY = new THREE.Raycaster();
+const PICKABLE = [];       // only interactive meshes go here — keeps raycasting cheap
+const HOTSPOTS = [];       // billboarded "clickable" markers
+const ANIMATED = [];       // { obj, fn } ticked every frame
+const INTERACTIVES = [];   // registry of everything you can click
+
+function setupEngine() {
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, STATE.mobile ? 1.5 : 2));
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.outputEncoding = THREE.sRGBEncoding;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.02;
+  renderer.shadowMap.enabled = !STATE.mobile;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+  scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x080A0E);
+  scene.fog = new THREE.Fog(0x080A0E, 46, 104);
+
+  camera = new THREE.PerspectiveCamera(46, window.innerWidth / window.innerHeight, 0.4, 260);
+
+  // --- lighting: one shadow-casting key light, everything else is cheap fill
+  const hemi = new THREE.HemisphereLight(0xDCEBFF, 0x4A4238, 0.62);
+  scene.add(hemi);
+
+  sun = new THREE.DirectionalLight(0xFFF3E0, 1.15);
+  sun.position.set(20, 27, 15);
+  if (!STATE.mobile) {
+    sun.castShadow = true;
+    sun.shadow.mapSize.set(2048, 2048);
+    const c = sun.shadow.camera;
+    c.left = -27; c.right = 27; c.top = 22; c.bottom = -22; c.near = 6; c.far = 78;
+    sun.shadow.bias = -0.0006;
+    sun.shadow.normalBias = 0.02;
+  }
+  scene.add(sun);
+
+  // window bounce from the glazed side
+  const bounce = new THREE.DirectionalLight(0xBFD8FF, 0.34);
+  bounce.position.set(-18, 10, -20);
+  scene.add(bounce);
+
+  // warm pools, no shadows
+  const p1 = new THREE.PointLight(0xFFD9A0, 0.5, 18, 2); p1.position.set(12, 3.1, -8.5); scene.add(p1);
+  const p2 = new THREE.PointLight(0xFFCE93, 0.45, 16, 2); p2.position.set(-13, 3.0, 9);  scene.add(p2);
+  const p3 = new THREE.PointLight(0xFFE2BE, 0.4, 15, 2);  p3.position.set(4, 3.0, 11.5); scene.add(p3);
+}
+
+/* ==========================================================================
+   3 · PROCEDURAL TEXTURES  (no external assets — nothing to download)
+   ========================================================================== */
+function makeTex(w, h, draw, rx, ry) {
+  const c = document.createElement('canvas');
+  c.width = w; c.height = h;
+  draw(c.getContext('2d'), w, h);
+  const t = new THREE.CanvasTexture(c);
+  t.encoding = THREE.sRGBEncoding;
+  if (rx) { t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(rx, ry || rx); }
+  t.anisotropy = 4;
+  return t;
+}
+
+const TEX = {};
+function buildTextures() {
+  // polished concrete floor with faint seams
+  TEX.floor = makeTex(256, 256, (x, w, h) => {
+    x.fillStyle = '#CFCAC1'; x.fillRect(0, 0, w, h);
+    for (let i = 0; i < 2600; i++) {
+      const g = 190 + Math.random() * 42;
+      x.fillStyle = `rgba(${g},${g - 4},${g - 12},${0.05 + Math.random() * 0.16})`;
+      x.fillRect(Math.random() * w, Math.random() * h, 2, 2);
+    }
+    x.strokeStyle = 'rgba(120,116,108,.30)'; x.lineWidth = 1.5;
+    x.strokeRect(0, 0, w, h);
+  }, 14, 11);
+
+  // low-pile carpet for zoned areas
+  TEX.carpet = makeTex(128, 128, (x, w, h) => {
+    x.fillStyle = '#4E5A68'; x.fillRect(0, 0, w, h);
+    for (let i = 0; i < 3400; i++) {
+      x.fillStyle = `rgba(255,255,255,${Math.random() * 0.05})`;
+      x.fillRect(Math.random() * w, Math.random() * h, 1, 2);
+    }
+  }, 5, 5);
+
+  TEX.carpetWarm = makeTex(128, 128, (x, w, h) => {
+    x.fillStyle = '#8A6B4F'; x.fillRect(0, 0, w, h);
+    for (let i = 0; i < 3400; i++) {
+      x.fillStyle = `rgba(255,235,210,${Math.random() * 0.07})`;
+      x.fillRect(Math.random() * w, Math.random() * h, 1, 2);
+    }
+  }, 4, 4);
+
+  // oak-ish desk surface
+  TEX.wood = makeTex(256, 128, (x, w, h) => {
+    x.fillStyle = '#C79A66'; x.fillRect(0, 0, w, h);
+    for (let i = 0; i < 70; i++) {
+      x.strokeStyle = `rgba(120,84,48,${0.05 + Math.random() * 0.16})`;
+      x.lineWidth = 0.6 + Math.random() * 1.8;
+      const y = Math.random() * h;
+      x.beginPath(); x.moveTo(0, y);
+      x.bezierCurveTo(w * 0.3, y + (Math.random() - .5) * 8, w * 0.7, y + (Math.random() - .5) * 8, w, y);
+      x.stroke();
+    }
+  }, 2, 1);
+
+  // ---- monitor screens
+  const screenBG = (x, w, h, top) => {
+    x.fillStyle = '#10141C'; x.fillRect(0, 0, w, h);
+    x.fillStyle = '#171D28'; x.fillRect(0, 0, w, 22);
+    x.fillStyle = '#F5A524'; x.fillRect(0, 0, 4, 22);
+    x.fillStyle = '#7F8B9E'; x.font = '600 11px ui-monospace,monospace';
+    x.fillText(top, 12, 15);
+  };
+  const R = (n) => Math.random() * n;
+
+  TEX.code = makeTex(384, 240, (x, w, h) => {
+    screenBG(x, w, h, 'index.tsx');
+    const cols = ['#7FB2FF', '#F5A524', '#7ED9A7', '#C58AF0', '#8A94A6'];
+    for (let i = 0; i < 15; i++) {
+      let px = 14 + (i % 4) * 9;
+      const y = 38 + i * 13;
+      x.fillStyle = '#3A4354'; x.font = '10px ui-monospace,monospace'; x.fillText(String(i + 1).padStart(2, '0'), 4, y);
+      for (let j = 0; j < 3 + R(3); j++) {
+        const len = 16 + R(58);
+        x.fillStyle = cols[(i + j) % cols.length];
+        x.globalAlpha = 0.85; x.fillRect(px, y - 7, len, 6); x.globalAlpha = 1;
+        px += len + 7;
+        if (px > w - 30) break;
+      }
+    }
+  });
+
+  TEX.dashboard = makeTex(384, 240, (x, w, h) => {
+    screenBG(x, w, h, 'hrsc · requests');
+    for (let i = 0; i < 3; i++) {
+      x.fillStyle = '#1A2130'; x.fillRect(12 + i * 122, 32, 112, 46);
+      x.fillStyle = ['#F5A524', '#7FB2FF', '#7ED9A7'][i]; x.fillRect(12 + i * 122, 32, 112, 3);
+      x.fillStyle = '#E6EBF3'; x.font = '600 18px ui-monospace,monospace';
+      x.fillText(['248', '31', '96%'][i], 22 + i * 122, 62);
+    }
+    x.fillStyle = '#1A2130'; x.fillRect(12, 88, 360, 138);
+    for (let i = 0; i < 9; i++) {
+      const bh = 18 + R(96);
+      x.fillStyle = i % 3 === 0 ? '#F5A524' : '#33507A';
+      x.fillRect(26 + i * 39, 214 - bh, 24, bh);
+    }
+  });
+
+  TEX.charts = makeTex(384, 240, (x, w, h) => {
+    screenBG(x, w, h, 'analytics');
+    x.fillStyle = '#141A25'; x.fillRect(12, 32, 360, 100);
+    x.strokeStyle = '#7FB2FF'; x.lineWidth = 2.4; x.beginPath();
+    for (let i = 0; i <= 30; i++) {
+      const px = 14 + i * 11.8, py = 118 - (Math.sin(i * 0.42) * 26 + 34 + R(10));
+      i ? x.lineTo(px, py) : x.moveTo(px, py);
+    }
+    x.stroke();
+    x.strokeStyle = '#F5A524'; x.lineWidth = 1.8; x.beginPath();
+    for (let i = 0; i <= 30; i++) {
+      const px = 14 + i * 11.8, py = 124 - (Math.cos(i * 0.31) * 15 + 20 + R(8));
+      i ? x.lineTo(px, py) : x.moveTo(px, py);
+    }
+    x.stroke();
+    for (let i = 0; i < 5; i++) {
+      x.fillStyle = '#1A2130'; x.fillRect(12, 142 + i * 18, 360, 13);
+      x.fillStyle = i % 2 ? '#33507A' : '#3E4A5E'; x.fillRect(16, 145 + i * 18, 60 + R(230), 7);
+    }
+  });
+
+  TEX.kanban = makeTex(384, 240, (x, w, h) => {
+    screenBG(x, w, h, 'pms · sprint 14');
+    const heads = ['#8A94A6', '#7FB2FF', '#7ED9A7'];
+    for (let c = 0; c < 3; c++) {
+      const cx = 12 + c * 122;
+      x.fillStyle = '#141A25'; x.fillRect(cx, 32, 112, 196);
+      x.fillStyle = heads[c]; x.fillRect(cx, 32, 112, 3);
+      for (let k = 0; k < 3 + (c === 1 ? 1 : 0); k++) {
+        const cy = 42 + k * 46;
+        x.fillStyle = '#1E2634'; x.fillRect(cx + 7, cy, 98, 38);
+        x.fillStyle = heads[c]; x.fillRect(cx + 7, cy, 3, 38);
+        x.fillStyle = '#48546A'; x.fillRect(cx + 16, cy + 9, 60 + R(24), 5);
+        x.fillRect(cx + 16, cy + 21, 34 + R(30), 5);
+      }
+    }
+  });
+
+  TEX.mobile = makeTex(384, 240, (x, w, h) => {
+    screenBG(x, w, h, 'tasks · android/ios');
+    x.fillStyle = '#141A25'; x.fillRect(132, 30, 120, 200);
+    x.fillStyle = '#F5A524'; x.fillRect(132, 30, 120, 26);
+    x.fillStyle = '#10141C'; x.font = '600 10px ui-monospace,monospace'; x.fillText('My tasks', 142, 47);
+    for (let i = 0; i < 5; i++) {
+      const y = 64 + i * 32;
+      x.fillStyle = '#1E2634'; x.fillRect(140, y, 104, 26);
+      x.fillStyle = ['#7ED9A7', '#F5A524', '#7FB2FF'][i % 3]; x.beginPath();
+      x.arc(151, y + 13, 5, 0, 6.3); x.fill();
+      x.fillStyle = '#48546A'; x.fillRect(162, y + 8, 40 + R(38), 4);
+      x.fillRect(162, y + 16, 26 + R(24), 4);
+    }
+  });
+
+  TEX.shop = makeTex(384, 240, (x, w, h) => {
+    screenBG(x, w, h, 'shopify · theme');
+    x.fillStyle = '#141A25'; x.fillRect(12, 32, 360, 62);
+    x.fillStyle = '#F5A524'; x.font = '700 20px ui-sans-serif,sans-serif'; x.fillText('NEW SEASON', 24, 68);
+    for (let i = 0; i < 4; i++) {
+      const cx = 12 + i * 92;
+      x.fillStyle = '#1E2634'; x.fillRect(cx, 104, 84, 122);
+      x.fillStyle = '#2C3646'; x.fillRect(cx + 8, 112, 68, 68);
+      x.fillStyle = '#48546A'; x.fillRect(cx + 8, 190, 52, 5);
+      x.fillStyle = '#7ED9A7'; x.fillRect(cx + 8, 202, 28, 5);
+    }
+  });
+
+  // meeting-room wall display
+  TEX.present = makeTex(512, 288, (x, w, h) => {
+    x.fillStyle = '#0E1219'; x.fillRect(0, 0, w, h);
+    x.fillStyle = '#F5A524'; x.fillRect(0, 0, w, 6);
+    x.fillStyle = '#E6EBF3'; x.font = '700 30px ui-sans-serif,sans-serif';
+    x.fillText('Sprint review', 34, 74);
+    x.fillStyle = '#7F8B9E'; x.font = '15px ui-monospace,monospace';
+    x.fillText('frontend · delivery · qa', 34, 104);
+    const rows = ['HRSC approval flow', 'Mobile push reminders', 'Dashboard filters', 'RBAC guard rollout'];
+    rows.forEach((r, i) => {
+      const y = 140 + i * 34;
+      x.fillStyle = '#7ED9A7'; x.fillRect(34, y - 10, 10, 10);
+      x.fillStyle = '#C3CCDA'; x.font = '17px ui-sans-serif,sans-serif'; x.fillText(r, 56, y);
+      x.fillStyle = '#1E2634'; x.fillRect(300, y - 9, 170, 8);
+      x.fillStyle = '#7FB2FF'; x.fillRect(300, y - 9, 60 + i * 34, 8);
+    });
+  });
+
+  // whiteboard: hand-drawn architecture sketch
+  TEX.board = makeTex(1024, 576, (x, w, h) => {
+    x.fillStyle = '#F7F7F4'; x.fillRect(0, 0, w, h);
+    x.fillStyle = '#20242C'; x.font = '700 44px ui-sans-serif,sans-serif';
+    x.fillText('How I build a screen', 54, 78);
+    x.strokeStyle = '#F5A524'; x.lineWidth = 6; x.beginPath();
+    x.moveTo(54, 96); x.lineTo(430, 96); x.stroke();
+
+    const box = (bx, by, bw, bh, label, sub, col) => {
+      x.strokeStyle = col; x.lineWidth = 4;
+      x.strokeRect(bx, by, bw, bh);
+      x.fillStyle = col + '1A'; x.fillRect(bx, by, bw, bh);
+      x.fillStyle = '#20242C'; x.font = '700 22px ui-sans-serif,sans-serif';
+      x.fillText(label, bx + 18, by + 36);
+      x.fillStyle = '#6A748A'; x.font = '16px ui-monospace,monospace';
+      x.fillText(sub, bx + 18, by + 62);
+    };
+    const arrow = (x1, y1, x2, y2) => {
+      x.strokeStyle = '#3A4354'; x.lineWidth = 3.5;
+      x.beginPath(); x.moveTo(x1, y1); x.lineTo(x2, y2); x.stroke();
+      const a = Math.atan2(y2 - y1, x2 - x1);
+      x.beginPath(); x.moveTo(x2, y2);
+      x.lineTo(x2 - 14 * Math.cos(a - 0.4), y2 - 14 * Math.sin(a - 0.4));
+      x.lineTo(x2 - 14 * Math.cos(a + 0.4), y2 - 14 * Math.sin(a + 0.4));
+      x.closePath(); x.fillStyle = '#3A4354'; x.fill();
+    };
+    box(54, 150, 230, 92, 'REST API', 'Spring Boot', '#7FB2FF');
+    arrow(292, 196, 372, 196);
+    box(380, 150, 230, 92, 'API layer', 'normalise + types', '#F5A524');
+    arrow(618, 196, 698, 196);
+    box(706, 150, 250, 92, 'Store', 'Redux / RxJS', '#7ED9A7');
+    arrow(830, 250, 830, 320);
+    box(660, 328, 296, 92, 'Screens', 'read-only state', '#C58AF0');
+    arrow(654, 374, 574, 374);
+    box(320, 328, 250, 92, 'Components', 'dumb + reusable', '#3A4354');
+
+    x.fillStyle = '#20242C'; x.font = '700 24px ui-sans-serif,sans-serif';
+    x.fillText('States before styling', 54, 358);
+    ['loading', 'empty', 'error', 'no-permission'].forEach((s, i) => {
+      x.fillStyle = '#6A748A'; x.font = '19px ui-monospace,monospace';
+      x.fillText('· ' + s, 54, 394 + i * 30);
+    });
+  });
+
+  // reception backdrop
+  TEX.logo = makeTex(1024, 256, (x, w, h) => {
+    x.fillStyle = '#20242C'; x.fillRect(0, 0, w, h);
+    x.fillStyle = '#F5A524'; x.fillRect(0, 0, 14, h);
+    x.fillStyle = '#F2F4F8'; x.font = '700 66px ui-sans-serif,sans-serif';
+    x.fillText('GeoffHaward Christy', 60, 108);
+    x.fillStyle = '#8A94A6'; x.font = '30px ui-monospace,monospace';
+    x.fillText('frontend developer  ·  react / angular / react native', 62, 164);
+  });
+
+  TEX.exit = makeTex(256, 96, (x, w, h) => {
+    x.fillStyle = '#0F1319'; x.fillRect(0, 0, w, h);
+    x.fillStyle = '#7ED9A7'; x.font = '700 40px ui-sans-serif,sans-serif';
+    x.textAlign = 'center'; x.fillText('SAY HELLO', w / 2, 62);
+  });
+}
+
+/* ==========================================================================
+   4 · SHARED MATERIALS + GEOMETRY CACHE
+   Reused everywhere so the GPU keeps state changes low.
+   ========================================================================== */
+const MAT = {};
+function buildMaterials() {
+  const std = (o) => new THREE.MeshStandardMaterial(o);
+  MAT.floor   = std({ map: TEX.floor, roughness: 0.72, metalness: 0.03 });
+  MAT.carpet  = std({ map: TEX.carpet, roughness: 0.96 });
+  MAT.carpetW = std({ map: TEX.carpetWarm, roughness: 0.96 });
+  MAT.wall    = std({ color: 0xE9E6DF, roughness: 0.92 });
+  MAT.wallDark= std({ color: 0x2C313A, roughness: 0.85 });
+  MAT.trim    = std({ color: 0xB9B3A8, roughness: 0.7 });
+  MAT.wood    = std({ map: TEX.wood, roughness: 0.55 });
+  MAT.deskTop = std({ color: 0xEDEAE3, roughness: 0.42 });
+  MAT.metal   = std({ color: 0x8A9099, roughness: 0.34, metalness: 0.62 });
+  MAT.dark    = std({ color: 0x23272E, roughness: 0.55 });
+  MAT.darker  = std({ color: 0x15181D, roughness: 0.6 });
+  MAT.fabric  = std({ color: 0x39404A, roughness: 0.95 });
+  MAT.fabricW = std({ color: 0x6E5A48, roughness: 0.95 });
+  MAT.plant   = std({ color: 0x4E8C52, roughness: 0.85 });
+  MAT.plant2  = std({ color: 0x3E7444, roughness: 0.85 });
+  MAT.pot     = std({ color: 0xB9743F, roughness: 0.75 });
+  MAT.paper   = std({ color: 0xF6F5F1, roughness: 0.9 });
+  MAT.amber   = std({ color: 0xF5A524, roughness: 0.45, emissive: 0x3A2200 });
+  MAT.glass   = std({ color: 0xC8E6F2, roughness: 0.06, metalness: 0.1, transparent: true, opacity: 0.16, side: THREE.DoubleSide });
+  MAT.window  = new THREE.MeshBasicMaterial({ color: 0xDCEEFF, toneMapped: false });
+  MAT.light   = new THREE.MeshBasicMaterial({ color: 0xFFF6E4, toneMapped: false });
+  MAT.board   = new THREE.MeshBasicMaterial({ map: TEX.board, toneMapped: false });
+  MAT.logo    = new THREE.MeshBasicMaterial({ map: TEX.logo, toneMapped: false });
+  MAT.present = new THREE.MeshBasicMaterial({ map: TEX.present, toneMapped: false });
+  MAT.exitSig = new THREE.MeshBasicMaterial({ map: TEX.exit, toneMapped: false });
+  MAT.screen  = {};
+  ['code', 'dashboard', 'charts', 'kanban', 'mobile', 'shop'].forEach(k => {
+    MAT.screen[k] = new THREE.MeshBasicMaterial({ map: TEX[k], toneMapped: false });
+  });
+  MAT.ring    = new THREE.MeshBasicMaterial({ color: 0x7FB2FF, transparent: true, opacity: 0, side: THREE.DoubleSide, depthWrite: false });
+  MAT.hotspot = new THREE.MeshBasicMaterial({ color: 0x7FB2FF, transparent: true, opacity: 0.9, depthWrite: false, toneMapped: false });
+}
+
+const GEO = {};
+function buildGeometry() {
+  GEO.box = new THREE.BoxGeometry(1, 1, 1);
+  GEO.cyl = new THREE.CylinderGeometry(0.5, 0.5, 1, 14);
+  GEO.cylLow = new THREE.CylinderGeometry(0.5, 0.5, 1, 8);
+  GEO.sphere = new THREE.SphereGeometry(0.5, 14, 10);
+  GEO.ico = new THREE.IcosahedronGeometry(0.5, 0);
+  GEO.cone = new THREE.ConeGeometry(0.5, 1, 8);
+  GEO.plane = new THREE.PlaneGeometry(1, 1);
+  GEO.ring = new THREE.RingGeometry(0.72, 0.86, 40);
+  GEO.disc = new THREE.CircleGeometry(0.5, 20);
+  GEO.torus = new THREE.TorusGeometry(0.5, 0.09, 6, 20);
+}
+
+/* ---- tiny builders ------------------------------------------------------ */
+function mesh(geo, mat, w, h, d, x, y, z, cast, receive) {
+  const m = new THREE.Mesh(geo, mat);
+  m.scale.set(w, h, d);
+  m.position.set(x, y, z);
+  m.castShadow = cast !== false && !STATE.mobile;
+  m.receiveShadow = receive !== false && !STATE.mobile;
+  return m;
+}
+const box = (mat, w, h, d, x, y, z, cast) => mesh(GEO.box, mat, w, h, d, x, y, z, cast);
+const cyl = (mat, r, h, x, y, z, low) => mesh(low ? GEO.cylLow : GEO.cyl, mat, r * 2, h, r * 2, x, y, z);
+const sph = (mat, r, x, y, z) => mesh(GEO.sphere, mat, r * 2, r * 2, r * 2, x, y, z);
+const plane = (mat, w, h, x, y, z) => {
+  const m = new THREE.Mesh(GEO.plane, mat);
+  m.scale.set(w, h, 1); m.position.set(x, y, z);
+  return m;
+};
+function group(x, y, z, ry) {
+  const g = new THREE.Group();
+  g.position.set(x || 0, y || 0, z || 0);
+  if (ry) g.rotation.y = ry;
+  return g;
+}
+
+/* ==========================================================================
+   5 · OFFICE SHELL  —  floor, walls, glazing, ceiling lights
+   Floor spans x[-21,21]  z[-16,16]. Wall height 3.9.
+   ========================================================================== */
+const WALL_H = 3.9;
+const BOUNDS = { x: 19.5, z: 14.5 };
+let SHELL;
+
+function buildShell() {
+  SHELL = group();
+  scene.add(SHELL);
+
+  // ---- floor
+  const floor = new THREE.Mesh(new THREE.PlaneGeometry(42, 32), MAT.floor);
+  floor.rotation.x = -Math.PI / 2;
+  floor.receiveShadow = !STATE.mobile;
+  SHELL.add(floor);
+
+  // subtle plinth so the slab reads as a solid object from outside
+  SHELL.add(box(MAT.wallDark, 42.6, 0.5, 32.6, 0, -0.26, 0, false));
+
+  // ---- zone rugs
+  const rug = (mat, w, d, x, z) => {
+    const m = new THREE.Mesh(GEO.plane, mat);
+    m.rotation.x = -Math.PI / 2;
+    m.scale.set(w, d, 1); m.position.set(x, 0.012, z);
+    m.receiveShadow = !STATE.mobile;
+    SHELL.add(m);
+  };
+  rug(MAT.carpet, 18.5, 12.5, -10.5, -6);      // workstation pod
+  rug(MAT.carpet, 12.4, 10.4, 13, -10);        // meeting room
+  rug(MAT.carpetW, 12.5, 10.5, -14, 9.6);      // lounge
+  rug(MAT.carpetW, 8, 6.5, 4.5, 12);           // reception
+
+  // ---- walls
+  const wall = (w, x, z, ry, mat) => {
+    const m = box(mat || MAT.wall, w, WALL_H, 0.28, x, WALL_H / 2, z, false);
+    m.rotation.y = ry || 0;
+    SHELL.add(m);
+    // baseboard
+    const b = box(MAT.trim, w, 0.16, 0.34, x, 0.08, z, false);
+    b.rotation.y = ry || 0;
+    SHELL.add(b);
+  };
+  wall(42, 0, -16.1);                          // back
+  wall(32, -21.1, 0, Math.PI / 2);             // left
+  wall(32, 21.1, 0, Math.PI / 2);              // right
+  wall(17, -12.5, 16.1);                       // front-left
+  wall(17, 12.5, 16.1);                        // front-right (entrance gap between)
+
+  // ---- glazing: repeated frame + emissive pane
+  const glaze = (x, y, z, w, h, ry) => {
+    const g = group(x, y, z, ry);
+    g.add(box(MAT.window, w, h, 0.06, 0, 0, 0, false));
+    g.add(box(MAT.trim, w + 0.16, 0.1, 0.14, 0, h / 2, 0.06, false));
+    g.add(box(MAT.trim, w + 0.16, 0.1, 0.14, 0, -h / 2, 0.06, false));
+    g.add(box(MAT.trim, 0.1, h, 0.14, -w / 2, 0, 0.06, false));
+    g.add(box(MAT.trim, 0.1, h, 0.14, w / 2, 0, 0.06, false));
+    g.add(box(MAT.trim, 0.07, h, 0.1, 0, 0, 0.06, false));
+    SHELL.add(g);
+  };
+  for (let i = 0; i < 7; i++) glaze(-18 + i * 6, 2.15, -15.94, 4.6, 2.3, 0);
+  for (let i = 0; i < 4; i++) glaze(20.94, 2.15, -9 + i * 6.4, 4.6, 2.3, -Math.PI / 2);
+
+  // ---- entrance frame + doormat
+  SHELL.add(box(MAT.wallDark, 0.35, 3.2, 0.4, -4, 1.6, 16.05, false));
+  SHELL.add(box(MAT.wallDark, 0.35, 3.2, 0.4, 4, 1.6, 16.05, false));
+  SHELL.add(box(MAT.wallDark, 8.4, 0.4, 0.4, 0, 3.4, 16.05, false));
+  const mat0 = new THREE.Mesh(GEO.plane, MAT.fabric);
+  mat0.rotation.x = -Math.PI / 2; mat0.scale.set(4.4, 2, 1); mat0.position.set(0, 0.015, 14.6);
+  SHELL.add(mat0);
+
+  // ---- ceiling light panels (InstancedMesh — one draw call for all of them)
+  const panels = [];
+  for (let r = 0; r < 4; r++)
+    for (let c = 0; c < 5; c++)
+      panels.push([-16.5 + c * 8.2, 3.62, -12 + r * 8]);
+  const inst = new THREE.InstancedMesh(GEO.box, MAT.light, panels.length);
+  const dummy = new THREE.Object3D();
+  panels.forEach((p, i) => {
+    dummy.position.set(p[0], p[1], p[2]);
+    dummy.scale.set(2.6, 0.07, 0.62);
+    dummy.updateMatrix();
+    inst.setMatrixAt(i, dummy.matrix);
+  });
+  inst.instanceMatrix.needsUpdate = true;
+  SHELL.add(inst);
+
+  // ---- ceiling rail so the lights read as fixtures, not floating slabs
+  const rails = new THREE.InstancedMesh(GEO.box, MAT.trim, panels.length);
+  panels.forEach((p, i) => {
+    dummy.position.set(p[0], p[1] + 0.06, p[2]);
+    dummy.scale.set(2.8, 0.06, 0.8);
+    dummy.updateMatrix();
+    rails.setMatrixAt(i, dummy.matrix);
+  });
+  rails.instanceMatrix.needsUpdate = true;
+  SHELL.add(rails);
+}
+
+/* ---- plants ------------------------------------------------------------- */
+function makePlant(kind, s) {
+  const g = group();
+  s = s || 1;
+  g.add(cyl(MAT.pot, 0.3, 0.44, 0, 0.22, 0));
+  g.add(cyl(MAT.darker, 0.27, 0.05, 0, 0.44, 0, true));
+  if (kind === 'tree') {
+    g.add(cyl(MAT.wood, 0.05, 1.1, 0, 0.95, 0, true));
+    for (let i = 0; i < 5; i++) {
+      const a = (i / 5) * Math.PI * 2;
+      const leaf = mesh(GEO.ico, i % 2 ? MAT.plant : MAT.plant2, 0.9, 0.7, 0.9,
+        Math.cos(a) * 0.28, 1.45 + Math.sin(i * 2) * 0.18, Math.sin(a) * 0.28);
+      g.add(leaf);
+    }
+    g.add(mesh(GEO.ico, MAT.plant, 1.15, 0.85, 1.15, 0, 1.72, 0));
+  } else {
+    for (let i = 0; i < 7; i++) {
+      const a = (i / 7) * Math.PI * 2 + Math.random();
+      const bl = new THREE.Mesh(GEO.cone, i % 2 ? MAT.plant : MAT.plant2);
+      bl.scale.set(0.34, 1.0 + Math.random() * 0.5, 0.12);
+      bl.position.set(Math.cos(a) * 0.16, 0.95, Math.sin(a) * 0.16);
+      bl.rotation.z = Math.cos(a) * 0.42;
+      bl.rotation.x = -Math.sin(a) * 0.42;
+      bl.castShadow = !STATE.mobile;
+      g.add(bl);
+    }
+  }
+  g.scale.setScalar(s);
+  return g;
+}
+
+/* ==========================================================================
+   6 · FURNITURE COMPONENTS
+   Local convention: a workstation "faces" -z. The chair sits at +z.
+   ========================================================================== */
+
+function makeChair(fabric) {
+  const g = group();
+  const f = fabric || MAT.fabric;
+  for (let i = 0; i < 5; i++) {
+    const spoke = box(MAT.dark, 0.5, 0.06, 0.09, 0, 0.06, 0, true);
+    spoke.rotation.y = (i / 5) * Math.PI * 2;
+    spoke.position.set(Math.cos(spoke.rotation.y) * 0.22, 0.06, Math.sin(spoke.rotation.y) * 0.22);
+    g.add(spoke);
+  }
+  g.add(cyl(MAT.metal, 0.045, 0.36, 0, 0.26, 0, true));
+  g.add(box(f, 0.52, 0.1, 0.5, 0, 0.47, 0));
+  const back = box(f, 0.5, 0.56, 0.09, 0, 0.78, 0.24);
+  back.rotation.x = -0.14;
+  g.add(back);
+  g.add(box(MAT.dark, 0.06, 0.05, 0.34, -0.28, 0.63, 0.02, true));
+  g.add(box(MAT.dark, 0.06, 0.05, 0.34, 0.28, 0.63, 0.02, true));
+  return g;
+}
+
+function makeMonitor(screenKey, w) {
+  const g = group();
+  w = w || 1.12;
+  g.add(cyl(MAT.dark, 0.15, 0.03, 0, 0.02, 0, true));
+  g.add(box(MAT.dark, 0.07, 0.3, 0.07, 0, 0.17, 0));
+  const head = group(0, 0.53, 0);
+  head.rotation.x = -0.07;
+  head.add(box(MAT.darker, w, w * 0.58, 0.045, 0, 0, 0));
+  const sc = plane(MAT.screen[screenKey] || MAT.screen.code, w * 0.93, w * 0.51, 0, 0.005, 0.026);
+  head.add(sc);
+  g.add(head);
+  return g;
+}
+
+function makeDesk(screenKey, dual) {
+  const g = group();
+  g.add(box(MAT.deskTop, 2.5, 0.07, 1.2, 0, 0.74, 0));
+  g.add(box(MAT.wood, 2.52, 0.03, 1.22, 0, 0.705, 0, false));
+  g.add(box(MAT.metal, 0.08, 0.72, 1.06, -1.17, 0.37, 0));
+  g.add(box(MAT.metal, 0.08, 0.72, 1.06, 1.17, 0.37, 0));
+  g.add(box(MAT.metal, 2.2, 0.06, 0.06, 0, 0.2, -0.4, true));
+  g.add(box(MAT.trim, 2.3, 0.4, 0.04, 0, 0.52, -0.56));
+
+  const mon = makeMonitor(screenKey);
+  mon.position.set(dual ? -0.42 : 0, 0.78, -0.34);
+  g.add(mon);
+  if (dual) {
+    const m2 = makeMonitor(screenKey === 'code' ? 'charts' : 'code', 0.86);
+    m2.position.set(0.72, 0.78, -0.3);
+    m2.rotation.y = -0.42;
+    g.add(m2);
+  }
+
+  g.add(box(MAT.darker, 0.66, 0.025, 0.22, 0, 0.79, 0.2));           // keyboard
+  g.add(box(MAT.darker, 0.62, 0.012, 0.19, 0, 0.805, 0.2, false));
+  g.add(box(MAT.dark, 0.09, 0.035, 0.13, 0.46, 0.795, 0.22));        // mouse
+  g.add(cyl(MAT.amber, 0.055, 0.11, -0.72, 0.83, 0.24, true));       // mug
+  g.add(box(MAT.paper, 0.3, 0.015, 0.23, 0.86, 0.785, -0.08));       // papers
+  g.add(box(MAT.darker, 0.24, 0.48, 0.5, -0.86, 0.24, -0.28));       // tower under desk
+  g.add(box(MAT.dark, 0.9, 0.35, 0.42, 0.75, 0.18, -0.3));           // drawer unit
+  return g;
+}
+
+function makeWorkstation(p, x, z, dual) {
+  const g = group(x, 0, z);
+  g.add(makeDesk(p.screen, dual));
+  const ch = makeChair(MAT.fabric);
+  ch.position.set(0.08, 0, 1.05);
+  ch.rotation.y = 0.12;
+  g.add(ch);
+  return g;
+}
+
+/* ---- meeting room ------------------------------------------------------- */
+function makeMeetingRoom() {
+  const g = group(13, 0, -10);
+  const glassPanel = (w, x, z, ry) => {
+    const p = group(x, 0, z, ry);
+    p.add(box(MAT.glass, w, 2.9, 0.05, 0, 1.6, 0, false));
+    p.add(box(MAT.metal, w, 0.07, 0.11, 0, 3.06, 0, false));
+    p.add(box(MAT.metal, w, 0.07, 0.11, 0, 0.14, 0, false));
+    p.add(box(MAT.metal, 0.07, 3, 0.11, -w / 2, 1.6, 0, false));
+    p.add(box(MAT.metal, 0.07, 3, 0.11, w / 2, 1.6, 0, false));
+    g.add(p);
+  };
+  glassPanel(10.4, -6, 0, Math.PI / 2);          // west wall
+  glassPanel(4.2, -4.1, 5.2, 0);                 // south wall, left of door
+  glassPanel(4.2, 4.1, 5.2, 0);                  // south wall, right of door
+  g.add(box(MAT.metal, 4.2, 0.12, 0.14, 0, 3.06, 5.2, false));
+
+  // table
+  g.add(box(MAT.wood, 4.8, 0.11, 1.9, 0, 0.74, 0));
+  g.add(box(MAT.dark, 0.9, 0.68, 0.28, -1.5, 0.36, 0));
+  g.add(box(MAT.dark, 0.9, 0.68, 0.28, 1.5, 0.36, 0));
+  g.add(box(MAT.darker, 0.5, 0.04, 0.3, 0, 0.81, 0, true));          // conference puck
+  g.add(cyl(MAT.metal, 0.11, 0.03, 0, 0.83, 0, true));
+  for (let i = 0; i < 4; i++) {
+    g.add(box(MAT.paper, 0.28, 0.012, 0.2, -1.5 + i, 0.8, i % 2 ? 0.55 : -0.55, false));
+  }
+  g.add(makePlant('tree', 0.9).translateX(-4.6).translateZ(3.6));
+
+  // chairs around the table
+  [[-1.6, 1.5], [0, 1.5], [1.6, 1.5], [-1.6, -1.5], [0, -1.5], [1.6, -1.5]].forEach(([cx, cz]) => {
+    const c = makeChair(MAT.fabric);
+    c.position.set(cx, 0, cz);
+    c.rotation.y = cz > 0 ? 0 : Math.PI;
+    g.add(c);
+  });
+
+  // wall display on the building wall behind
+  const scr = group(0, 1.85, -4.85);
+  scr.add(box(MAT.darker, 3.5, 2.0, 0.1, 0, 0, 0, false));
+  scr.add(plane(MAT.present, 3.3, 1.85, 0, 0, 0.06));
+  g.add(scr);
+  g.add(box(MAT.wall, 12.2, 3.9, 0.2, 0, 1.95, -5.05, false));       // room's own back wall
+
+  return g;
+}
+
+/* ---- whiteboard --------------------------------------------------------- */
+function makeWhiteboard() {
+  const g = group(-20.7, 0, 2, Math.PI / 2);
+  g.add(box(MAT.metal, 5.0, 2.9, 0.09, 0, 1.95, 0, false));
+  g.add(plane(MAT.board, 4.8, 2.7, 0, 1.95, 0.055));
+  g.add(box(MAT.trim, 4.6, 0.07, 0.16, 0, 0.52, 0.1, false));        // pen tray
+  [-1.2, -0.9, -0.6].forEach((x, i) => {
+    g.add(cyl([MAT.amber, MAT.dark, MAT.plant][i], 0.03, 0.16, x, 0.58, 0.12, true).rotateZ(Math.PI / 2));
+  });
+  return g;
+}
+
+/* ---- reception ---------------------------------------------------------- */
+function makeReception() {
+  const g = group(4.5, 0, 12.4);
+  // curved counter
+  const front = new THREE.Mesh(
+    new THREE.CylinderGeometry(1.7, 1.7, 1.06, 26, 1, true),
+    MAT.wood
+  );
+  front.position.y = 0.53; front.castShadow = !STATE.mobile;
+  g.add(front);
+  const top = new THREE.Mesh(
+    new THREE.RingGeometry(1.4, 1.88, 26),
+    MAT.deskTop
+  );
+  top.rotation.x = -Math.PI / 2; top.position.y = 1.07;
+  g.add(top);
+  const inner = new THREE.Mesh(
+    new THREE.CylinderGeometry(1.4, 1.4, 1.04, 24, 1, true),
+    MAT.trim
+  );
+  inner.position.y = 0.52; g.add(inner);
+  g.add(box(MAT.wood, 3.3, 0.1, 1.0, 0, 1.05, -0.9));               // work surface behind
+  g.add(makeMonitor('code', 0.8).translateY(1.1).translateZ(-0.85).rotateY(Math.PI));
+
+  // backdrop with the name on it
+  const bd = group(0, 0, -2.2);
+  bd.add(box(MAT.wallDark, 6.4, 3.1, 0.16, 0, 1.6, 0, false));
+  bd.add(plane(MAT.logo, 5.6, 1.4, 0, 1.9, 0.09));
+  bd.add(box(MAT.amber, 6.4, 0.06, 0.2, 0, 0.16, 0.02, false));
+  g.add(bd);
+
+  g.add(makePlant('tree', 1.05).translateX(-2.9));
+  g.add(makePlant('tree', 1.0).translateX(2.9));
+  return g;
+}
+
+/* ---- lounge + coffee ---------------------------------------------------- */
+function makeSofa(w) {
+  const g = group();
+  g.add(box(MAT.fabricW, w, 0.34, 0.95, 0, 0.28, 0));
+  g.add(box(MAT.fabricW, w, 0.62, 0.24, 0, 0.62, -0.42));
+  g.add(box(MAT.fabricW, 0.22, 0.44, 0.95, -w / 2 + 0.11, 0.6, 0));
+  g.add(box(MAT.fabricW, 0.22, 0.44, 0.95, w / 2 - 0.11, 0.6, 0));
+  for (let i = 0; i < 4; i++) g.add(cyl(MAT.dark, 0.04, 0.16, (-w / 2 + 0.3) + (i % 2) * (w - 0.6), 0.08, i < 2 ? 0.35 : -0.35, true));
+  return g;
+}
+
+function makeLounge() {
+  const g = group(-13.6, 0, 9.6);
+
+  const s1 = makeSofa(2.6); s1.position.set(-2.6, 0, 0); s1.rotation.y = Math.PI / 2; g.add(s1);
+  const s2 = makeSofa(2.2); s2.position.set(2.6, 0, 0); s2.rotation.y = -Math.PI / 2; g.add(s2);
+
+  // coffee table + the side-project laptop
+  g.add(box(MAT.wood, 1.7, 0.09, 0.95, 0, 0.44, 0));
+  [[-0.72, -0.36], [0.72, -0.36], [-0.72, 0.36], [0.72, 0.36]].forEach(([x, z]) =>
+    g.add(cyl(MAT.metal, 0.035, 0.44, x, 0.22, z, true)));
+  g.add(box(MAT.paper, 0.34, 0.03, 0.26, 0.52, 0.5, 0.14, false));
+
+  g.add(makePlant('leaf', 1.15).translateX(-4.4).translateZ(3.4));
+  return g;
+}
+
+function makeLaptop() {
+  const g = group();
+  g.add(box(MAT.metal, 0.62, 0.03, 0.44, 0, 0.015, 0));
+  g.add(box(MAT.darker, 0.54, 0.012, 0.3, 0, 0.033, 0.03, false));
+  const lid = group(0, 0.02, -0.22);
+  lid.rotation.x = -1.24;
+  lid.add(box(MAT.metal, 0.62, 0.42, 0.02, 0, 0.21, 0));
+  lid.add(plane(MAT.screen.code, 0.56, 0.36, 0, 0.21, 0.014));
+  g.add(lid);
+  return g;
+}
+
+function makeCoffeePoint() {
+  const g = group(-15.5, 0, 15.2);
+  g.add(box(MAT.wallDark, 4.6, 0.9, 0.7, 0, 0.45, 0));               // cabinet
+  g.add(box(MAT.deskTop, 4.8, 0.1, 0.78, 0, 0.94, 0));               // counter
+  // machine
+  const m = group(-1.1, 0.99, 0.02);
+  m.add(box(MAT.darker, 0.62, 0.78, 0.5, 0, 0.39, 0));
+  m.add(box(MAT.metal, 0.5, 0.1, 0.06, 0, 0.5, 0.26, false));
+  m.add(box(MAT.amber, 0.14, 0.06, 0.04, 0.16, 0.66, 0.26, false));
+  m.add(box(MAT.metal, 0.44, 0.03, 0.3, 0, 0.03, 0.2, false));
+  m.add(cyl(MAT.paper, 0.06, 0.11, 0, 0.09, 0.2, true));
+  g.add(m);
+  // cups + kettle
+  for (let i = 0; i < 4; i++) g.add(cyl(MAT.paper, 0.05, 0.1, 0.3 + i * 0.18, 1.04, 0.12, true));
+  g.add(cyl(MAT.metal, 0.13, 0.28, 1.5, 1.13, 0, true));
+  g.add(box(MAT.wood, 3.4, 0.08, 0.3, 0, 2.1, -0.2, false));         // shelf
+  for (let i = 0; i < 9; i++) {
+    g.add(box(i % 3 ? MAT.paper : MAT.amber, 0.09, 0.28, 0.2, -1.3 + i * 0.32, 2.28, -0.2, false));
+  }
+  return g;
+}
+
+/* ---- bookshelf (education) ---------------------------------------------- */
+function makeBookshelf() {
+  const g = group(20.5, 0, 5, -Math.PI / 2);
+  g.add(box(MAT.wood, 4.6, 2.4, 0.42, 0, 1.2, 0));
+  g.add(box(MAT.darker, 4.4, 2.2, 0.06, 0, 1.2, -0.2, false));
+  for (let s = 0; s < 3; s++) {
+    const y = 0.62 + s * 0.66;
+    g.add(box(MAT.wood, 4.4, 0.05, 0.4, 0, y, 0.01, false));
+    let x = -2.05;
+    while (x < 1.9) {
+      const w = 0.07 + Math.random() * 0.09;
+      const h = 0.34 + Math.random() * 0.16;
+      const cols = [MAT.amber, MAT.fabric, MAT.plant, MAT.pot, MAT.dark, MAT.trim];
+      const bk = box(cols[(Math.random() * cols.length) | 0], w, h, 0.26, x + w / 2, y + h / 2 + 0.03, 0.02, false);
+      if (Math.random() > 0.86) { bk.rotation.z = 0.22; bk.position.x += 0.06; }
+      g.add(bk);
+      x += w + 0.012;
+    }
+  }
+  g.add(box(MAT.amber, 0.2, 0.3, 0.2, 1.7, 2.55, 0, false));         // little trophy
+  g.add(cyl(MAT.metal, 0.12, 0.06, 1.7, 2.42, 0, true));
+  return g;
+}
+
+/* ---- misc props --------------------------------------------------------- */
+function makeBreakoutTable() {
+  const g = group(2.5, 0, -5.5);
+  g.add(cyl(MAT.wood, 0.62, 0.08, 0, 1.02, 0, true));
+  g.add(cyl(MAT.metal, 0.06, 1.0, 0, 0.5, 0, true));
+  g.add(cyl(MAT.dark, 0.42, 0.05, 0, 0.03, 0, true));
+  for (let i = 0; i < 3; i++) {
+    const a = (i / 3) * Math.PI * 2;
+    const st = group(Math.cos(a) * 1.15, 0, Math.sin(a) * 1.15);
+    st.add(cyl(MAT.fabric, 0.22, 0.09, 0, 0.72, 0, true));
+    st.add(cyl(MAT.metal, 0.05, 0.7, 0, 0.35, 0, true));
+    st.add(cyl(MAT.dark, 0.24, 0.04, 0, 0.02, 0, true));
+    g.add(st);
+  }
+  g.add(cyl(MAT.paper, 0.06, 0.12, 0.2, 1.12, 0.1, true));
+  return g;
+}
+
+function makeExitSign() {
+  const g = group(0, 0, 15.4, Math.PI);
+  g.add(box(MAT.wallDark, 2.4, 0.7, 0.12, 0, 2.6, 0, false));
+  g.add(plane(MAT.exitSig, 2.2, 0.6, 0, 2.6, 0.07));
+  g.add(box(MAT.amber, 2.4, 0.05, 0.14, 0, 2.22, 0.01, false));
+  return g;
+}
+
+/* ==========================================================================
+   7 · NPC CHARACTERS
+   Stylised, low-poly, generic. Built from primitives — no external models.
+   ========================================================================== */
+const NPCGEO = {};
+function buildNpcGeo() {
+  NPCGEO.torso = new THREE.CylinderGeometry(0.205, 0.27, 0.6, 12);
+  NPCGEO.hips = new THREE.CylinderGeometry(0.26, 0.24, 0.2, 12);
+  NPCGEO.limb = new THREE.CylinderGeometry(0.072, 0.06, 1, 8);
+  NPCGEO.head = new THREE.SphereGeometry(0.145, 16, 12);
+  NPCGEO.hair = new THREE.SphereGeometry(0.152, 16, 10, 0, 6.3, 0, 1.5);
+  NPCGEO.hand = new THREE.SphereGeometry(0.056, 8, 6);
+}
+const SKIN = [0xD8AE86, 0xB98862, 0xE7C4A0, 0x9C6B45];
+const HAIR = [0x1E1A18, 0x2E2622, 0x3D2A1E];
+
+function npcMat(color, rough) {
+  return new THREE.MeshStandardMaterial({ color, roughness: rough === undefined ? 0.82 : rough });
+}
+
+function makeNPC(opts) {
+  const o = opts || {};
+  const g = group();
+  const skin = npcMat(SKIN[(o.skin || 0) % SKIN.length]);
+  const shirt = npcMat(o.shirt || 0x4A6FA5);
+  const pants = npcMat(o.pants || 0x2F3540);
+  const hairM = npcMat(HAIR[(o.hair || 0) % HAIR.length], 0.9);
+  const M = (geo, mat, sx, sy, sz, x, y, z) => {
+    const m = new THREE.Mesh(geo, mat);
+    m.scale.set(sx, sy, sz); m.position.set(x, y, z);
+    m.castShadow = !STATE.mobile;
+    return m;
+  };
+
+  const body = group();
+  const seated = !!o.seated;
+  const hipY = seated ? 0.52 : 0.9;
+
+  if (seated) {
+    // thighs forward (-z), shins down
+    [-0.13, 0.13].forEach(x => {
+      body.add(M(GEO.box, pants, 0.19, 0.19, 0.46, x, hipY - 0.04, 0.23));
+      body.add(M(NPCGEO.limb, pants, 1, 0.42, 1, x, hipY - 0.25, 0.44));
+      body.add(M(GEO.box, npcMat(0x24282F), 0.16, 0.09, 0.26, x, hipY - 0.44, 0.52));
+    });
+  } else {
+    [-0.11, 0.11].forEach(x => {
+      body.add(M(NPCGEO.limb, pants, 1, 0.82, 1, x, hipY - 0.42, 0));
+      body.add(M(GEO.box, npcMat(0x24282F), 0.16, 0.09, 0.27, x, 0.045, 0.03));
+    });
+  }
+
+  body.add(M(NPCGEO.hips, pants, 1, 1, 1, 0, hipY + 0.06, 0));
+  body.add(M(NPCGEO.torso, shirt, 1, 1, 1, 0, hipY + 0.44, 0));
+  body.add(M(GEO.box, npcMat(0xE9E6DF, 0.9), 0.1, 0.3, 0.03, 0, hipY + 0.5, 0.2));   // collar strip
+  body.add(M(GEO.box, npcMat(o.badge || 0xF5A524, 0.6), 0.075, 0.11, 0.02, 0.07, hipY + 0.3, 0.21)); // badge
+
+  // arms
+  const arms = [];
+  [-1, 1].forEach(side => {
+    const sh = group(side * 0.26, hipY + 0.6, 0);
+    const upper = M(NPCGEO.limb, shirt, 0.92, 0.34, 0.92, 0, -0.17, 0);
+    sh.add(upper);
+    const fore = group(0, -0.34, 0);
+    fore.add(M(NPCGEO.limb, skin, 0.86, 0.3, 0.86, 0, -0.15, 0));
+    fore.add(M(NPCGEO.hand, skin, 1, 1, 1, 0, -0.31, 0));
+    sh.add(fore);
+    if (seated) { sh.rotation.x = -0.62; fore.rotation.x = -0.72; }
+    else { sh.rotation.x = 0.12; sh.rotation.z = side * -0.1; fore.rotation.x = -0.28; }
+    body.add(sh);
+    arms.push({ sh, fore, side });
+  });
+
+  // head
+  const neck = group(0, hipY + 0.74, 0);
+  neck.add(M(NPCGEO.limb, skin, 0.8, 0.1, 0.8, 0, 0.03, 0));
+  const head = group(0, 0.18, 0);
+  head.add(M(NPCGEO.head, skin, 1, 1.1, 0.96, 0, 0, 0));
+  head.add(M(NPCGEO.hair, hairM, 1, 1.02, 1, 0, 0.005, -0.008));
+  head.add(M(GEO.sphere, npcMat(0x1A1D22, 0.4), 0.038, 0.038, 0.02, -0.055, 0.01, 0.135));
+  head.add(M(GEO.sphere, npcMat(0x1A1D22, 0.4), 0.038, 0.038, 0.02, 0.055, 0.01, 0.135));
+  neck.add(head);
+  body.add(neck);
+
+  g.add(body);
+
+  // idle motion — subtle, never distracting
+  const phase = Math.random() * 6.3;
+  ANIMATED.push({
+    fn: (t) => {
+      const s = Math.sin(t * 1.5 + phase);
+      body.position.y = s * 0.012;
+      head.rotation.y = Math.sin(t * 0.42 + phase) * 0.34;
+      head.rotation.x = Math.sin(t * 0.7 + phase) * 0.05;
+      if (seated) {
+        arms.forEach((a, i) => {
+          a.fore.rotation.x = -0.72 + Math.sin(t * 6.5 + phase + i * 1.7) * 0.055;
+        });
+        body.rotation.y = s * 0.02;
+      } else {
+        arms.forEach((a, i) => { a.sh.rotation.x = 0.12 + Math.sin(t * 1.2 + phase + i * 3) * 0.07; });
+        body.rotation.y = Math.sin(t * 0.5 + phase) * 0.05;
+      }
+    }
+  });
+
+  return g;
+}
+
+/* ==========================================================================
+   8 · INTERACTIVE REGISTRY
+   Every clickable thing gets: a floor ring, a billboarded hotspot,
+   a focus pose for the camera, and the payload the panel renders.
+   ========================================================================== */
+function registerInteractive(obj, cfg) {
+  const rec = Object.assign({ obj, hl: 0, target: 0 }, cfg);
+
+  // floor ring
+  const ringMat = MAT.ring.clone();
+  const ring = new THREE.Mesh(GEO.ring, ringMat);
+  ring.rotation.x = -Math.PI / 2;
+  const r = cfg.ring || {};
+  ring.scale.setScalar(r.r || 1.6);
+  ring.position.set(r.x || 0, (r.y === undefined ? 0.035 : r.y), r.z || 0);
+  ring.renderOrder = 2;
+  obj.add(ring);
+  rec.ring = ring; rec.ringMat = ringMat; rec.ringR = r.r || 1.6;
+
+  // hotspot marker
+  const h = cfg.hotspot || {};
+  const hs = group(h.x || 0, h.y || 2, h.z || 0);
+  const hMat = MAT.hotspot.clone();
+  const dot = new THREE.Mesh(GEO.disc, hMat);
+  dot.scale.setScalar(0.14);
+  const rim = new THREE.Mesh(GEO.torus, hMat);
+  rim.scale.setScalar(0.34);
+  hs.add(dot); hs.add(rim);
+  hs.renderOrder = 3;
+  obj.add(hs);
+  rec.hotspot = hs; rec.hotMat = hMat;
+  HOTSPOTS.push(rec);
+
+  // pickable meshes
+  obj.traverse(m => {
+    if (m.isMesh && m !== ring && m !== dot && m !== rim) {
+      m.userData.ix = rec;
+      PICKABLE.push(m);
+    }
+  });
+
+  INTERACTIVES.push(rec);
+  return rec;
+}
+
+/* focus poses: where the camera parks when you open something */
+function focusPose(tx, ty, tz, radius, theta, phi) {
+  return {
+    target: new THREE.Vector3(tx, ty, tz),
+    radius, theta,
+    phi: phi === undefined ? 1.02 : phi
+  };
+}
+
+/* ==========================================================================
+   9 · OFFICE SCENE  —  floor plan + interactive wiring
+   --------------------------------------------------------------------------
+     x[-21..21]  z[-16..16]
+     workstation pod : x -19..-2   z -12..0
+     meeting room    : x   7..19   z -15..-5
+     lounge / coffee : x -20..-8   z   5..15
+     reception       : x   2..8    z  10..14
+     whiteboard      : left wall,  z 2
+     bookshelf       : right wall, z 5
+   ========================================================================== */
+const DESK_POS = [
+  [-16, -9], [-10.5, -9], [-5, -9],
+  [-16, -3], [-10.5, -3], [-5, -3]
+];
+
+function assembleOffice() {
+  buildShell();
+
+  // ---------- workstations -> projects
+  DATA.projects.forEach((p, i) => {
+    const [x, z] = DESK_POS[i];
+    const ws = makeWorkstation(p, x, z, i === 0 || i === 3);
+    scene.add(ws);
+    registerInteractive(ws, {
+      type: 'project', id: p.id, title: p.name, sub: p.station,
+      ring: { r: 1.75, z: 0.1 },
+      hotspot: { y: 1.95, z: -0.34 },
+      focus: focusPose(x, 1.05, z - 0.2, 5.6, 0.34, 1.02),
+      data: p
+    });
+  });
+
+  // ---------- NPCs
+  const seatOf = {};
+  DATA.projects.forEach((p, i) => { seatOf[p.id] = DESK_POS[i]; });
+
+  DATA.employees.forEach((e, i) => {
+    let pos, ry, seated = true;
+    if (seatOf[e.seatKey]) {
+      const [dx, dz] = seatOf[e.seatKey];
+      pos = [dx + 0.08, 0, dz + 1.0]; ry = Math.PI;      // facing the monitor
+    } else if (e.seatKey === 'board') {
+      pos = [-18.7, 0, 2.6]; ry = -Math.PI / 2; seated = false;
+    } else {
+      pos = [15.4, 0, -13.2]; ry = 0.35; seated = false; // presenting in the meeting room
+    }
+    const npc = makeNPC({ seated, shirt: e.shirt, skin: i, hair: i % 3 });
+    npc.position.set(pos[0], pos[1], pos[2]);
+    npc.rotation.y = ry;
+    scene.add(npc);
+
+    const theta = seated ? Math.PI + 0.4 : (e.seatKey === 'board' ? Math.PI / 2 : 0.5);
+    registerInteractive(npc, {
+      type: 'person', id: e.id, title: e.name, sub: e.designation,
+      ring: { r: 0.62, z: seated ? 0.15 : 0 },
+      hotspot: { y: seated ? 1.62 : 2.0 },
+      focus: focusPose(pos[0], 1.15, pos[2], 3.9, theta, 1.16),
+      data: e
+    });
+  });
+
+  // ---------- meeting room -> experience & teamwork
+  const room = makeMeetingRoom();
+  scene.add(room);
+  registerInteractive(room, {
+    type: 'experience', id: 'meeting', title: 'Meeting room', sub: 'Experience & how I work in a team',
+    ring: { r: 3.6 }, hotspot: { y: 2.5 },
+    focus: focusPose(13, 1.2, -10, 12.5, 0.62, 0.94),
+    data: DATA.experience
+  });
+
+  // ---------- whiteboard -> skills
+  const board = makeWhiteboard();
+  scene.add(board);
+  registerInteractive(board, {
+    type: 'skills', id: 'board', title: 'The whiteboard', sub: 'Stack, workflow, architecture',
+    ring: { r: 1.5, z: 1.3 }, hotspot: { y: 3.35, z: 0.35 },
+    focus: focusPose(-19.4, 1.9, 2, 7.4, Math.PI / 2, 1.12),
+    data: DATA.skills
+  });
+
+  // ---------- reception -> about me
+  const rec = makeReception();
+  scene.add(rec);
+  registerInteractive(rec, {
+    type: 'about', id: 'about', title: DATA.owner.name, sub: DATA.owner.role + ' · ' + DATA.owner.years,
+    ring: { r: 2.5, z: 0.2 }, hotspot: { y: 2.1, z: 0.4 },
+    focus: focusPose(4.5, 1.3, 12.2, 8.2, 0.22, 1.0),
+    data: DATA.owner
+  });
+
+  // ---------- bookshelf -> education
+  const shelf = makeBookshelf();
+  scene.add(shelf);
+  registerInteractive(shelf, {
+    type: 'education', id: 'edu', title: 'The shelf', sub: 'Education & how I keep learning',
+    ring: { r: 1.5, z: 1.2 }, hotspot: { y: 3.0, z: 0.4 },
+    focus: focusPose(19.2, 1.5, 5, 6.8, -Math.PI / 2, 1.1),
+    data: DATA.education
+  });
+
+  // ---------- lounge, laptop -> side project
+  const lounge = makeLounge();
+  scene.add(lounge);
+  const laptop = makeLaptop();
+  laptop.position.set(-13.75, 0.49, 9.5);
+  laptop.rotation.y = 2.5;
+  scene.add(laptop);
+  registerInteractive(laptop, {
+    type: 'side', id: 'side', title: DATA.sideProject.name, sub: 'Side project · open laptop',
+    ring: { r: 1.05, y: -0.47 }, hotspot: { y: 1.0 },
+    focus: focusPose(-13.7, 0.85, 9.5, 4.4, 2.45, 1.1),
+    data: DATA.sideProject
+  });
+
+  // ---------- coffee point -> easter egg
+  const coffee = makeCoffeePoint();
+  scene.add(coffee);
+  registerInteractive(coffee, {
+    type: 'coffee', id: 'coffee', title: 'Coffee machine', sub: 'Purely operational equipment',
+    ring: { r: 1.15, x: -1.1, z: -1.0 }, hotspot: { y: 2.7, x: -1.1, z: -0.2 },
+    focus: focusPose(-15.4, 1.4, 13.9, 6.4, Math.PI + 0.28, 1.08),
+    data: DATA.coffee
+  });
+
+  // ---------- exit sign -> contact
+  const exit = makeExitSign();
+  scene.add(exit);
+  registerInteractive(exit, {
+    type: 'contact', id: 'contact', title: 'Say hello', sub: 'Contact & resume',
+    ring: { r: 1.6, y: -0.0, z: -1.2 }, hotspot: { y: 1.85, z: 0.0 },
+    focus: focusPose(0, 2.0, 14.6, 8.0, Math.PI + 0.12, 1.14),
+    data: DATA.contact
+  });
+
+  // ---------- non-interactive dressing
+  scene.add(makeBreakoutTable());
+  [[-20, -13.4, 'tree', 1.1], [19.6, -1.2, 'leaf', 1.0], [-2.3, 0.6, 'leaf', 0.95],
+   [8.2, 13.6, 'tree', 1.15], [-20, 5.6, 'leaf', 0.9], [19.4, 13.8, 'tree', 1.0],
+   [-2.4, -12.4, 'tree', 1.05]].forEach(([x, z, k, s]) => {
+    const pl = makePlant(k, s); pl.position.set(x, 0, z); scene.add(pl);
+  });
+
+  // storage units along the back of the pod
+  [-19.4, -8.4].forEach(x => {
+    const c = box(MAT.wallDark, 3.2, 1.1, 0.55, x, 0.55, -12.6);
+    scene.add(c);
+    scene.add(box(MAT.deskTop, 3.3, 0.08, 0.6, x, 1.14, -12.6, false));
+    const pl = makePlant('leaf', 0.7); pl.position.set(x + 1.1, 1.18, -12.6); scene.add(pl);
+  });
+  // printer
+  const pr = group(-13.9, 0, -12.6);
+  pr.add(box(MAT.dark, 0.9, 0.8, 0.7, 0, 0.4, 0));
+  pr.add(box(MAT.darker, 0.8, 0.06, 0.5, 0, 0.83, 0.06, false));
+  pr.add(box(MAT.paper, 0.6, 0.03, 0.4, 0, 0.87, 0.14, false));
+  scene.add(pr);
+
+  // static geometry never moves — stop recomputing its matrices every frame
+  SHELL.traverse(o => { o.updateMatrix(); o.matrixAutoUpdate = false; });
+}
+
+/* ==========================================================================
+   10 · CAMERA CONTROLLER
+   Orbit + dolly + WASD pan, with eased "focus" transitions and a
+   remembered pose so closing a panel returns you where you were.
+   ========================================================================== */
+const CAM = {
+  target: new THREE.Vector3(0, 0.8, -1),
+  goalTarget: new THREE.Vector3(0, 0.8, -1),
+  theta: 0.55, goalTheta: 0.55,
+  phi: 0.86, goalPhi: 0.86,
+  radius: 62, goalRadius: 62,
+  tween: null,
+  prev: null,
+  keys: {},
+  drag: null,
+  pointers: new Map(),
+  pinch: 0
+};
+const HOME = { t: new THREE.Vector3(0, 0.8, -1), theta: 0.55, phi: 0.86, radius: 34 };
+
+function camApply() {
+  const sp = new THREE.Spherical(CAM.radius, CAM.phi, CAM.theta);
+  const p = new THREE.Vector3().setFromSpherical(sp).add(CAM.target);
+  camera.position.copy(p);
+  camera.lookAt(CAM.target);
+}
+
+function shortAngle(from, to) {
+  let d = (to - from) % (Math.PI * 2);
+  if (d > Math.PI) d -= Math.PI * 2;
+  if (d < -Math.PI) d += Math.PI * 2;
+  return from + d;
+}
+
+function camFocus(pose, ms) {
+  CAM.tween = {
+    t: 0, dur: (ms || 1050) / 1000,
+    from: { t: CAM.target.clone(), theta: CAM.theta, phi: CAM.phi, radius: CAM.radius },
+    to: {
+      t: pose.target.clone(),
+      theta: shortAngle(CAM.theta, pose.theta),
+      phi: pose.phi, radius: pose.radius
+    }
+  };
+}
+function camSnapshot() {
+  return { target: CAM.goalTarget.clone(), theta: CAM.goalTheta, phi: CAM.goalPhi, radius: CAM.goalRadius };
+}
+
+function camUpdate(dt) {
+  if (CAM.tween) {
+    const tw = CAM.tween;
+    tw.t += dt;
+    let k = Math.min(1, tw.t / tw.dur);
+    k = k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;   // easeInOutCubic
+    CAM.target.lerpVectors(tw.from.t, tw.to.t, k);
+    CAM.theta = tw.from.theta + (tw.to.theta - tw.from.theta) * k;
+    CAM.phi = tw.from.phi + (tw.to.phi - tw.from.phi) * k;
+    CAM.radius = tw.from.radius + (tw.to.radius - tw.from.radius) * k;
+    if (tw.t >= tw.dur) {
+      CAM.tween = null;
+      CAM.goalTarget.copy(CAM.target);
+      CAM.goalTheta = CAM.theta; CAM.goalPhi = CAM.phi; CAM.goalRadius = CAM.radius;
+    }
+    camApply();
+    return;
+  }
+
+  // keyboard walk
+  const k = CAM.keys;
+  const f = (k.w || k.arrowup ? 1 : 0) - (k.s || k.arrowdown ? 1 : 0);
+  const r = (k.d || k.arrowright ? 1 : 0) - (k.a || k.arrowleft ? 1 : 0);
+  if (f || r) {
+    STATE.idle = 0;
+    const speed = (k.shift ? 19 : 9.5) * dt;
+    const fwd = new THREE.Vector3(-Math.sin(CAM.theta), 0, -Math.cos(CAM.theta));
+    const right = new THREE.Vector3(fwd.z, 0, -fwd.x);
+    CAM.goalTarget.addScaledVector(fwd, f * speed).addScaledVector(right, r * speed);
+    CAM.goalTarget.x = THREE.MathUtils.clamp(CAM.goalTarget.x, -BOUNDS.x, BOUNDS.x);
+    CAM.goalTarget.z = THREE.MathUtils.clamp(CAM.goalTarget.z, -BOUNDS.z, BOUNDS.z);
+  }
+
+  // gentle drift when nobody has touched anything for a while
+  if (STATE.ready && STATE.idle > 14 && !STATE.selected) CAM.goalTheta += dt * 0.035;
+
+  const s = 1 - Math.exp(-dt * 7.5);
+  CAM.target.lerp(CAM.goalTarget, s);
+  CAM.theta += (CAM.goalTheta - CAM.theta) * s;
+  CAM.phi += (CAM.goalPhi - CAM.phi) * s;
+  CAM.radius += (CAM.goalRadius - CAM.radius) * s;
+  camApply();
+}
+
+/* ---- input -------------------------------------------------------------- */
+function bindCameraInput() {
+  const cv = canvas;
+
+  cv.addEventListener('pointerdown', (e) => {
+    cv.setPointerCapture(e.pointerId);
+    CAM.pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (CAM.pointers.size === 1) {
+      CAM.drag = { x: e.clientX, y: e.clientY, sx: e.clientX, sy: e.clientY, moved: 0, pan: e.button === 2 || e.shiftKey };
+      cv.classList.add('grabbing');
+    }
+    STATE.idle = 0;
+  });
+
+  cv.addEventListener('pointermove', (e) => {
+    const p = CAM.pointers.get(e.pointerId);
+    if (p) { p.x = e.clientX; p.y = e.clientY; }
+    POINTER.x = (e.clientX / window.innerWidth) * 2 - 1;
+    POINTER.y = -(e.clientY / window.innerHeight) * 2 + 1;
+    POINTER.sx = e.clientX; POINTER.sy = e.clientY;
+    POINTER.dirty = true;
+
+    if (CAM.pointers.size === 2) { handlePinch(); return; }
+    if (!CAM.drag) return;
+    const dx = e.clientX - CAM.drag.x, dy = e.clientY - CAM.drag.y;
+    CAM.drag.x = e.clientX; CAM.drag.y = e.clientY;
+    CAM.drag.moved += Math.abs(dx) + Math.abs(dy);
+    STATE.idle = 0;
+    CAM.tween = null;
+
+    if (CAM.drag.pan) {
+      const k = CAM.radius * 0.0016;
+      const fwd = new THREE.Vector3(-Math.sin(CAM.theta), 0, -Math.cos(CAM.theta));
+      const right = new THREE.Vector3(fwd.z, 0, -fwd.x);
+      CAM.goalTarget.addScaledVector(right, -dx * k).addScaledVector(fwd, -dy * k);
+      CAM.goalTarget.x = THREE.MathUtils.clamp(CAM.goalTarget.x, -BOUNDS.x, BOUNDS.x);
+      CAM.goalTarget.z = THREE.MathUtils.clamp(CAM.goalTarget.z, -BOUNDS.z, BOUNDS.z);
+    } else {
+      CAM.goalTheta -= dx * 0.0052;
+      CAM.goalPhi = THREE.MathUtils.clamp(CAM.goalPhi - dy * 0.0042, 0.2, 1.36);
+    }
+  });
+
+  const release = (e) => {
+    CAM.pointers.delete(e.pointerId);
+    if (CAM.pointers.size < 2) CAM.pinch = 0;
+    if (CAM.pointers.size === 0) {
+      cv.classList.remove('grabbing');
+      if (CAM.drag && CAM.drag.moved < 7) handleClick();
+      CAM.drag = null;
+    }
+  };
+  cv.addEventListener('pointerup', release);
+  cv.addEventListener('pointercancel', release);
+  cv.addEventListener('contextmenu', e => e.preventDefault());
+
+  cv.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    CAM.tween = null;
+    STATE.idle = 0;
+    CAM.goalRadius = THREE.MathUtils.clamp(CAM.goalRadius * Math.exp(e.deltaY * 0.0011), 2.6, 66);
+  }, { passive: false });
+
+  function handlePinch() {
+    const pts = [...CAM.pointers.values()];
+    const d = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
+    if (CAM.pinch) {
+      CAM.tween = null;
+      CAM.goalRadius = THREE.MathUtils.clamp(CAM.goalRadius * (CAM.pinch / d), 2.6, 66);
+    }
+    CAM.pinch = d;
+  }
+
+  addEventListener('keydown', (e) => {
+    const k = e.key.toLowerCase();
+    if (['w', 'a', 's', 'd', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright', 'shift'].includes(k)) {
+      CAM.keys[k] = true;
+      if (k !== 'shift') { CAM.tween = null; e.preventDefault(); }
+    }
+    if (k === 'escape') closePanel();
+  });
+  addEventListener('keyup', (e) => { CAM.keys[e.key.toLowerCase()] = false; });
+  addEventListener('blur', () => { CAM.keys = {}; });
+}
+
+const POINTER = { x: 0, y: 0, sx: 0, sy: 0, dirty: false };
+
+/* ==========================================================================
+   11 · PICKING + TOOLTIP
+   ========================================================================== */
+const KIND = {
+  project: 'Workstation', person: 'Colleague', skills: 'Whiteboard',
+  experience: 'Meeting room', about: 'Reception', education: 'Shelf',
+  contact: 'Exit', coffee: 'Break area', side: 'Side project'
+};
+
+function pick() {
+  RAY.setFromCamera(POINTER, camera);
+  const hits = RAY.intersectObjects(PICKABLE, false);
+  return hits.length ? hits[0].object.userData.ix : null;
+}
+
+function setHover(rec) {
+  if (STATE.hovered === rec) return;
+  STATE.hovered = rec;
+  const tip = el('tip');
+  canvas.classList.toggle('pointing', !!rec);
+  if (rec) {
+    tip.querySelector('.s').textContent = KIND[rec.type] || '';
+    tip.querySelector('.t').textContent = rec.title;
+    tip.classList.add('on');
+  } else {
+    tip.classList.remove('on');
+  }
+}
+
+function moveTip() {
+  if (!STATE.hovered) return;
+  const t = el('tip');
+  t.style.left = POINTER.sx + 'px';
+  t.style.top = POINTER.sy + 'px';
+}
+
+function handleClick() {
+  const rec = pick();
+  if (rec) openPanel(rec);
+  else if (STATE.selected) closePanel();
+}
+
+/* ==========================================================================
+   12 · INFO PANEL
+   ========================================================================== */
+const esc = (s) => String(s).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+const tags = (arr, hot) => `<div class="tags">${arr.map(t => `<span class="tag${hot ? ' hot' : ''}">${esc(t)}</span>`).join('')}</div>`;
+const list = (arr, amber) => `<ul class="list${amber ? ' amber' : ''}">${arr.map(i => `<li>${esc(i)}</li>`).join('')}</ul>`;
+const sec = (h, inner) => `<div class="sec">${h ? `<h3>${h}</h3>` : ''}${inner}</div>`;
+const meta = (pairs) => `<dl class="meta">${pairs.filter(p => p[1]).map(p => `<dt>${p[0]}</dt><dd>${esc(p[1])}</dd>`).join('')}</dl>`;
+
+function renderProject(p) {
+  return [
+    sec('', meta([['Company', p.company], ['Role', p.role], ['When', p.duration]])),
+    sec('What it is', `<p>${esc(p.description)}</p>`),
+    sec('Built with', tags(p.tech, true)),
+    sec('What I did', list(p.responsibilities)),
+    p.features ? sec('Key features', list(p.features, true)) : '',
+    p.apis ? sec('APIs & integrations', tags(p.apis)) : '',
+    p.challenge ? sec('Challenge → solution', `
+      <div class="split">
+        <div class="card"><h4>The problem</h4><p>${esc(p.challenge)}</p></div>
+        <div class="card"><h4>What I changed</h4><p>${esc(p.solution)}</p></div>
+      </div>`) : '',
+    p.impact ? sec('Result', `<p>${esc(p.impact)}</p>`) : ''
+  ].join('');
+}
+
+function renderPerson(e) {
+  return [
+    sec('', meta([['Role', e.designation], ['Team', e.department], ['Overlap', e.duration]])),
+    sec('Projects together', tags(e.projects, true)),
+    sec('Split of work', `
+      <div class="split">
+        <div class="card"><h4>My side</h4>${list(e.mine)}</div>
+        <div class="card"><h4>Their side</h4>${list(e.theirs)}</div>
+      </div>`),
+    sec('How it actually worked', `<p>${esc(e.collab)}</p>`),
+    sec('Shared stack', tags(e.tech)),
+    sec('', `<p class="note">Colleagues here are stand-ins, not named individuals — the collaboration each one describes is real.</p>`)
+  ].join('');
+}
+
+function renderSkills(s) {
+  return [
+    ...s.groups.map(g => sec(g.label, tags(g.items, g.hot))),
+    sec('How I work', list(s.workflow, true)),
+    sec('The pattern I keep', `<p>${esc(s.architecture)}</p>`)
+  ].join('');
+}
+
+function renderExperience(x) {
+  return [
+    sec('Roles', `<div class="tl">${x.roles.map(r => `
+      <div class="item">
+        <div class="when">${esc(r.when)}</div>
+        <div class="what">${esc(r.what)}</div>
+        <div class="who">${esc(r.who)}</div>
+        ${list(r.points)}
+      </div>`).join('')}</div>`),
+    sec('In the room', list(x.teamwork, true)),
+    sec('Who I worked for', `<p>${esc(x.clients)}</p>`)
+  ].join('');
+}
+
+function renderAbout(o) {
+  return [
+    sec('', `<p>${esc(o.summary)}</p>`),
+    sec('The short version', list(o.pitch, true)),
+    sec('', meta([['Based in', o.location], ['Experience', o.years], ['Stack', 'React · Angular · React Native · Next.js']])),
+    sec('', `<div class="act">
+        <button class="btn primary" data-open="contact"><svg viewBox="0 0 24 24"><path d="M4 6h16v12H4z"/><path d="M4 7l8 6 8-6"/></svg>Get in touch</button>
+        <button class="btn" data-open="board">See the stack</button>
+      </div>`),
+    sec('', `<p class="note">Resume link placeholder: ${esc(o.resumeUrl)} — drop your real file URL into DATA.owner.resumeUrl.</p>`)
+  ].join('');
+}
+
+function renderEducation(e) {
+  return [
+    sec('', meta([['Degree', e.degree], ['Institute', e.school], ['Year', e.year], ['Score', e.score]])),
+    sec('Since then', list(e.extra, true)),
+    sec('', `<div class="stat"><b>${esc(e.score.split(' ')[0])}</b><span>CGPA · ${esc(e.year)}</span></div>`)
+  ].join('');
+}
+
+function renderContact(c) {
+  const line = (label, val, href) => {
+    const placeholder = /^\{\{/.test(val);
+    return `<div class="card" style="margin-bottom:8px">
+      <h4>${label}</h4>
+      <p style="font-family:var(--mono);font-size:12px;color:${placeholder ? 'var(--dim)' : '#DDE3EC'}">${esc(val)}</p>
+    </div>`;
+  };
+  return [
+    sec('', `<p>${esc(c.note)}</p>`),
+    sec('Reach me', line('Email', c.email) + line('Phone', c.phone) + line('LinkedIn', c.linkedin) + line('GitHub', c.github)),
+    sec('', `<p class="note">These are placeholders. Open DATA.contact at the top of the file and replace the {{ }} values — the panel updates itself.</p>`)
+  ].join('');
+}
+
+function renderSide(p) {
+  return [
+    sec('', meta([['Status', p.company], ['Role', p.role], ['Since', p.duration]])),
+    sec('The idea', `<p>${esc(p.description)}</p>`),
+    sec('Built with', tags(p.tech, true)),
+    sec('What it shows', list(p.features)),
+    sec('Decisions', list(p.responsibilities)),
+    sec('Where it goes', `<p>${esc(p.impact)}</p>`)
+  ].join('');
+}
+
+function renderCoffee() {
+  STATE.coffee = Math.min(STATE.coffee + 1, DATA.coffee.length);
+  const msg = DATA.coffee[STATE.coffee - 1];
+  return [
+    sec('', `<div class="stat"><b>${STATE.coffee}</b><span>cup${STATE.coffee > 1 ? 's' : ''} today</span></div>`),
+    sec('', `<p>${esc(msg)}</p>`),
+    STATE.coffee >= DATA.coffee.length
+      ? sec('', `<p class="note">You found the end of the coffee jokes. Genuinely, thanks for exploring this far — the meeting room and the whiteboard are the two worth clicking next.</p>`)
+      : sec('', `<p class="note">Click it again.</p>`)
+  ].join('');
+}
+
+const RENDER = {
+  project: renderProject, person: renderPerson, skills: renderSkills,
+  experience: renderExperience, about: renderAbout, education: renderEducation,
+  contact: renderContact, coffee: renderCoffee, side: renderSide
+};
+
+function openPanel(rec) {
+  if (!STATE.selected) CAM.prev = camSnapshot();
+  if (STATE.selected && STATE.selected !== rec) STATE.selected.target = 0;
+  STATE.selected = rec;
+  rec.target = 1;
+
+  el('panelKind').textContent = KIND[rec.type] || 'Info';
+  el('panelTitle').textContent = rec.title;
+  el('panelSub').textContent = rec.sub || '';
+  el('body').innerHTML = RENDER[rec.type](rec.data);
+  el('body').scrollTop = 0;
+  el('panel').classList.add('open');
+  el('legend').classList.add('hide');
+  camFocus(rec.focus, 950);
+  STATE.idle = 0;
+}
+
+function closePanel() {
+  if (!STATE.selected) return;
+  STATE.selected.target = 0;
+  STATE.selected = null;
+  el('panel').classList.remove('open');
+  el('legend').classList.remove('hide');
+  if (CAM.prev) {
+    camFocus({ target: CAM.prev.target, theta: CAM.prev.theta, phi: CAM.prev.phi, radius: CAM.prev.radius }, 850);
+    CAM.prev = null;
+  }
+}
+
+function openById(id) {
+  const rec = INTERACTIVES.find(r => r.id === id);
+  if (rec) openPanel(rec);
+}
+
+/* ==========================================================================
+   13 · NAVIGATION
+   ========================================================================== */
+const NAV = {
+  overview: { pose: () => focusPose(0, 0.8, -1, 34, 0.55, 0.86) },
+  about: { pose: () => focusPose(4.5, 1.3, 12.2, 9.5, 0.22, 1.0), open: 'about' },
+  projects: { pose: () => focusPose(-10.5, 0.9, -6, 17, 0.5, 0.92) },
+  experience: { pose: () => focusPose(13, 1.2, -10, 13, 0.62, 0.94), open: 'meeting' },
+  skills: { pose: () => focusPose(-19.4, 1.9, 2, 8, Math.PI / 2, 1.12), open: 'board' },
+  people: { pose: () => focusPose(-10.6, 1.1, -8.4, 11, 0.42, 1.0) },
+  contact: { pose: () => focusPose(0, 2.0, 14.6, 8.5, Math.PI + 0.12, 1.14), open: 'contact' }
+};
+
+function goTo(key) {
+  const n = NAV[key];
+  if (!n) return;
+  document.querySelectorAll('#nav button').forEach(b => b.classList.toggle('on', b.dataset.goto === key));
+  if (STATE.selected && (!n.open || STATE.selected.id !== n.open)) {
+    STATE.selected.target = 0; STATE.selected = null;
+    el('panel').classList.remove('open');
+  }
+  CAM.prev = null;
+  camFocus(n.pose(), 1150);
+  STATE.idle = 0;
+  if (n.open) setTimeout(() => { if (!STATE.selected) openById(n.open); }, 620);
+}
+
+/* ==========================================================================
+   14 · CLASSIC VIEW  (mobile-lite / no-WebGL fallback)
+   ========================================================================== */
+function buildClassic() {
+  const p = (h, inner) => `<section><h2>${h}</h2>${inner}</section>`;
+  const entry = (title, m, body) => `<div class="entry"><h3>${esc(title)}</h3><div class="m">${esc(m)}</div>${body}</div>`;
+  const o = DATA.owner;
+  el('classicBody').innerHTML = [
+    p('About', `<p style="font-size:14px;line-height:1.7;color:#C9D1DE;margin:0 0 14px">${esc(o.summary)}</p>${list(o.pitch, true)}`),
+    p('Experience', DATA.experience.roles.map(r => entry(r.what + ' · ' + r.who, r.when, list(r.points))).join('')),
+    p('Projects', DATA.projects.map(pr =>
+      entry(pr.name, `${pr.company} · ${pr.duration}`, `<p>${esc(pr.description)}</p>${tags(pr.tech)}`)).join('')
+      + entry(DATA.sideProject.name, DATA.sideProject.company, `<p>${esc(DATA.sideProject.description)}</p>${tags(DATA.sideProject.tech)}`)),
+    p('Skills', DATA.skills.groups.map(g => `<div class="entry"><h3>${esc(g.label)}</h3>${tags(g.items, g.hot)}</div>`).join('')),
+    p('Collaboration', DATA.employees.map(e =>
+      entry(e.designation, e.projects.join(' · '), `<p>${esc(e.collab)}</p>`)).join('')),
+    p('Education', entry(DATA.education.degree, `${DATA.education.school} · ${DATA.education.year} · ${DATA.education.score}`, list(DATA.education.extra))),
+    p('Contact', `<p style="font-size:14px;color:#C9D1DE;margin:0 0 12px">${esc(DATA.contact.note)}</p>
+      ${tags([DATA.contact.email, DATA.contact.phone, DATA.contact.linkedin, DATA.contact.github])}`)
+  ].join('');
+}
+
+function showClassic(on) {
+  el('classic').classList.toggle('on', on);
+  el('btnBack3D').style.display = STATE.webgl ? '' : 'none';
+}
+
+/* ==========================================================================
+   15 · BOOT + RENDER LOOP
+   ========================================================================== */
+let frames = 0, fpsAcc = 0, checked = false;
+
+function animate() {
+  requestAnimationFrame(animate);
+  const dt = Math.min(CLOCK.getDelta(), 0.05);
+  const t = CLOCK.elapsedTime;
+  STATE.idle += dt;
+
+  camUpdate(dt);
+
+  // hover picking — every other frame is plenty
+  if (POINTER.dirty && !CAM.drag) {
+    frames % 2 === 0 && setHover(pick());
+    moveTip();
+  }
+
+  // highlight easing
+  for (let i = 0; i < INTERACTIVES.length; i++) {
+    const r = INTERACTIVES[i];
+    const want = (r === STATE.selected) ? 1 : (r === STATE.hovered ? 0.75 : 0);
+    r.hl += (want - r.hl) * Math.min(1, dt * 9);
+    if (r.hl > 0.002 || r.ringMat.opacity > 0.002) {
+      const sel = r === STATE.selected;
+      r.ringMat.opacity = r.hl * 0.85;
+      r.ringMat.color.setHex(sel ? 0xF5A524 : 0x7FB2FF);
+      const pulse = 1 + Math.sin(t * 3.4) * 0.03 * r.hl;
+      r.ring.scale.setScalar(r.ringR * pulse);
+      r.obj.scale.setScalar(1 + r.hl * 0.012);
+    }
+    // hotspot
+    const vis = STATE.ready && !STATE.selected;
+    r.hotMat.opacity = (vis ? 0.55 : 0.12) + r.hl * 0.45;
+    r.hotspot.scale.setScalar((0.85 + Math.sin(t * 2.2 + i) * 0.07) * (1 + r.hl * 0.35));
+    r.hotspot.lookAt(camera.position);
+  }
+
+  for (let i = 0; i < ANIMATED.length; i++) ANIMATED[i].fn(t);
+
+  renderer.render(scene, camera);
+
+  // one-shot performance check
+  frames++;
+  if (!checked && STATE.ready) {
+    fpsAcc += dt;
+    if (frames > 140) {
+      checked = true;
+      if (140 / fpsAcc < 38) downgrade();
+    }
+  }
+}
+
+function downgrade() {
+  STATE.low = true;
+  renderer.setPixelRatio(1);
+  renderer.shadowMap.enabled = false;
+  scene.traverse(o => { if (o.isMesh && o.material) o.material.needsUpdate = true; });
+}
+
+function onResize() {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, STATE.low ? 1 : (STATE.mobile ? 1.5 : 2)));
+}
+
+function step(pct, label) {
+  el('bar').firstElementChild.style.width = pct + '%';
+  if (label) el('loadLbl').textContent = label;
+}
+
+function boot() {
+  buildClassic();
+
+  if (!STATE.webgl) {
+    el('loader').classList.add('gone');
+    el('intro').classList.add('gone');
+    showClassic(true);
+    return;
+  }
+
+  setupEngine();
+  step(15, 'Mixing the paint');
+
+  requestAnimationFrame(() => {
+    buildTextures(); buildMaterials(); buildGeometry(); buildNpcGeo();
+    step(55, 'Moving in the furniture');
+
+    requestAnimationFrame(() => {
+      assembleOffice();
+      bindCameraInput();
+      addEventListener('resize', onResize);
+      step(92, 'Hiring the team');
+
+      requestAnimationFrame(() => {
+        camApply();
+        renderer.compile(scene, camera);
+        step(100, 'Ready');
+        setTimeout(() => el('loader').classList.add('gone'), 260);
+        animate();
+      });
+    });
+  });
+
+  // ---- UI wiring
+  el('btnExplore').onclick = () => {
+    el('intro').classList.add('gone');
+    STATE.ready = true;
+    camFocus({ target: HOME.t.clone(), theta: HOME.theta, phi: HOME.phi, radius: HOME.radius }, 2200);
+    setTimeout(() => el('legend').classList.remove('hide'), 900);
+  };
+  el('btnSkip').onclick = () => { el('intro').classList.add('gone'); STATE.ready = true; showClassic(true); };
+  el('btnClassic').onclick = () => showClassic(true);
+  el('btnBack3D').onclick = () => showClassic(false);
+  el('btnHelp').onclick = () => el('legend').classList.toggle('hide');
+  el('close').onclick = closePanel;
+  document.querySelectorAll('#nav button').forEach(b => { b.onclick = () => goTo(b.dataset.goto); });
+  el('body').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-open]');
+    if (b) openById(b.dataset.open);
+  });
+
+  if (STATE.mobile) {
+    el('legend').classList.add('hide');
+  }
+}
+
+boot();
+</script>
+</body>
+</html>
