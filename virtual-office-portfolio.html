@@ -94,7 +94,7 @@ button{font-family:inherit;color:inherit}
 
 /* ============================ CONTROL LEGEND ============================ */
 #legend{
-  position:fixed;left:16px;bottom:16px;z-index:15;padding:13px 15px;max-width:250px;
+  position:fixed;right:16px;bottom:16px;z-index:15;padding:13px 15px;max-width:250px;
   transition:opacity .35s,transform .35s;
 }
 #legend h4{margin:0 0 9px;font-family:var(--mono);font-size:9.5px;letter-spacing:.22em;
@@ -281,6 +281,134 @@ ul.list.amber li::before{background:var(--amber)}
 }
 </style>
 </head>
+<style>
+/* ===================== v2 · HUB, DOORS, CHARACTER ===================== */
+#fade{position:fixed;inset:0;z-index:55;background:#05060A;opacity:0;pointer-events:none;
+  transition:opacity .42s var(--ease)}
+#fade.on{opacity:1}
+
+#prompt{
+  position:fixed;left:50%;bottom:92px;z-index:22;transform:translate(-50%,14px) scale(.96);
+  opacity:0;pointer-events:none;transition:opacity .2s,transform .2s var(--ease);
+  padding:11px 16px;border-radius:14px;display:flex;align-items:center;gap:11px;
+  background:rgba(10,12,17,.82);border:1px solid var(--hair);
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:0 16px 40px rgba(0,0,0,.5);
+}
+#prompt.on{opacity:1;transform:translate(-50%,0) scale(1)}
+#prompt .txt{font-size:13px;font-weight:560;letter-spacing:-.01em}
+#prompt .txt b{color:var(--amber);font-weight:640}
+
+#doorhud{
+  position:fixed;left:50%;top:78px;z-index:18;transform:translateX(-50%);
+  opacity:0;transition:opacity .3s;pointer-events:none;text-align:center;
+  padding:12px 22px;border-radius:16px;background:rgba(10,12,17,.7);border:1px solid var(--hair);
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+}
+#doorhud.on{opacity:1}
+#doorhud .tier{font-family:var(--mono);font-size:9.5px;letter-spacing:.26em;text-transform:uppercase}
+#doorhud .co{font-size:16px;font-weight:640;letter-spacing:-.02em;margin-top:5px}
+#doorhud .dt{font-family:var(--mono);font-size:10.5px;color:var(--muted);margin-top:3px;letter-spacing:.06em}
+
+.chip{
+  display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:9.5px;
+  letter-spacing:.2em;text-transform:uppercase;padding:5px 10px;border-radius:99px;
+  border:1px solid currentColor;
+}
+.t-silver{color:#C8D0DA} .t-gold{color:#F5A524} .t-platinum{color:#9FE7F5} .t-diamond{color:#B9A7FF}
+
+#nav button.tier{padding-left:10px}
+#nav button .dot{width:7px;height:7px;border-radius:99px;display:inline-block;margin-right:7px;
+  background:currentColor;vertical-align:middle}
+#nav button.silver .dot{background:#C8D0DA}
+#nav button.gold .dot{background:#F5A524}
+#nav button.platinum .dot{background:#9FE7F5}
+#nav button.diamond .dot{background:#B9A7FF}
+
+#exitBtn{
+  position:fixed;left:16px;top:74px;z-index:19;display:none;align-items:center;gap:8px;
+  padding:10px 15px;border-radius:13px;cursor:pointer;font-size:12.5px;font-weight:600;
+  background:var(--glass);border:1px solid var(--hair);box-shadow:var(--shadow);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);transition:background .18s,transform .18s;
+}
+#exitBtn.on{display:flex}
+#exitBtn:hover{background:var(--glass-2);transform:translateX(-2px)}
+#exitBtn svg{width:14px;height:14px;stroke:var(--text);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+
+.icobtn.active{background:var(--amber);border-color:transparent}
+.icobtn.active svg{stroke:#1B1204}
+
+#roomlbl{
+  position:fixed;left:16px;bottom:16px;z-index:15;padding:12px 15px;
+  transition:opacity .3s;
+}
+#roomlbl .eyebrow{display:block;margin-bottom:5px}
+#roomlbl .rn{font-size:14px;font-weight:640;letter-spacing:-.015em}
+#roomlbl .rs{font-size:11.5px;color:var(--muted);margin-top:3px}
+#roomlbl.hide{opacity:0}
+
+@media (max-width:900px){
+  #nav{display:flex;overflow-x:auto;max-width:calc(100vw - 32px);position:fixed;
+    left:16px;right:16px;top:auto;bottom:14px;z-index:21;justify-content:flex-start}
+  #hud{align-items:flex-start}
+  #roomlbl{display:none}
+  #prompt{bottom:82px}
+  #doorhud{top:70px}
+}
+</style>
+<style>
+/* ===================== v3 · CONTENT EDITOR ===================== */
+#editor{
+  position:fixed;top:0;right:0;bottom:0;width:min(440px,100vw);z-index:45;
+  display:flex;flex-direction:column;transform:translateX(102%);
+  transition:transform .38s var(--ease);
+  background:rgba(11,13,18,.94);border-left:1px solid var(--hair);
+  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+}
+#editor.on{transform:none}
+#editor .ehead{padding:18px 20px 14px;border-bottom:1px solid var(--hair-2);flex:none}
+#editor .ehead h2{margin:6px 0 0;font-size:19px;letter-spacing:-.025em;font-weight:660}
+#editor .ehead p{margin:6px 0 0;font-size:12px;color:var(--muted);line-height:1.5}
+#editor .ebody{padding:8px 20px 24px;overflow-y:auto;flex:1 1 auto}
+#editor .efoot{padding:13px 20px;border-top:1px solid var(--hair-2);display:flex;gap:8px;flex:none;flex-wrap:wrap}
+#eclose{position:absolute;top:16px;right:16px;width:30px;height:30px;border-radius:9px;cursor:pointer;
+  background:rgba(255,255,255,.06);border:1px solid var(--hair);display:grid;place-items:center}
+#eclose:hover{background:rgba(255,255,255,.14)}
+#eclose svg{width:13px;height:13px;stroke:var(--text);stroke-width:2;fill:none;stroke-linecap:round}
+
+.efield{margin:0 0 12px}
+.efield > label{display:block;font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--dim);margin-bottom:5px}
+.efield input,.efield textarea{
+  width:100%;background:rgba(255,255,255,.045);border:1px solid var(--hair);border-radius:9px;
+  color:var(--text);font-family:var(--sans);font-size:13px;line-height:1.5;padding:9px 11px;
+  outline:none;transition:border-color .16s,background .16s;resize:vertical;
+}
+.efield input:focus,.efield textarea:focus{border-color:var(--amber);background:rgba(255,255,255,.07)}
+.efield textarea{min-height:66px}
+.efield .hint{font-size:10.5px;color:var(--dim);margin-top:4px;font-family:var(--mono)}
+
+details.egrp{border:1px solid var(--hair-2);border-radius:12px;margin:0 0 10px;overflow:hidden;
+  background:rgba(255,255,255,.02)}
+details.egrp > summary{
+  cursor:pointer;list-style:none;padding:11px 13px;font-size:12.5px;font-weight:600;
+  display:flex;align-items:center;gap:8px;letter-spacing:-.01em;
+}
+details.egrp > summary::-webkit-details-marker{display:none}
+details.egrp > summary::before{content:"›";color:var(--amber);font-size:16px;line-height:1;
+  transition:transform .2s;display:inline-block}
+details.egrp[open] > summary::before{transform:rotate(90deg)}
+details.egrp > summary:hover{background:rgba(255,255,255,.04)}
+details.egrp .inner{padding:4px 13px 13px}
+details.egrp details.egrp{background:rgba(255,255,255,.03)}
+.esec{font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--dim);margin:18px 0 9px}
+.esec:first-child{margin-top:4px}
+#etoast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,10px);z-index:50;opacity:0;
+  transition:opacity .25s,transform .25s;padding:10px 16px;border-radius:12px;font-size:12.5px;
+  background:rgba(10,12,17,.9);border:1px solid var(--hair);pointer-events:none}
+#etoast.on{opacity:1;transform:translate(-50%,0)}
+@media (max-width:900px){ #editor{width:100vw} }
+</style>
 <body>
 <canvas id="scene"></canvas>
 
@@ -295,19 +423,25 @@ ul.list.amber li::before{background:var(--amber)}
   </div>
 
   <nav id="nav" class="glass">
-    <button data-goto="overview" class="on">Overview</button>
-    <button data-goto="about">About</button>
-    <button data-goto="projects">Projects</button>
-    <button data-goto="experience">Experience</button>
-    <button data-goto="skills">Skills</button>
-    <button data-goto="people">Collaborations</button>
+    <button data-scene="hub" class="on">Lobby</button>
     <span class="sep"></span>
-    <button data-goto="contact">Contact</button>
+    <button data-scene="evision" class="tier silver"><span class="dot"></span>Silver</button>
+    <button data-scene="logieagle" class="tier gold"><span class="dot"></span>Gold</button>
+    <!-- parked for now — uncomment with the DOORS / LAYOUTS blocks
+    <button data-scene="independent" class="tier platinum"><span class="dot"></span>Platinum</button>
+    <button data-scene="vacant" class="tier diamond"><span class="dot"></span>Diamond</button>
+    -->
   </nav>
 
   <div id="tools">
+    <button class="icobtn active" id="btnMode" title="Camera: follow / free" aria-label="Toggle camera mode">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.2"/><path d="M5.5 20a6.5 6.5 0 0 1 13 0"/></svg>
+    </button>
     <button class="icobtn" id="btnHelp" title="Show controls" aria-label="Show controls">
       <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.2a2.5 2.5 0 1 1 3.3 2.4c-.6.2-.9.8-.9 1.4v.4"/><path d="M12 17h.01"/></svg>
+    </button>
+    <button class="icobtn" id="btnEdit" title="Edit all content" aria-label="Edit content">
+      <svg viewBox="0 0 24 24"><path d="M4 20h4L19 9a2.1 2.1 0 0 0-3-3L5 17v3z"/><path d="M14.5 6.5l3 3"/></svg>
     </button>
     <button class="icobtn" id="btnClassic" title="Switch to text view" aria-label="Switch to text view">
       <svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
@@ -315,15 +449,39 @@ ul.list.amber li::before{background:var(--amber)}
   </div>
 </div>
 
+<!-- ================= BACK TO LOBBY ================= -->
+<button id="exitBtn">
+  <svg viewBox="0 0 24 24"><path d="M19 12H6M12 5l-7 7 7 7"/></svg>
+  Back to lobby
+</button>
+
+<!-- ================= DOOR HEADS-UP ================= -->
+<div id="doorhud">
+  <div class="tier"></div>
+  <div class="co"></div>
+  <div class="dt"></div>
+</div>
+
+<!-- ================= WHERE AM I ================= -->
+<div id="roomlbl" class="glass">
+  <span class="eyebrow">You are in</span>
+  <div class="rn">Reception lobby</div>
+  <div class="rs">Four doors. Each one is a chapter.</div>
+</div>
+
 <!-- ================= CONTROL LEGEND ================= -->
 <div id="legend" class="glass">
   <h4>Controls</h4>
-  <div class="row"><kbd>Drag</kbd> Look around</div>
+  <div class="row"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> Walk</div>
+  <div class="row"><kbd>Drag</kbd> Turn the camera</div>
   <div class="row"><kbd>Scroll</kbd> Zoom</div>
-  <div class="row"><kbd>Click</kbd> Inspect an object</div>
-  <div class="row"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> Walk the floor</div>
-  <div class="row"><kbd>Esc</kbd> Back to the room</div>
+  <div class="row"><kbd>E</kbd> Open what you're near</div>
+  <div class="row"><kbd>Click</kbd> Inspect anything</div>
+  <div class="row"><kbd>Esc</kbd> Close / step back</div>
 </div>
+
+<!-- ================= PROXIMITY PROMPT ================= -->
+<div id="prompt"><kbd>E</kbd><span class="txt"></span></div>
 
 <!-- ================= HOVER TOOLTIP ================= -->
 <div id="tip"><div class="s"></div><div class="t"></div></div>
@@ -344,19 +502,19 @@ ul.list.amber li::before{background:var(--amber)}
 <!-- ================= INTRO ================= -->
 <div id="intro">
   <div id="introCard" class="glass">
-    <span class="eyebrow">Portfolio · Built as a place, not a page</span>
-    <h1>Welcome to my <em>virtual office</em>.</h1>
-    <p class="lede">Six workstations, a meeting room, a whiteboard and the people I shipped with — every object in here holds a piece of my work history. Click, explore, and discover.</p>
+    <span class="eyebrow">Portfolio · Four doors, four chapters</span>
+    <h1>You're standing in my <em>lobby</em>.</h1>
+    <p class="lede">That's me by the reception desk. Walk to a door and step into the office where that chapter happened. Every desk, screen and colleague inside holds a piece of the work.</p>
     <div class="keys">
-      <div class="row"><kbd>Drag</kbd> Look around</div>
-      <div class="row"><kbd>Scroll</kbd> Zoom</div>
-      <div class="row"><kbd>Click</kbd> Interact</div>
-      <div class="row"><kbd>WASD</kbd> Move</div>
+      <div class="row"><kbd>WASD</kbd> Walk</div>
+      <div class="row"><kbd>Drag</kbd> Turn camera</div>
+      <div class="row"><kbd>E</kbd> Open a door</div>
+      <div class="row"><kbd>Click</kbd> Inspect</div>
     </div>
     <div class="cta">
       <button class="btn primary" id="btnExplore">
         <svg viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg>
-        Explore the office
+        Step into the lobby
       </button>
       <button class="btn" id="btnSkip">Read the text version</button>
     </div>
@@ -366,8 +524,34 @@ ul.list.amber li::before{background:var(--amber)}
 <!-- ================= LOADER ================= -->
 <div id="loader"><div class="in">
   <div id="bar"><i></i></div>
-  <div class="lbl" id="loadLbl">Furnishing the office</div>
+  <div class="lbl" id="loadLbl">Unlocking the building</div>
 </div></div>
+
+<!-- ================= FADE ================= -->
+<div id="fade"></div>
+
+<!-- ================= CONTENT EDITOR ================= -->
+<aside id="editor">
+  <div class="ehead">
+    <span class="eyebrow">Your content</span>
+    <h2>Edit everything</h2>
+    <p>Every word in this portfolio is below. Type over it and the office updates as you go. Export when you're done so you never lose it.</p>
+    <button id="eclose" aria-label="Close editor">
+      <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+  </div>
+  <div class="ebody" id="ebody"></div>
+  <div class="efoot">
+    <button class="btn primary" id="btnExport">
+      <svg viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M4 20h16"/></svg>
+      Export JSON
+    </button>
+    <button class="btn" id="btnImport">Import</button>
+    <button class="btn" id="btnReset">Reset</button>
+    <input type="file" id="fileIn" accept="application/json" style="display:none">
+  </div>
+</aside>
+<div id="etoast"></div>
 
 <!-- ================= CLASSIC / LOW-POWER FALLBACK ================= -->
 <div id="classic"><div class="wrap">
@@ -376,7 +560,7 @@ ul.list.amber li::before{background:var(--amber)}
       <h1>GeoffHaward Christy</h1>
       <div class="role">Frontend Developer · React, Angular, React Native, Next.js · Gandhinagar, Gujarat</div>
     </div>
-    <button class="btn" id="btnBack3D">Back to 3D office</button>
+    <button class="btn" id="btnBack3D">Back to 3D</button>
   </div>
   <div id="classicBody"></div>
 </div></div>
@@ -713,6 +897,207 @@ const DATA = {
 };
 
 /* ==========================================================================
+   1b · DOORS  —  one door per chapter of the career.
+   Tier is earned by what's behind it, not decoration.
+   ========================================================================== */
+const DOORS = [
+  {
+    id: 'evision', tier: 'silver', tierLabel: 'Silver',
+    company: 'Evision IT Solution Pvt. Ltd.',
+    role: 'Frontend Developer',
+    when: 'May 2022 – Mar 2024', span: '1 yr 11 mos',
+    headline: 'Where I learned to ship',
+    blurb: 'Straight out of LDRP into a delivery team. Angular, Reactive Forms, RxJS, and a Shopify theme practice on the side. This is the floor where I stopped writing code that only worked on my machine.',
+    stack: ['Angular', 'TypeScript', 'RxJS', 'Reactive Forms', 'Shopify Liquid', 'Java Spring Boot'],
+    learned: [
+      'Lazy-loaded feature modules, and why the bundle size is somebody\'s first impression',
+      'Centralised HTTP error handling instead of a try/catch in every component',
+      'Reading a Spring Boot endpoint before complaining about its payload',
+      'Talking to a client without a PM translating for me'
+    ]
+  },
+  {
+    id: 'logieagle', tier: 'gold', tierLabel: 'Gold',
+    company: 'Logieagle Private Limited',
+    role: 'Frontend Developer',
+    when: 'Mar 2024 – Nov 2025', span: '1 yr 9 mos',
+    headline: 'Where the work got serious',
+    blurb: 'Enterprise HR and project systems with real permission models, a React Native app, an analytics dashboard and a Chrome Extension. Four products, one frontend, three teammates I still think about when I write code.',
+    stack: ['React', 'Redux Toolkit', 'React Native', 'RBAC', 'Firebase', 'Chrome Extension APIs'],
+    learned: [
+      'Role-based access control belongs in one map, never scattered across components',
+      'Performance work is measured on the cheapest device anyone actually owns',
+      'A component library is a negotiation with a designer, not a folder',
+      'Manifest V3 will delete your architecture and not apologise'
+    ]
+  }
+/* ===== PLATINUM + DIAMOND — parked for now =================================
+   Uncomment this block (and the matching LAYOUTS + nav buttons below) to bring
+   both doors back. Door positions in the lobby recalculate automatically.
+  {
+    id: 'independent', tier: 'platinum', tierLabel: 'Platinum',
+    company: 'Independent',
+    role: 'Building my own things',
+    when: 'Nov 2025 – present', span: 'ongoing',
+    headline: 'Where nobody hands me the spec',
+    blurb: 'A full-stack side project, freelance work, and the uncomfortable discovery that scoping your own product is harder than building it. Next.js, my own Postgres, my own bad decisions.',
+    stack: ['Next.js 14', 'Node.js', 'Express', 'PostgreSQL', 'Tailwind CSS'],
+    learned: [
+      'Owning the database beats depending on somebody else\'s API staying alive',
+      'Phase 1 means cutting the features you\'re most excited about',
+      'A product needs a verdict, not just data',
+      'Backend skills stop being theoretical the moment nobody else has them'
+    ]
+  },
+  {
+    id: 'vacant', tier: 'diamond', tierLabel: 'Diamond',
+    company: 'Vacant',
+    role: 'Reserved for the next team',
+    when: 'Available now', span: 'open',
+    headline: 'The one you can fill',
+    blurb: 'Empty desk, working monitor, nothing on the walls yet. This is the room where whatever I build next goes — and it stays empty until somebody hires me to furnish it.',
+    stack: ['React', 'Next.js', 'TypeScript', 'React Native', 'Node.js'],
+    learned: [
+      'Frontend roles where the UI is the product, not a wrapper',
+      'Teams that write down API contracts before building either side',
+      'Somewhere I can keep one foot in the backend',
+      'Remote, hybrid or Ahmedabad / Gandhinagar'
+    ]
+  }
+   ========================================================================= */
+];
+
+/* What I'm looking for — shown on the empty desk behind the Diamond door */
+const VACANCY = {
+  title: 'The empty desk',
+  intro: 'This desk is set up and waiting. Here\'s what would fill it.',
+  looking: [
+    'Frontend Developer — React, Next.js or Angular, product-owned UI',
+    'Teams that treat state, permissions and error handling as design work',
+    'Room to touch the backend when the payload is the problem',
+    'Ahmedabad / Gandhinagar, remote, or hybrid'
+  ],
+  bring: [
+    '3 yrs 5 mos of production frontend across two product companies',
+    'Enterprise RBAC, dashboards, mobile and Chrome Extension experience',
+    'Java Spring Boot and Node.js — I can meet the API halfway',
+    'A side project I run end to end, database included'
+  ]
+};
+
+/* ==========================================================================
+   1c · LAYOUTS  —  one floor plan per door.
+   Everything here is data. Move a desk by changing two numbers.
+   ========================================================================== */
+const LAYOUTS = {
+  hub: {
+    name: 'Reception lobby', sub: 'Four doors. Each one is a chapter.',
+    room: { w: 30, d: 24, tone: 'cool', windows: { left: true, right: true } },
+    spawn: [0, 8.5], exit: null
+  },
+
+  evision: {
+    name: 'Evision floor', sub: 'Angular, Shopify, and the first real deadlines',
+    room: { w: 26, d: 20, tone: 'cool', windows: { back: true, right: true } },
+    spawn: [0, 7.5], exit: [0, 10],
+    desks: [
+      { p: 'ws04', x: -7.5, z: -4, dual: true },
+      { p: 'ws05', x: -2, z: -4, npc: 'npc04' }
+    ],
+    npcs: [{ id: 'npc05', x: 6.4, z: 1.6, ry: -0.7 }],
+    shelf: { x: 12.5, z: 0.5, ry: -Math.PI / 2 },
+    breakout: { x: 6.4, z: 0 },
+    plaque: { x: -12.5, z: 4.5, ry: Math.PI / 2 },
+    storage: [[-9.5, -8.6], [1.5, -8.6]],
+    plants: []
+  },
+
+  logieagle: {
+    name: 'Logieagle floor', sub: 'Four products, one frontend, three teammates',
+    theme: 'logieagle',
+    room: { w: 36, d: 28, windows: { back: true } },     // garden view on the back wall only
+    spawn: [9.6, 11.5], exit: [9.6, 14],
+
+    /* seat 0 = front-left, 1 = front-right, 2 = back-left, 3 = back-right */
+    tables: [
+      { x: 6, z: -11, w: 5.8, d: 2.3, seats: [                       // table 1
+        { p: 'ws01', npc: 'npc02', dual: true }, { p: 'ws02' }, {}, {} ] },
+      { x: 6, z: -4.9, w: 5.8, d: 2.3, seats: [                      // table 2 — first one you meet
+        { p: 'ws03', npc: 'npc01' }, { p: 'ws06' }, {}, {} ] },
+      { x: -11.5, z: -2.9, w: 5.8, d: 2.3, seats: [                  // table 3
+        { npc: 'npc03' }, {}, {}, {} ] }
+    ],
+
+    /* both cabins sit hard against the building walls */
+    cabins: [
+      { id: 'director', x: -14.05, z: -10.6, w: 8.1, d: 6.8, style: 'director',
+        sides: { e: 1, s: 1 }, door: 's', label: 'Director', ac: true },
+      { id: 'meeting', x: -12.6, z: 10.05, w: 11, d: 8, style: 'meeting',
+        sides: { e: 1, n: 1 }, door: 'n', label: 'Meeting', ac: true }
+    ],
+
+    /* washrooms: back against the front wall, doors facing into the office */
+    bathrooms: [
+      { x: -5.8, z: 12.55, w: 2.6, d: 3, ry: Math.PI, label: 'Men' },
+      { x: -3.2, z: 12.55, w: 2.6, d: 3, ry: Math.PI, label: 'Ladies' }
+    ],
+
+    desks: [],
+    npcs: [],
+    whiteboard: { x: -17.8, z: 10.05, ry: Math.PI / 2 },             // inside the meeting room
+    plaque: { x: 0.95, z: 10, ry: -Math.PI / 2 },                    // back face of the logo wall
+    logo: { x: 1.2, z: 10.25, ry: Math.PI / 2, w: 7.7 },             // runs up to the front wall
+    caboodh: [{ x: 4.8, z: 13.55, ry: Math.PI, w: 2.6, h: 2.7 }],
+    shelves: [{ x: 14.5, z: 4.6, ry: 0, len: 5.4, bays: 3, levels: 4 }],
+    rings: [],
+    fans: [[6, -8], [-11.5, -3]],
+    acs: [{ x: 17.88, z: -4.9, ry: -Math.PI / 2 }],                  // right of table 2
+    credenzas: [],
+    storage: [],
+    plants: []
+  }
+
+/* ===== LAYOUTS for the parked doors — uncomment together with DOORS above ===
+  independent: {
+    name: 'The studio', sub: 'One desk, one product, nobody to ask',
+    room: { w: 20, d: 15, tone: 'warm', windows: { back: true, left: true } },
+    spawn: [0, 5], exit: [0, 7.5],
+    desks: [
+      { p: 'side', x: -4, z: -3.4, dual: true, screen: 'charts', side: true }
+    ],
+    npcs: [],
+    lounge: { x: 3.6, z: 1.2, laptop: true },
+    coffee: { x: -6.5, z: -6.6 },
+    plaque: { x: 9.6, z: -1.5, ry: -Math.PI / 2 },
+    storage: [],
+    plants: [[8.8, 5.6, 'tree', 1.05], [-8.8, 4.6, 'leaf', 0.95], [1.5, -6.4, 'leaf', 0.9]]
+  },
+
+  vacant: {
+    name: 'The empty office', sub: 'Set up, powered on, unoccupied',
+    room: { w: 22, d: 16, tone: 'bright', windows: { back: true, right: true, left: true } },
+    spawn: [0, 5.5], exit: [0, 8],
+    desks: [
+      { p: 'vacancy', x: 0, z: -3.4, screen: 'code', vacant: true }
+    ],
+    npcs: [],
+    contact: { x: 0, z: -7.6 },
+    plaque: { x: -9.6, z: 1.5, ry: Math.PI / 2 },
+    storage: [],
+    plants: [[-9, -6.4, 'tree', 1.05], [9, -6.4, 'tree', 1.05], [9, 5.8, 'leaf', 0.95], [-9, 5.8, 'leaf', 0.95]]
+  }
+   ========================================================================= */
+};
+
+/* tier palettes — used by doors, plaques and floor strips */
+const TIERS = {
+  silver:   { base: 0xC3CBD6, glow: 0x8FA6BF, metal: 0.85, rough: 0.28, css: '#C8D0DA' },
+  gold:     { base: 0xE0A233, glow: 0xF5A524, metal: 0.9,  rough: 0.24, css: '#F5A524' },
+  platinum: { base: 0xD9E6EE, glow: 0x9FE7F5, metal: 0.92, rough: 0.16, css: '#9FE7F5' },
+  diamond:  { base: 0xB9A7FF, glow: 0xC9B8FF, metal: 0.55, rough: 0.08, css: '#B9A7FF' }
+};
+
+/* ==========================================================================
    2 · ENGINE  —  renderer, scene, lighting
    ========================================================================== */
 const el = (id) => document.getElementById(id);
@@ -802,6 +1187,18 @@ function makeTex(w, h, draw, rx, ry) {
 }
 
 const TEX = {};
+
+function ownerLogoTexture() {
+  return makeTex(1024, 256, (x, w, h) => {
+    x.fillStyle = '#20242C'; x.fillRect(0, 0, w, h);
+    x.fillStyle = '#F5A524'; x.fillRect(0, 0, 14, h);
+    x.fillStyle = '#F2F4F8'; x.font = '700 62px ui-sans-serif,sans-serif';
+    x.fillText(DATA.owner.name, 60, 108);
+    x.fillStyle = '#8A94A6'; x.font = '28px ui-monospace,monospace';
+    x.fillText((DATA.owner.role + '  ·  ' + DATA.owner.location).toLowerCase(), 62, 164);
+  });
+}
+
 function buildTextures() {
   // polished concrete floor with faint seams
   TEX.floor = makeTex(256, 256, (x, w, h) => {
@@ -823,6 +1220,22 @@ function buildTextures() {
       x.fillRect(Math.random() * w, Math.random() * h, 1, 2);
     }
   }, 5, 5);
+
+  TEX.woodFloor = makeTex(256, 256, (x, w, h) => {
+    x.fillStyle = '#A97B4E'; x.fillRect(0, 0, w, h);
+    for (let p = 0; p < 6; p++) {
+      const y = p * (h / 6);
+      x.fillStyle = `rgba(${118 + Math.random() * 38},${82 + Math.random() * 26},${48 + Math.random() * 20},.30)`;
+      x.fillRect(0, y, w, h / 6 - 2);
+      for (let i = 0; i < 26; i++) {
+        x.strokeStyle = 'rgba(90,60,34,.20)'; x.lineWidth = 0.7;
+        const ly = y + Math.random() * (h / 6);
+        x.beginPath(); x.moveTo(0, ly); x.lineTo(w, ly + (Math.random() - .5) * 4); x.stroke();
+      }
+      x.strokeStyle = 'rgba(70,46,26,.5)'; x.lineWidth = 1.4;
+      x.beginPath(); x.moveTo(0, y); x.lineTo(w, y); x.stroke();
+    }
+  }, 9, 7);
 
   TEX.carpetWarm = makeTex(128, 128, (x, w, h) => {
     x.fillStyle = '#8A6B4F'; x.fillRect(0, 0, w, h);
@@ -1016,15 +1429,8 @@ function buildTextures() {
     });
   });
 
-  // reception backdrop
-  TEX.logo = makeTex(1024, 256, (x, w, h) => {
-    x.fillStyle = '#20242C'; x.fillRect(0, 0, w, h);
-    x.fillStyle = '#F5A524'; x.fillRect(0, 0, 14, h);
-    x.fillStyle = '#F2F4F8'; x.font = '700 66px ui-sans-serif,sans-serif';
-    x.fillText('GeoffHaward Christy', 60, 108);
-    x.fillStyle = '#8A94A6'; x.font = '30px ui-monospace,monospace';
-    x.fillText('frontend developer  ·  react / angular / react native', 62, 164);
-  });
+  // reception backdrop — regenerated whenever the owner details are edited
+  TEX.logo = ownerLogoTexture();
 
   TEX.exit = makeTex(256, 96, (x, w, h) => {
     x.fillStyle = '#0F1319'; x.fillRect(0, 0, w, h);
@@ -1043,6 +1449,7 @@ function buildMaterials() {
   MAT.floor   = std({ map: TEX.floor, roughness: 0.72, metalness: 0.03 });
   MAT.carpet  = std({ map: TEX.carpet, roughness: 0.96 });
   MAT.carpetW = std({ map: TEX.carpetWarm, roughness: 0.96 });
+  MAT.woodFloor = std({ map: TEX.woodFloor, roughness: 0.62, metalness: 0.02 });
   MAT.wall    = std({ color: 0xE9E6DF, roughness: 0.92 });
   MAT.wallDark= std({ color: 0x2C313A, roughness: 0.85 });
   MAT.trim    = std({ color: 0xB9B3A8, roughness: 0.7 });
@@ -1062,7 +1469,7 @@ function buildMaterials() {
   MAT.window  = new THREE.MeshBasicMaterial({ color: 0xDCEEFF, toneMapped: false });
   MAT.light   = new THREE.MeshBasicMaterial({ color: 0xFFF6E4, toneMapped: false });
   MAT.board   = new THREE.MeshBasicMaterial({ map: TEX.board, toneMapped: false });
-  MAT.logo    = new THREE.MeshBasicMaterial({ map: TEX.logo, toneMapped: false });
+  MAT.logo    = signage(new THREE.MeshBasicMaterial({ map: TEX.logo, toneMapped: false }), ownerLogoTexture);
   MAT.present = new THREE.MeshBasicMaterial({ map: TEX.present, toneMapped: false });
   MAT.exitSig = new THREE.MeshBasicMaterial({ map: TEX.exit, toneMapped: false });
   MAT.screen  = {};
@@ -1112,118 +1519,251 @@ function group(x, y, z, ry) {
 }
 
 /* ==========================================================================
-   5 · OFFICE SHELL  —  floor, walls, glazing, ceiling lights
-   Floor spans x[-21,21]  z[-16,16]. Wall height 3.9.
+   4c · THEMES
+   The Evision floor uses the default palette. The Logieagle floor is modelled
+   on the real office: charcoal tile, glossy white benching, black mesh chairs,
+   black-framed glass, black tube shelving, black ring pendants.
+   ========================================================================== */
+let TH = null;
+const THEMES = {};
+
+function buildThemeAssets() {
+
+  // ---- large-format charcoal floor tile with grout
+  TEX.tile = makeTex(256, 256, (x, w, h) => {
+    x.fillStyle = '#3C3F44'; x.fillRect(0, 0, w, h);
+    for (let i = 0; i < 2200; i++) {
+      const g = 58 + Math.random() * 26;
+      x.fillStyle = `rgba(${g + 4},${g + 5},${g + 9},${0.05 + Math.random() * 0.13})`;
+      x.fillRect(Math.random() * w, Math.random() * h, 2, 2);
+    }
+    // soft sheen band — these tiles are polished
+    const gr = x.createLinearGradient(0, 0, w, h);
+    gr.addColorStop(0, 'rgba(255,255,255,.05)');
+    gr.addColorStop(0.5, 'rgba(255,255,255,.012)');
+    gr.addColorStop(1, 'rgba(255,255,255,.05)');
+    x.fillStyle = gr; x.fillRect(0, 0, w, h);
+    x.strokeStyle = 'rgba(28,30,34,.85)'; x.lineWidth = 3;
+    x.strokeRect(0, 0, w, h);
+  }, 1, 1);
+
+  // ---- what you see out of the windows: trees, overcast sky
+  TEX.outside = makeTex(256, 256, (x, w, h) => {
+    const sky = x.createLinearGradient(0, 0, 0, h);
+    sky.addColorStop(0, '#DCE6EE'); sky.addColorStop(0.55, '#C9D8E2'); sky.addColorStop(1, '#A9BCA6');
+    x.fillStyle = sky; x.fillRect(0, 0, w, h);
+    for (let i = 0; i < 46; i++) {                       // canopy
+      const cx = Math.random() * w, cy = h * 0.58 + Math.random() * h * 0.45;
+      const r = 16 + Math.random() * 46;
+      const g = 60 + Math.random() * 60;
+      x.fillStyle = `rgba(${28 + g * 0.35},${64 + g},${34 + g * 0.35},${0.5 + Math.random() * 0.4})`;
+      x.beginPath(); x.arc(cx, cy, r, 0, 6.3); x.fill();
+    }
+    x.fillStyle = 'rgba(46,64,44,.55)'; x.fillRect(0, h * 0.92, w, h * 0.08);
+  }, 1, 1);
+
+  // ---- backlit LOGIEAGLE feature wall
+  TEX.logieLogo = makeTex(1024, 384, (x, w, h) => {
+    x.fillStyle = '#34373C'; x.fillRect(0, 0, w, h);
+    for (let i = 0; i < 2600; i++) {
+      x.fillStyle = `rgba(255,255,255,${Math.random() * 0.02})`;
+      x.fillRect(Math.random() * w, Math.random() * h, 2, 2);
+    }
+    // warm wash from the spotlight above
+    const gl = x.createRadialGradient(w * 0.42, -40, 20, w * 0.42, 120, 520);
+    gl.addColorStop(0, 'rgba(255,232,196,.30)'); gl.addColorStop(1, 'rgba(255,232,196,0)');
+    x.fillStyle = gl; x.fillRect(0, 0, w, h);
+
+    // isometric cube mark
+    const cx = 168, cy = 150, s = 62;
+    const face = (pts, col) => {
+      x.fillStyle = col; x.beginPath();
+      pts.forEach((p, i) => i ? x.lineTo(p[0], p[1]) : x.moveTo(p[0], p[1]));
+      x.closePath(); x.fill();
+    };
+    face([[cx, cy - s], [cx + s * 0.92, cy - s * 0.45], [cx, cy + s * 0.1], [cx - s * 0.92, cy - s * 0.45]], '#E8B923');
+    face([[cx - s * 0.92, cy - s * 0.42], [cx, cy + s * 0.13], [cx, cy + s * 1.05], [cx - s * 0.92, cy + s * 0.5]], '#D63C2E');
+    face([[cx + s * 0.92, cy - s * 0.42], [cx, cy + s * 0.13], [cx, cy + s * 1.05], [cx + s * 0.92, cy + s * 0.5]], '#3AA6D6');
+
+    x.fillStyle = '#F0F1F3';
+    x.font = '800 96px ui-sans-serif,Arial,sans-serif';
+    x.fillText('LOGIEAGLE', 292, 188);
+    x.fillStyle = '#B8BCC4';
+    x.font = '600 34px ui-sans-serif,Arial,sans-serif';
+    x.fillText('LOGICAL  |  FOCUSED  |  SHARP', 296, 246);
+  });
+
+  // ---- wall screen for the open floor
+  TEX.wallTv = makeTex(512, 288, (x, w, h) => {
+    x.fillStyle = '#0B0E13'; x.fillRect(0, 0, w, h);
+    x.fillStyle = '#141A24'; x.fillRect(0, 0, w, 44);
+    x.fillStyle = '#3AA6D6'; x.fillRect(0, 0, 6, 44);
+    x.fillStyle = '#8A94A6'; x.font = '600 20px ui-monospace,monospace';
+    x.fillText('release board', 26, 30);
+    for (let i = 0; i < 4; i++) {
+      const y = 74 + i * 50;
+      x.fillStyle = '#141A24'; x.fillRect(26, y, 460, 38);
+      x.fillStyle = ['#E8B923', '#3AA6D6', '#7ED9A7', '#D63C2E'][i]; x.fillRect(26, y, 5, 38);
+      x.fillStyle = '#39445A'; x.fillRect(44, y + 10, 150 + Math.random() * 120, 7);
+      x.fillStyle = '#252E3E'; x.fillRect(44, y + 24, 90 + Math.random() * 70, 6);
+    }
+  });
+
+  const std = (o) => new THREE.MeshStandardMaterial(o);
+  MAT.gloss      = std({ color: 0xF3F3F1, roughness: 0.16, metalness: 0.04 });
+  MAT.glossEdge  = std({ color: 0xE4E5E3, roughness: 0.3 });
+  MAT.wallWhite  = std({ color: 0xF5F5F3, roughness: 0.92 });
+  MAT.wallFeature= std({ color: 0x34373C, roughness: 0.8 });
+  MAT.blackFrame = std({ color: 0x121418, roughness: 0.42, metalness: 0.45 });
+  MAT.blackSoft  = std({ color: 0x1C1F25, roughness: 0.8 });
+  MAT.mesh       = std({ color: 0x1A1D23, roughness: 0.92 });
+  MAT.chrome     = std({ color: 0x9AA0A8, roughness: 0.25, metalness: 0.8 });
+  MAT.potWhite   = std({ color: 0xF0EFEC, roughness: 0.55 });
+  MAT.glassClear = std({ color: 0xD6ECF4, roughness: 0.04, metalness: 0.08, transparent: true, opacity: 0.13, side: THREE.DoubleSide });
+  MAT.outside    = new THREE.MeshBasicMaterial({ map: TEX.outside, toneMapped: false });
+  MAT.logieLogo  = new THREE.MeshBasicMaterial({ map: TEX.logieLogo, toneMapped: false });
+  MAT.wallTv     = new THREE.MeshBasicMaterial({ map: TEX.wallTv, toneMapped: false });
+  MAT.downlight  = new THREE.MeshBasicMaterial({ color: 0xFFF4E2, toneMapped: false });
+
+  THEMES.default = {
+    id: 'default',
+    wall: MAT.wall, glazing: 'strip', pane: MAT.window,
+    frame: MAT.trim, ceiling: 'panels', rugs: true, bench: false
+  };
+
+  THEMES.logieagle = {
+    id: 'logieagle',
+    wall: MAT.wallWhite, glazing: 'full', pane: MAT.outside,
+    frame: MAT.blackFrame, ceiling: 'rings', rugs: false, bench: true,
+    tile: true
+  };
+}
+
+/* the tile floor needs its own repeat per room size */
+function floorMaterialFor(cfg) {
+  if (!TH || !TH.tile) return cfg.tone === 'warm' ? MAT.woodFloor : MAT.floor;
+  const t = TEX.tile.clone();
+  t.needsUpdate = true;
+  t.wrapS = t.wrapT = THREE.RepeatWrapping;
+  t.repeat.set(Math.round(cfg.w / 0.8), Math.round(cfg.d / 0.8));
+  return new THREE.MeshStandardMaterial({ map: t, roughness: 0.34, metalness: 0.06 });
+}
+
+/* ==========================================================================
+   5 · ROOM BUILDER
+   Every scene — the lobby and all four offices — is built from this.
+   Returns a group; pushes wall/furniture blockers into ctx.blockers so the
+   character can't walk through anything.
    ========================================================================== */
 const WALL_H = 3.9;
-const BOUNDS = { x: 19.5, z: 14.5 };
-let SHELL;
 
-function buildShell() {
-  SHELL = group();
-  scene.add(SHELL);
+function makeRoom(cfg, ctx) {
+  const g = new THREE.Group();
+  const w = cfg.w, d = cfg.d, hw = w / 2, hd = d / 2;
+  const floorMat = floorMaterialFor(cfg);
 
-  // ---- floor
-  const floor = new THREE.Mesh(new THREE.PlaneGeometry(42, 32), MAT.floor);
+  ctx.bounds = { x: hw - 0.85, z: hd - 0.85 };
+
+  // floor + plinth
+  const floor = new THREE.Mesh(new THREE.PlaneGeometry(w, d), floorMat);
   floor.rotation.x = -Math.PI / 2;
   floor.receiveShadow = !STATE.mobile;
-  SHELL.add(floor);
+  g.add(floor);
+  g.add(box(MAT.wallDark, w + 0.6, 0.5, d + 0.6, 0, -0.26, 0, false));
 
-  // subtle plinth so the slab reads as a solid object from outside
-  SHELL.add(box(MAT.wallDark, 42.6, 0.5, 32.6, 0, -0.26, 0, false));
-
-  // ---- zone rugs
-  const rug = (mat, w, d, x, z) => {
-    const m = new THREE.Mesh(GEO.plane, mat);
-    m.rotation.x = -Math.PI / 2;
-    m.scale.set(w, d, 1); m.position.set(x, 0.012, z);
-    m.receiveShadow = !STATE.mobile;
-    SHELL.add(m);
+  // walls
+  const addWall = (ww, x, z, ry) => {
+    const m = box(TH.wall, ww, WALL_H, 0.3, x, WALL_H / 2, z, false);
+    m.rotation.y = ry || 0; g.add(m);
+    const b = box(TH.tile ? MAT.blackSoft : MAT.trim, ww, 0.16, 0.36, x, 0.08, z, false);
+    b.rotation.y = ry || 0; g.add(b);
   };
-  rug(MAT.carpet, 18.5, 12.5, -10.5, -6);      // workstation pod
-  rug(MAT.carpet, 12.4, 10.4, 13, -10);        // meeting room
-  rug(MAT.carpetW, 12.5, 10.5, -14, 9.6);      // lounge
-  rug(MAT.carpetW, 8, 6.5, 4.5, 12);           // reception
+  addWall(w, 0, -hd - 0.15, 0);
+  addWall(d, -hw - 0.15, 0, Math.PI / 2);
+  addWall(d, hw + 0.15, 0, Math.PI / 2);
+  if (cfg.frontGap) {
+    const gx = cfg.frontGapX || 0, hg = cfg.frontGap / 2;
+    const l = (gx - hg) + hw, r = hw - (gx + hg);
+    if (l > 0.2) addWall(l, (-hw + gx - hg) / 2, hd + 0.15, 0);
+    if (r > 0.2) addWall(r, (gx + hg + hw) / 2, hd + 0.15, 0);
+  } else addWall(w, 0, hd + 0.15, 0);
 
-  // ---- walls
-  const wall = (w, x, z, ry, mat) => {
-    const m = box(mat || MAT.wall, w, WALL_H, 0.28, x, WALL_H / 2, z, false);
-    m.rotation.y = ry || 0;
-    SHELL.add(m);
-    // baseboard
-    const b = box(MAT.trim, w, 0.16, 0.34, x, 0.08, z, false);
-    b.rotation.y = ry || 0;
-    SHELL.add(b);
+  const span = (len, pitch) => {
+    const n = Math.max(1, Math.floor((len - 3) / pitch));
+    const start = -((n - 1) * pitch) / 2;
+    return Array.from({ length: n }, (_, i) => start + i * pitch);
   };
-  wall(42, 0, -16.1);                          // back
-  wall(32, -21.1, 0, Math.PI / 2);             // left
-  wall(32, 21.1, 0, Math.PI / 2);              // right
-  wall(17, -12.5, 16.1);                       // front-left
-  wall(17, 12.5, 16.1);                        // front-right (entrance gap between)
+  const wnd = cfg.windows || {};
+  const full = TH && TH.glazing === 'full';
 
-  // ---- glazing: repeated frame + emissive pane
-  const glaze = (x, y, z, w, h, ry) => {
-    const g = group(x, y, z, ry);
-    g.add(box(MAT.window, w, h, 0.06, 0, 0, 0, false));
-    g.add(box(MAT.trim, w + 0.16, 0.1, 0.14, 0, h / 2, 0.06, false));
-    g.add(box(MAT.trim, w + 0.16, 0.1, 0.14, 0, -h / 2, 0.06, false));
-    g.add(box(MAT.trim, 0.1, h, 0.14, -w / 2, 0, 0.06, false));
-    g.add(box(MAT.trim, 0.1, h, 0.14, w / 2, 0, 0.06, false));
-    g.add(box(MAT.trim, 0.07, h, 0.1, 0, 0, 0.06, false));
-    SHELL.add(g);
+  // ---- glazing. 'strip' = punched windows, 'full' = floor-to-ceiling curtain wall
+  const stripBay = (x, y, z, gw, gh, ry) => {
+    const q = group(x, y, z, ry);
+    q.add(box(TH.pane, gw, gh, 0.06, 0, 0, 0, false));
+    q.add(box(MAT.trim, gw + 0.16, 0.1, 0.15, 0, gh / 2, 0.07, false));
+    q.add(box(MAT.trim, gw + 0.16, 0.1, 0.15, 0, -gh / 2, 0.07, false));
+    q.add(box(MAT.trim, 0.1, gh, 0.15, -gw / 2, 0, 0.07, false));
+    q.add(box(MAT.trim, 0.1, gh, 0.15, gw / 2, 0, 0.07, false));
+    q.add(box(MAT.trim, 0.07, gh, 0.11, 0, 0, 0.07, false));
+    g.add(q);
   };
-  for (let i = 0; i < 7; i++) glaze(-18 + i * 6, 2.15, -15.94, 4.6, 2.3, 0);
-  for (let i = 0; i < 4; i++) glaze(20.94, 2.15, -9 + i * 6.4, 4.6, 2.3, -Math.PI / 2);
-
-  // ---- entrance frame + doormat
-  SHELL.add(box(MAT.wallDark, 0.35, 3.2, 0.4, -4, 1.6, 16.05, false));
-  SHELL.add(box(MAT.wallDark, 0.35, 3.2, 0.4, 4, 1.6, 16.05, false));
-  SHELL.add(box(MAT.wallDark, 8.4, 0.4, 0.4, 0, 3.4, 16.05, false));
-  const mat0 = new THREE.Mesh(GEO.plane, MAT.fabric);
-  mat0.rotation.x = -Math.PI / 2; mat0.scale.set(4.4, 2, 1); mat0.position.set(0, 0.015, 14.6);
-  SHELL.add(mat0);
-
-  // ---- ceiling light panels (InstancedMesh — one draw call for all of them)
-  const panels = [];
-  for (let r = 0; r < 4; r++)
-    for (let c = 0; c < 5; c++)
-      panels.push([-16.5 + c * 8.2, 3.62, -12 + r * 8]);
-  const inst = new THREE.InstancedMesh(GEO.box, MAT.light, panels.length);
-  const dummy = new THREE.Object3D();
-  panels.forEach((p, i) => {
-    dummy.position.set(p[0], p[1], p[2]);
-    dummy.scale.set(2.6, 0.07, 0.62);
-    dummy.updateMatrix();
-    inst.setMatrixAt(i, dummy.matrix);
+  const curtainWall = (len, x, z, ry) => {
+    const run = len - 1.0, H = 3.3;
+    const bays = Math.max(2, Math.round(run / 2.35));
+    const bw = run / bays;
+    const q = group(x, 0, z, ry);
+    q.add(box(TH.pane, run, H, 0.05, 0, 0.14 + H / 2, 0, false));
+    q.add(box(TH.frame, run + 0.2, 0.13, 0.16, 0, 0.14 + H, 0.06, false));   // head
+    q.add(box(TH.frame, run + 0.2, 0.16, 0.18, 0, 0.1, 0.06, false));        // sill
+    for (let i = 0; i <= bays; i++)
+      q.add(box(TH.frame, 0.09, H, 0.16, -run / 2 + bw * i, 0.14 + H / 2, 0.06, false));
+    q.add(box(TH.frame, run, 0.06, 0.13, 0, 2.5, 0.06, false));              // transom
+    g.add(q);
+  };
+  const wallRun = (side) => (side === 'back' ? w : d);
+  ['back', 'right', 'left'].forEach(side => {
+    if (!wnd[side]) return;
+    const ry = side === 'back' ? 0 : (side === 'right' ? -Math.PI / 2 : Math.PI / 2);
+    const px = side === 'back' ? 0 : (side === 'right' ? hw + 0.02 : -hw - 0.02);
+    const pz = side === 'back' ? -hd - 0.02 : 0;
+    if (full) curtainWall(wallRun(side), px, pz, ry);
+    else span(wallRun(side), 5.8).forEach(o =>
+      stripBay(side === 'back' ? o : px, 2.15, side === 'back' ? pz : o, 4.3, 2.3, ry));
   });
-  inst.instanceMatrix.needsUpdate = true;
-  SHELL.add(inst);
 
-  // ---- ceiling rail so the lights read as fixtures, not floating slabs
-  const rails = new THREE.InstancedMesh(GEO.box, MAT.trim, panels.length);
-  panels.forEach((p, i) => {
-    dummy.position.set(p[0], p[1] + 0.06, p[2]);
-    dummy.scale.set(2.8, 0.06, 0.8);
-    dummy.updateMatrix();
-    rails.setMatrixAt(i, dummy.matrix);
-  });
-  rails.instanceMatrix.needsUpdate = true;
-  SHELL.add(rails);
+  // ---- no ceiling fixtures: all light hardware removed on request.
+  //      Illumination still comes from the scene's hemisphere/key/fill lights.
+
+  return g;
+}
+
+/* rug helper */
+function addRug(parent, mat, w, d, x, z) {
+  const m = new THREE.Mesh(GEO.plane, mat);
+  m.rotation.x = -Math.PI / 2;
+  m.scale.set(w, d, 1); m.position.set(x, 0.012, z);
+  m.receiveShadow = !STATE.mobile;
+  parent.add(m);
+  return m;
+}
+
+/* collision helper — axis-aligned box the character gets pushed out of */
+function blocker(ctx, x, z, hwid, hdep) {
+  ctx.blockers.push({ x, z, hw: hwid, hd: hdep });
 }
 
 /* ---- plants ------------------------------------------------------------- */
-function makePlant(kind, s) {
-  const g = group();
+function makePlant(kind, s, potMat) {
+  const g = new THREE.Group();
   s = s || 1;
-  g.add(cyl(MAT.pot, 0.3, 0.44, 0, 0.22, 0));
+  g.add(cyl(potMat || (TH && TH.tile ? MAT.potWhite : MAT.pot), 0.3, 0.44, 0, 0.22, 0));
   g.add(cyl(MAT.darker, 0.27, 0.05, 0, 0.44, 0, true));
   if (kind === 'tree') {
     g.add(cyl(MAT.wood, 0.05, 1.1, 0, 0.95, 0, true));
     for (let i = 0; i < 5; i++) {
       const a = (i / 5) * Math.PI * 2;
-      const leaf = mesh(GEO.ico, i % 2 ? MAT.plant : MAT.plant2, 0.9, 0.7, 0.9,
-        Math.cos(a) * 0.28, 1.45 + Math.sin(i * 2) * 0.18, Math.sin(a) * 0.28);
-      g.add(leaf);
+      g.add(mesh(GEO.ico, i % 2 ? MAT.plant : MAT.plant2, 0.9, 0.7, 0.9,
+        Math.cos(a) * 0.28, 1.45 + Math.sin(i * 2) * 0.18, Math.sin(a) * 0.28));
     }
     g.add(mesh(GEO.ico, MAT.plant, 1.15, 0.85, 1.15, 0, 1.72, 0));
   } else {
@@ -1321,7 +1861,7 @@ function makeWorkstation(p, x, z, dual) {
 
 /* ---- meeting room ------------------------------------------------------- */
 function makeMeetingRoom() {
-  const g = group(13, 0, -10);
+  const g = group();
   const glassPanel = (w, x, z, ry) => {
     const p = group(x, 0, z, ry);
     p.add(box(MAT.glass, w, 2.9, 0.05, 0, 1.6, 0, false));
@@ -1345,7 +1885,6 @@ function makeMeetingRoom() {
   for (let i = 0; i < 4; i++) {
     g.add(box(MAT.paper, 0.28, 0.012, 0.2, -1.5 + i, 0.8, i % 2 ? 0.55 : -0.55, false));
   }
-  g.add(makePlant('tree', 0.9).translateX(-4.6).translateZ(3.6));
 
   // chairs around the table
   [[-1.6, 1.5], [0, 1.5], [1.6, 1.5], [-1.6, -1.5], [0, -1.5], [1.6, -1.5]].forEach(([cx, cz]) => {
@@ -1367,7 +1906,7 @@ function makeMeetingRoom() {
 
 /* ---- whiteboard --------------------------------------------------------- */
 function makeWhiteboard() {
-  const g = group(-20.7, 0, 2, Math.PI / 2);
+  const g = group();
   g.add(box(MAT.metal, 5.0, 2.9, 0.09, 0, 1.95, 0, false));
   g.add(plane(MAT.board, 4.8, 2.7, 0, 1.95, 0.055));
   g.add(box(MAT.trim, 4.6, 0.07, 0.16, 0, 0.52, 0.1, false));        // pen tray
@@ -1379,7 +1918,7 @@ function makeWhiteboard() {
 
 /* ---- reception ---------------------------------------------------------- */
 function makeReception() {
-  const g = group(4.5, 0, 12.4);
+  const g = group();
   // curved counter
   const front = new THREE.Mesh(
     new THREE.CylinderGeometry(1.7, 1.7, 1.06, 26, 1, true),
@@ -1408,8 +1947,6 @@ function makeReception() {
   bd.add(box(MAT.amber, 6.4, 0.06, 0.2, 0, 0.16, 0.02, false));
   g.add(bd);
 
-  g.add(makePlant('tree', 1.05).translateX(-2.9));
-  g.add(makePlant('tree', 1.0).translateX(2.9));
   return g;
 }
 
@@ -1425,7 +1962,7 @@ function makeSofa(w) {
 }
 
 function makeLounge() {
-  const g = group(-13.6, 0, 9.6);
+  const g = group();
 
   const s1 = makeSofa(2.6); s1.position.set(-2.6, 0, 0); s1.rotation.y = Math.PI / 2; g.add(s1);
   const s2 = makeSofa(2.2); s2.position.set(2.6, 0, 0); s2.rotation.y = -Math.PI / 2; g.add(s2);
@@ -1436,7 +1973,6 @@ function makeLounge() {
     g.add(cyl(MAT.metal, 0.035, 0.44, x, 0.22, z, true)));
   g.add(box(MAT.paper, 0.34, 0.03, 0.26, 0.52, 0.5, 0.14, false));
 
-  g.add(makePlant('leaf', 1.15).translateX(-4.4).translateZ(3.4));
   return g;
 }
 
@@ -1453,7 +1989,7 @@ function makeLaptop() {
 }
 
 function makeCoffeePoint() {
-  const g = group(-15.5, 0, 15.2);
+  const g = group();
   g.add(box(MAT.wallDark, 4.6, 0.9, 0.7, 0, 0.45, 0));               // cabinet
   g.add(box(MAT.deskTop, 4.8, 0.1, 0.78, 0, 0.94, 0));               // counter
   // machine
@@ -1476,7 +2012,7 @@ function makeCoffeePoint() {
 
 /* ---- bookshelf (education) ---------------------------------------------- */
 function makeBookshelf() {
-  const g = group(20.5, 0, 5, -Math.PI / 2);
+  const g = group();
   g.add(box(MAT.wood, 4.6, 2.4, 0.42, 0, 1.2, 0));
   g.add(box(MAT.darker, 4.4, 2.2, 0.06, 0, 1.2, -0.2, false));
   for (let s = 0; s < 3; s++) {
@@ -1500,7 +2036,7 @@ function makeBookshelf() {
 
 /* ---- misc props --------------------------------------------------------- */
 function makeBreakoutTable() {
-  const g = group(2.5, 0, -5.5);
+  const g = group();
   g.add(cyl(MAT.wood, 0.62, 0.08, 0, 1.02, 0, true));
   g.add(cyl(MAT.metal, 0.06, 1.0, 0, 0.5, 0, true));
   g.add(cyl(MAT.dark, 0.42, 0.05, 0, 0.03, 0, true));
@@ -1517,10 +2053,707 @@ function makeBreakoutTable() {
 }
 
 function makeExitSign() {
-  const g = group(0, 0, 15.4, Math.PI);
+  const g = group();
   g.add(box(MAT.wallDark, 2.4, 0.7, 0.12, 0, 2.6, 0, false));
   g.add(plane(MAT.exitSig, 2.2, 0.6, 0, 2.6, 0.07));
   g.add(box(MAT.amber, 2.4, 0.05, 0.14, 0, 2.22, 0.01, false));
+  return g;
+}
+
+/* ==========================================================================
+   6b · DOORS, PLAQUES AND THE CHARACTER
+   ========================================================================== */
+const TIERMAT = {};
+function buildTierMaterials() {
+  Object.keys(TIERS).forEach(k => {
+    const t = TIERS[k];
+    TIERMAT[k] = {
+      metal: new THREE.MeshStandardMaterial({ color: t.base, metalness: t.metal, roughness: t.rough }),
+      glow: new THREE.MeshBasicMaterial({ color: t.glow, toneMapped: false }),
+      soft: new THREE.MeshBasicMaterial({ color: t.glow, transparent: true, opacity: 0.34, toneMapped: false, depthWrite: false })
+    };
+  });
+  // "your project here" screen for the vacant desk
+  MAT.screen.vacant = new THREE.MeshBasicMaterial({
+    toneMapped: false,
+    map: makeTex(384, 240, (x, w, h) => {
+      x.fillStyle = '#10141C'; x.fillRect(0, 0, w, h);
+      x.fillStyle = '#171D28'; x.fillRect(0, 0, w, 22);
+      x.fillStyle = '#B9A7FF'; x.fillRect(0, 0, 4, 22);
+      x.fillStyle = '#7F8B9E'; x.font = '600 11px ui-monospace,monospace';
+      x.fillText('untitled — new project', 12, 15);
+      x.strokeStyle = '#2A3446'; x.lineWidth = 2; x.setLineDash([7, 7]);
+      x.strokeRect(30, 48, 324, 150); x.setLineDash([]);
+      x.fillStyle = '#4A5468'; x.font = '600 17px ui-sans-serif,sans-serif';
+      x.textAlign = 'center';
+      x.fillText('your product goes here', w / 2, 128);
+      x.font = '12px ui-monospace,monospace';
+      x.fillStyle = '#38415280'; x.fillText('git init', w / 2, 156);
+    })
+  });
+}
+
+function plaqueTexture(door) {
+  const t = TIERS[door.tier];
+  return makeTex(640, 200, (x, w, h) => {
+    x.fillStyle = '#141821'; x.fillRect(0, 0, w, h);
+    x.fillStyle = t.css; x.fillRect(0, 0, w, 5);
+    x.fillStyle = t.css; x.font = '600 17px ui-monospace,monospace';
+    x.fillText(door.tierLabel.toUpperCase() + '  ·  ' + door.span.toUpperCase(), 30, 50);
+    x.fillStyle = '#F2F4F8'; x.font = '700 33px ui-sans-serif,sans-serif';
+    x.fillText(door.company.replace(' Pvt. Ltd.', '').replace(' Private Limited', ''), 30, 97);
+    x.fillStyle = '#98A2B3'; x.font = '20px ui-sans-serif,sans-serif';
+    x.fillText(door.role, 30, 132);
+    x.fillStyle = '#6A748A'; x.font = '17px ui-monospace,monospace';
+    x.fillText(door.when, 30, 166);
+  });
+}
+
+function makeDoor(door) {
+  const T = TIERMAT[door.tier];
+  const g = new THREE.Group();
+  const OW = 2.9, OH = 3.15;          // opening
+
+  // dark portal behind the leaves
+  g.add(box(MAT.darker, OW, OH, 0.3, 0, OH / 2, -0.3, false));
+
+  // frame
+  g.add(box(T.metal, 0.26, OH + 0.34, 0.42, -OW / 2 - 0.13, (OH + 0.34) / 2, 0));
+  g.add(box(T.metal, 0.26, OH + 0.34, 0.42, OW / 2 + 0.13, (OH + 0.34) / 2, 0));
+  g.add(box(T.metal, OW + 0.52, 0.3, 0.42, 0, OH + 0.19, 0));
+  g.add(box(T.glow, OW + 0.42, 0.045, 0.06, 0, OH + 0.03, 0.2, false));
+
+  // leaves
+  const leaves = [];
+  [-1, 1].forEach(side => {
+    const pivot = group(side * (OW / 2), 0, 0);
+    const lw = OW / 2;
+    const leaf = new THREE.Group();
+    leaf.position.x = -side * lw / 2;
+    leaf.add(box(T.metal, lw - 0.03, OH - 0.06, 0.085, 0, OH / 2, 0));
+    const rank = ['silver', 'gold', 'platinum', 'diamond'].indexOf(door.tier) + 1;
+    for (let i = 0; i < rank; i++) {
+      leaf.add(box(T.glow, lw - 0.5, 0.05, 0.03, 0, 0.75 + i * 0.5, side * 0.05, false));
+    }
+    if (door.tier === 'diamond') {
+      for (let i = 0; i < 3; i++) {
+        const gem = mesh(GEO.ico, T.glow, 0.16, 0.22, 0.16, 0, 2.35 - i * 0.3, side * 0.07, false);
+        gem.rotation.z = 0.5; leaf.add(gem);
+      }
+    }
+    leaf.add(cyl(T.metal, 0.035, 0.44, -side * (lw / 2 - 0.22), 1.12, side * 0.09, true));
+    pivot.add(leaf);
+    g.add(pivot);
+    leaves.push(pivot);
+  });
+
+  // plaque above the door
+  const pl = group(0, OH + 0.72, 0.06);
+  pl.add(box(MAT.darker, 3.3, 1.03, 0.09, 0, 0, 0, false));
+  pl.add(plane(signage(new THREE.MeshBasicMaterial({ map: plaqueTexture(door), toneMapped: false }), () => plaqueTexture(door)), 3.2, 1.0, 0, 0, 0.055));
+  g.add(pl);
+
+  // floor light spilling out of the door
+  const strip = new THREE.Mesh(GEO.plane, T.soft);
+  strip.rotation.x = -Math.PI / 2;
+  strip.scale.set(OW - 0.2, 2.4, 1);
+  strip.position.set(0, 0.02, 1.35);
+  g.add(strip);
+  g.add(box(T.glow, OW - 0.2, 0.03, 0.12, 0, 0.015, 0.22, false));
+
+  const rec = { group: g, leaves, open: 0, want: 0, door };
+  ANIMATED.push({
+    fn: (t, dt) => {
+      if (Math.abs(rec.want - rec.open) < 0.001) return;
+      rec.open += (rec.want - rec.open) * Math.min(1, dt * 3.4);
+      leaves[0].rotation.y = rec.open * 1.55;
+      leaves[1].rotation.y = -rec.open * 1.55;
+    }
+  });
+  return rec;
+}
+
+/* ---- portal back to the lobby ------------------------------------------ */
+function makeExitPortal() {
+  const g = new THREE.Group();
+  const OW = 2.6, OH = 2.9;
+  g.add(box(MAT.darker, OW, OH, 0.36, 0, OH / 2, 0.12, false));
+  g.add(box(MAT.metal, 0.2, OH + 0.26, 0.44, -OW / 2 - 0.1, (OH + 0.26) / 2, 0));
+  g.add(box(MAT.metal, 0.2, OH + 0.26, 0.44, OW / 2 + 0.1, (OH + 0.26) / 2, 0));
+  g.add(box(MAT.metal, OW + 0.4, 0.24, 0.44, 0, OH + 0.13, 0));
+  const sign = plane(new THREE.MeshBasicMaterial({
+    toneMapped: false,
+    map: makeTex(320, 96, (x, w, h) => {
+      x.fillStyle = '#0F1319'; x.fillRect(0, 0, w, h);
+      x.fillStyle = '#7ED9A7'; x.font = '700 38px ui-sans-serif,sans-serif';
+      x.textAlign = 'center'; x.fillText('LOBBY', w / 2, 62);
+    })
+  }), 1.5, 0.45, 0, OH + 0.13, 0.24);
+  g.add(sign);
+  const glow = new THREE.Mesh(GEO.plane, new THREE.MeshBasicMaterial({
+    color: 0x7ED9A7, transparent: true, opacity: 0.26, toneMapped: false, depthWrite: false
+  }));
+  glow.rotation.x = -Math.PI / 2; glow.scale.set(OW, 2, 1); glow.position.set(0, 0.02, -1.1);
+  g.add(glow);
+  return g;
+}
+
+/* ---- wall plaque describing the role ----------------------------------- */
+function rolePlaqueTexture(door) {
+  const t = TIERS[door.tier];
+  return makeTex(600, 380, (x, w, h) => {
+      x.fillStyle = '#151A23'; x.fillRect(0, 0, w, h);
+      x.fillStyle = t.css; x.fillRect(0, 0, 8, h);
+      x.fillStyle = t.css; x.font = '600 16px ui-monospace,monospace';
+      x.fillText(door.tierLabel.toUpperCase(), 34, 48);
+      x.fillStyle = '#F2F4F8'; x.font = '700 30px ui-sans-serif,sans-serif';
+      x.fillText(door.company.replace(' Pvt. Ltd.', '').replace(' Private Limited', ''), 34, 96);
+      x.fillStyle = '#98A2B3'; x.font = '19px ui-sans-serif,sans-serif';
+      x.fillText(door.role + '  ·  ' + door.when, 34, 128);
+      x.strokeStyle = '#2A3140'; x.lineWidth = 2;
+      x.beginPath(); x.moveTo(34, 152); x.lineTo(w - 34, 152); x.stroke();
+      x.fillStyle = '#C3CCDA'; x.font = '600 21px ui-sans-serif,sans-serif';
+      x.fillText(door.headline, 34, 190);
+      x.fillStyle = '#7F8B9E'; x.font = '17px ui-monospace,monospace';
+      door.stack.slice(0, 4).forEach((s, i) => x.fillText('· ' + s, 34, 228 + i * 30));
+      x.fillStyle = t.css; x.font = '15px ui-monospace,monospace';
+      x.fillText('click for the full story', 34, 355);
+  });
+}
+
+function makeRolePlaque(door) {
+  const g = new THREE.Group();
+  g.add(box(MAT.darker, 3.0, 1.9, 0.1, 0, 1.9, 0, false));
+  g.add(plane(signage(new THREE.MeshBasicMaterial({ map: rolePlaqueTexture(door), toneMapped: false }),
+    () => rolePlaqueTexture(door)), 2.9, 1.8, 0, 1.9, 0.06));
+  g.add(box(TIERMAT[door.tier].glow, 3.0, 0.04, 0.12, 0, 0.94, 0.02, false));
+  return g;
+}
+
+/* ==========================================================================
+   7 · THE CHARACTER  (that's you — curly hair, walk cycle, no GLB needed)
+   To swap in a real GLTF model later, replace the body of makeHero() and keep
+   the same returned API: { group, tick(dt, speed) }.
+   ========================================================================== */
+function makeHero() {
+  const g = new THREE.Group();
+  const skin = new THREE.MeshStandardMaterial({ color: 0xC08A5E, roughness: 0.8 });
+  const shirt = new THREE.MeshStandardMaterial({ color: 0xB65E33, roughness: 0.82 });
+  const jeans = new THREE.MeshStandardMaterial({ color: 0x2E3646, roughness: 0.9 });
+  const shoe = new THREE.MeshStandardMaterial({ color: 0x1A1E26, roughness: 0.7 });
+  const curl = new THREE.MeshStandardMaterial({ color: 0x241C17, roughness: 0.95 });
+
+  const LIMB = new THREE.CylinderGeometry(0.075, 0.062, 1, 8);
+  const M = (geo, mat, sx, sy, sz, x, y, z) => {
+    const m = new THREE.Mesh(geo, mat);
+    m.scale.set(sx, sy, sz); m.position.set(x, y, z);
+    m.castShadow = !STATE.mobile;
+    return m;
+  };
+
+  const root = new THREE.Group();
+  g.add(root);
+  const HIP = 0.94;
+
+  // legs with knees
+  const legs = [];
+  [-1, 1].forEach(side => {
+    const hip = group(side * 0.13, HIP, 0);
+    hip.add(M(LIMB, jeans, 1.15, 0.48, 1.15, 0, -0.24, 0));
+    const knee = group(0, -0.47, 0);
+    knee.add(M(LIMB, jeans, 1.0, 0.44, 1.0, 0, -0.22, 0));
+    knee.add(M(GEO.box, shoe, 0.17, 0.1, 0.3, 0, -0.46, 0.06));
+    hip.add(knee);
+    root.add(hip);
+    legs.push({ hip, knee, side });
+  });
+
+  // body
+  root.add(M(new THREE.CylinderGeometry(0.245, 0.225, 0.22, 12), jeans, 1, 1, 1, 0, HIP + 0.06, 0));
+  root.add(M(new THREE.CylinderGeometry(0.215, 0.26, 0.62, 12), shirt, 1, 1, 1, 0, HIP + 0.46, 0));
+  root.add(M(GEO.box, new THREE.MeshStandardMaterial({ color: 0x1F242C, roughness: 0.9 }), 0.05, 0.34, 0.03, 0, HIP + 0.5, 0.21));
+  root.add(M(GEO.box, MAT.amber, 0.08, 0.12, 0.02, 0.08, HIP + 0.3, 0.22));   // badge
+
+  // arms with elbows
+  const arms = [];
+  [-1, 1].forEach(side => {
+    const sh = group(side * 0.28, HIP + 0.66, 0);
+    sh.add(M(LIMB, shirt, 0.95, 0.36, 0.95, 0, -0.18, 0));
+    const el = group(0, -0.36, 0);
+    el.add(M(LIMB, skin, 0.88, 0.32, 0.88, 0, -0.16, 0));
+    el.add(M(new THREE.SphereGeometry(0.06, 8, 6), skin, 1, 1, 1, 0, -0.33, 0));
+    sh.add(el);
+    root.add(sh);
+    arms.push({ sh, el, side });
+  });
+
+  // head + curly hair
+  const neck = group(0, HIP + 0.8, 0);
+  neck.add(M(LIMB, skin, 0.8, 0.1, 0.8, 0, 0.02, 0));
+  const head = group(0, 0.2, 0);
+  head.add(M(new THREE.SphereGeometry(0.15, 16, 12), skin, 1, 1.1, 0.97, 0, 0, 0));
+  head.add(M(new THREE.SphereGeometry(0.032, 8, 6), new THREE.MeshStandardMaterial({ color: 0x191C22, roughness: 0.35 }), 1, 1, 0.5, -0.056, 0.015, 0.138));
+  head.add(M(new THREE.SphereGeometry(0.032, 8, 6), new THREE.MeshStandardMaterial({ color: 0x191C22, roughness: 0.35 }), 1, 1, 0.5, 0.056, 0.015, 0.138));
+  // curls: a cluster of small spheres over the skull
+  const CURL = new THREE.SphereGeometry(0.062, 7, 5);
+  for (let i = 0; i < 26; i++) {
+    const a = Math.random() * Math.PI * 2;
+    const p = 0.24 + Math.random() * 0.95;             // polar, top-weighted
+    const r = 0.152 + Math.random() * 0.03;
+    const cx = Math.sin(p) * Math.cos(a) * r;
+    const cz = Math.sin(p) * Math.sin(a) * r;
+    const cy = Math.cos(p) * r + 0.028;
+    if (cz > 0.09 && cy < 0.03) continue;              // keep the face clear
+    const c = M(CURL, curl, 0.85 + Math.random() * 0.5, 0.85 + Math.random() * 0.5, 0.85 + Math.random() * 0.5, cx, cy, cz);
+    head.add(c);
+  }
+  neck.add(head);
+  root.add(neck);
+
+  // grounding shadow for when real shadows are off
+  const blob = new THREE.Mesh(GEO.disc, new THREE.MeshBasicMaterial({
+    color: 0x000000, transparent: true, opacity: 0.2, depthWrite: false
+  }));
+  blob.rotation.x = -Math.PI / 2; blob.scale.setScalar(0.86); blob.position.y = 0.02;
+  g.add(blob);
+
+  let phase = 0, amt = 0;
+  return {
+    group: g,
+    head,
+    tick(dt, speed) {
+      const want = Math.min(1, speed / 4.2);
+      amt += (want - amt) * Math.min(1, dt * 10);
+      phase += dt * (4.2 + speed * 1.5) * (0.25 + amt);
+      const sw = Math.sin(phase);
+      legs.forEach(l => {
+        const s = l.side > 0 ? sw : -sw;
+        l.hip.rotation.x = s * 0.62 * amt;
+        l.knee.rotation.x = Math.max(0, -(l.side > 0 ? Math.sin(phase - 0.7) : Math.sin(phase - 0.7 + Math.PI))) * 1.05 * amt;
+      });
+      arms.forEach(a => {
+        const s = a.side > 0 ? -sw : sw;
+        a.sh.rotation.x = s * 0.52 * amt + Math.sin(phase * 0.4) * 0.04 * (1 - amt);
+        a.sh.rotation.z = a.side * (-0.08 - 0.04 * amt);
+        a.el.rotation.x = -0.25 * amt - 0.1;
+      });
+      root.position.y = Math.abs(Math.sin(phase)) * 0.045 * amt;
+      root.rotation.x = 0.07 * amt;
+      head.rotation.y = Math.sin(phase * 0.28) * 0.18 * (1 - amt);
+      head.rotation.z = -sw * 0.03 * amt;
+    }
+  };
+}
+
+/* ==========================================================================
+   6c · LOGIEAGLE-STYLE PROPS
+   Modelled from the reference photos of the real office.
+   ========================================================================== */
+
+/* black rectangular ring pendant, recessed white tray above it */
+function makeRingLight(w, d) {
+  const g = new THREE.Group();
+  const y = 3.05, t = 0.085;
+  const bar = (bw, bd, x, z) => {
+    g.add(box(MAT.blackFrame, bw, 0.075, bd, x, y, z, false));
+    g.add(box(MAT.light, bw - 0.04, 0.028, bd - 0.04, x, y - 0.05, z, false));   // emissive underside
+  };
+  bar(w, t, 0, -d / 2); bar(w, t, 0, d / 2);
+  bar(t, d, -w / 2, 0); bar(t, d, w / 2, 0);
+  // suspension
+  [[-w / 2 + 0.3, -d / 2 + 0.05], [w / 2 - 0.3, -d / 2 + 0.05],
+   [-w / 2 + 0.3, d / 2 - 0.05], [w / 2 - 0.3, d / 2 - 0.05]].forEach(([x, z]) =>
+    g.add(cyl(MAT.blackSoft, 0.012, 0.62, x, y + 0.33, z, true)));
+  // recessed ceiling tray
+  g.add(box(MAT.wallWhite, w + 1.5, 0.09, d + 1.5, 0, 3.72, 0, false));
+  g.add(box(MAT.blackSoft, w + 1.5, 0.14, d + 1.5, 0, 3.63, 0, false));
+  return g;
+}
+
+/* white ceiling fan */
+function makeCeilingFan() {
+  const g = new THREE.Group();
+  g.add(cyl(MAT.wallWhite, 0.035, 0.5, 0, 3.42, 0, true));
+  g.add(cyl(MAT.wallWhite, 0.13, 0.16, 0, 3.14, 0, true));
+  const hub = new THREE.Group();
+  hub.position.y = 3.12;
+  for (let i = 0; i < 4; i++) {
+    const b = box(MAT.wallWhite, 1.5, 0.025, 0.19, 0.85, 0, 0, false);
+    const arm = new THREE.Group();
+    arm.rotation.y = (i / 4) * Math.PI * 2;
+    arm.add(b);
+    hub.add(arm);
+  }
+  g.add(hub);
+  ANIMATED.push({ fn: (t) => { hub.rotation.y = t * 0.55; } });
+  return g;
+}
+
+/* black square-tube open shelving with white pots — the room divider */
+function makeShelfUnit(len, bays, levels) {
+  const g = new THREE.Group();
+  const H = 2.45, D = 0.42, T = 0.05;
+  const cols = bays + 1;
+  for (let i = 0; i < cols; i++) {
+    const x = -len / 2 + (len / bays) * i;
+    g.add(box(MAT.blackFrame, T, H, T, x, H / 2, -D / 2, false));
+    g.add(box(MAT.blackFrame, T, H, T, x, H / 2, D / 2, false));
+    g.add(box(MAT.blackFrame, T, T, D, x, H, 0, false));
+    g.add(box(MAT.blackFrame, T, T, D, x, 0.02, 0, false));
+  }
+  for (let l = 0; l < levels; l++) {
+    const y = 0.42 + l * ((H - 0.55) / (levels - 1));
+    g.add(box(MAT.blackFrame, len, T * 0.7, T, 0, y, -D / 2, false));
+    g.add(box(MAT.blackFrame, len, T * 0.7, T, 0, y, D / 2, false));
+    g.add(box(MAT.blackSoft, len - 0.06, 0.022, D - 0.06, 0, y + 0.02, 0, false));
+    // a plant on roughly half the cells
+    for (let b = 0; b < bays; b++) {
+      if ((l + b) % 2) continue;
+      const px = -len / 2 + (len / bays) * (b + 0.5);
+      const pot = new THREE.Group();
+      pot.add(cyl(MAT.potWhite, 0.15, 0.24, 0, 0.12, 0, true));
+      for (let k = 0; k < 6; k++) {
+        const a = (k / 6) * Math.PI * 2 + Math.random();
+        const lf = new THREE.Mesh(GEO.ico, k % 2 ? MAT.plant : MAT.plant2);
+        lf.scale.set(0.2, 0.13, 0.2);
+        lf.position.set(Math.cos(a) * 0.14, 0.3 + Math.random() * 0.14, Math.sin(a) * 0.14);
+        lf.castShadow = !STATE.mobile;
+        pot.add(lf);
+      }
+      pot.position.set(px, y + 0.03, 0);
+      g.add(pot);
+    }
+  }
+  return g;
+}
+
+/* black mesh task chair on castors */
+function makeTaskChair() {
+  const g = new THREE.Group();
+  for (let i = 0; i < 5; i++) {
+    const a = (i / 5) * Math.PI * 2;
+    const spoke = box(MAT.blackSoft, 0.46, 0.05, 0.08, Math.cos(a) * 0.21, 0.09, Math.sin(a) * 0.21, false);
+    spoke.rotation.y = -a;
+    g.add(spoke);
+    g.add(cyl(MAT.blackSoft, 0.035, 0.07, Math.cos(a) * 0.4, 0.04, Math.sin(a) * 0.4, true));
+  }
+  g.add(cyl(MAT.chrome, 0.042, 0.34, 0, 0.27, 0, true));
+  g.add(box(MAT.mesh, 0.5, 0.09, 0.48, 0, 0.46, 0));
+  g.add(box(MAT.blackSoft, 0.52, 0.04, 0.5, 0, 0.41, 0, false));
+  const back = box(MAT.mesh, 0.46, 0.62, 0.06, 0, 0.83, 0.25);
+  back.rotation.x = -0.16; g.add(back);
+  g.add(box(MAT.blackFrame, 0.5, 0.66, 0.03, 0, 0.83, 0.29, false));
+  g.add(box(MAT.blackSoft, 0.05, 0.05, 0.32, -0.27, 0.63, 0.04, false));
+  g.add(box(MAT.blackSoft, 0.05, 0.05, 0.32, 0.27, 0.63, 0.04, false));
+  return g;
+}
+
+/* glossy white bench desk — the islands from the photos */
+function makeBenchDesk(screenKey, dual) {
+  const g = new THREE.Group();
+  const W = 2.7, D = 1.5;
+  g.add(box(MAT.gloss, W, 0.09, D, 0, 0.76, 0));                       // top
+  g.add(box(MAT.glossEdge, W - 0.06, 0.03, D - 0.06, 0, 0.705, 0, false));
+  g.add(box(MAT.gloss, 0.1, 0.6, D - 0.12, -W / 2 + 0.05, 0.41, 0));   // side panels
+  g.add(box(MAT.gloss, 0.1, 0.6, D - 0.12, W / 2 - 0.05, 0.41, 0));
+  g.add(box(MAT.gloss, W - 0.2, 0.34, 0.08, 0, 0.55, -D / 2 + 0.14));  // back panel
+  g.add(box(MAT.blackSoft, W - 0.24, 0.14, D - 0.5, 0, 0.34, 0, false)); // shadow gap / under-shelf
+  g.add(box(MAT.gloss, W - 0.2, 0.05, D - 0.4, 0, 0.24, 0, false));
+
+  const mon = makeMonitor(screenKey);
+  mon.position.set(dual ? -0.44 : 0, 0.805, -0.42);
+  g.add(mon);
+  if (dual) {
+    const m2 = makeMonitor(screenKey === 'code' ? 'charts' : 'code', 0.86);
+    m2.position.set(0.76, 0.805, -0.36); m2.rotation.y = -0.4;
+    g.add(m2);
+  }
+  g.add(box(MAT.blackSoft, 0.64, 0.022, 0.21, 0, 0.815, 0.24, false));  // keyboard
+  g.add(box(MAT.blackSoft, 0.09, 0.032, 0.13, 0.46, 0.82, 0.26, false));// mouse
+  g.add(cyl(MAT.potWhite, 0.052, 0.1, -0.78, 0.855, 0.26, true));       // cup
+  g.add(box(MAT.paper, 0.28, 0.014, 0.21, 0.85, 0.81, -0.1, false));
+  return g;
+}
+
+/* black-framed glass cabin.
+   sides: which faces get glazing — {n,s,e,w}. door: which side the gap is in.
+   style: 'meeting' (conference table) or 'director' (desk + visitor chairs)   */
+function makeGlassCabin(w, d, opts) {
+  const o = opts || {};
+  const sides = o.sides || { w: 1, s: 1 };
+  const doorSide = o.door || 's';
+  const g = new THREE.Group();
+  const H = 3.05, hw = w / 2, hd = d / 2;
+
+  const pane = (pw, x, z, ry) => {
+    if (pw < 0.3) return;
+    const p = group(x, 0, z, ry);
+    p.add(box(MAT.glassClear, pw, H - 0.16, 0.03, 0, H / 2, 0, false));
+    p.add(box(MAT.blackFrame, pw, 0.09, 0.09, 0, H, 0, false));
+    p.add(box(MAT.blackFrame, pw, 0.09, 0.09, 0, 0.06, 0, false));
+    p.add(box(MAT.blackFrame, 0.07, H, 0.09, -pw / 2, H / 2, 0, false));
+    p.add(box(MAT.blackFrame, 0.07, H, 0.09, pw / 2, H / 2, 0, false));
+    const mull = Math.max(0, Math.round(pw / 1.7) - 1);
+    for (let i = 1; i <= mull; i++)
+      p.add(box(MAT.blackFrame, 0.05, H - 0.2, 0.06, -pw / 2 + (pw / (mull + 1)) * i, H / 2, 0, false));
+    g.add(p);
+  };
+
+  const SIDE = {
+    n: { len: w, x: 0, z: -hd, ry: 0, ax: 'x' },
+    s: { len: w, x: 0, z: hd, ry: 0, ax: 'x' },
+    w: { len: d, x: -hw, z: 0, ry: Math.PI / 2, ax: 'z' },
+    e: { len: d, x: hw, z: 0, ry: Math.PI / 2, ax: 'z' }
+  };
+  Object.keys(SIDE).forEach(k => {
+    if (!sides[k]) return;
+    const S = SIDE[k];
+    if (k === doorSide) {
+      const doorW = 1.15, seg = (S.len - doorW) / 2;
+      const off = doorW / 2 + seg / 2;
+      pane(seg, S.ax === 'x' ? -off : S.x, S.ax === 'x' ? S.z : -off, S.ry);
+      pane(seg, S.ax === 'x' ? off : S.x, S.ax === 'x' ? S.z : off, S.ry);
+      const dj = group(S.x, 0, S.z, S.ry);
+      dj.add(box(MAT.blackFrame, doorW + 0.1, 0.09, 0.1, 0, H, 0, false));
+      dj.add(box(MAT.blackFrame, 0.06, H, 0.07, -doorW / 2, H / 2, 0, false));
+      dj.add(box(MAT.blackFrame, 0.06, H, 0.07, doorW / 2, H / 2, 0, false));
+      if (o.label) {
+        dj.add(box(MAT.blackSoft, 1.15, 0.3, 0.06, 0, H + 0.24, 0.02, false));
+        dj.add(plane(new THREE.MeshBasicMaterial({
+          toneMapped: false,
+          map: makeTex(320, 84, (x, ww, hh) => {
+            x.fillStyle = '#12151B'; x.fillRect(0, 0, ww, hh);
+            x.fillStyle = '#E8B923'; x.fillRect(0, hh - 5, ww, 5);
+            x.fillStyle = '#F0F1F3'; x.font = '700 34px ui-sans-serif,Arial,sans-serif';
+            x.textAlign = 'center'; x.fillText(o.label.toUpperCase(), ww / 2, 50);
+          })
+        }), 1.05, 0.26, 0, H + 0.24, 0.055));
+      }
+      g.add(dj);
+    } else {
+      pane(S.len, S.x, S.z, S.ry);
+    }
+  });
+
+  if (o.style === 'director') {
+    // desk across the room, chair behind it, two visitor chairs in front
+    g.add(box(MAT.gloss, 2.9, 0.1, 1.35, 0, 0.76, -hd + 2.3));
+    g.add(box(MAT.glossEdge, 2.84, 0.03, 1.29, 0, 0.705, -hd + 2.3, false));
+    g.add(box(MAT.gloss, 2.6, 0.62, 0.16, 0, 0.43, -hd + 1.7));
+    g.add(box(MAT.gloss, 0.12, 0.62, 1.2, -1.32, 0.43, -hd + 2.3));
+    g.add(box(MAT.gloss, 0.12, 0.62, 1.2, 1.32, 0.43, -hd + 2.3));
+    const mon = makeMonitor('charts');
+    mon.position.set(-0.3, 0.81, -hd + 2.66);
+    mon.rotation.y = Math.PI;
+    g.add(mon);
+    g.add(box(MAT.blackSoft, 0.6, 0.022, 0.2, -0.3, 0.815, -hd + 2.1, false));
+    g.add(box(MAT.blackFrame, 0.34, 0.09, 0.1, 0.95, 0.83, -hd + 2.0, false));   // name block
+    const ch = makeTaskChair(); ch.position.set(-0.3, 0, -hd + 3.4); ch.rotation.y = Math.PI; g.add(ch);
+    [-0.85, 0.85].forEach(x => {
+      const v = makeTaskChair(); v.position.set(x, 0, -hd + 1.05); g.add(v);
+    });
+    g.add(makeCredenza(2.4).translateX(-hw + 0.55).translateZ(-hd + 4.2).rotateY(Math.PI / 2));
+    g.add(box(MAT.gloss, 1.6, 0.09, 0.9, 0, 0.44, hd - 2.2, false));             // low coffee table
+    if (o.ac) { const u = makeAC(); u.position.set(-hw + 0.4, 2.85, -hd + 2.0); u.rotation.y = Math.PI / 2; g.add(u); }
+  } else {
+    const TW = Math.min(w - 3.6, 6.0);
+    g.add(box(MAT.gloss, TW, 0.1, 1.7, 0, 0.75, 0));
+    g.add(box(MAT.glossEdge, TW - 0.06, 0.03, 1.64, 0, 0.695, 0, false));
+    g.add(box(MAT.gloss, TW - 1.6, 0.56, 0.5, 0, 0.42, 0));
+    g.add(box(MAT.blackSoft, TW - 1.7, 0.1, 0.56, 0, 0.28, 0, false));
+    g.add(box(MAT.blackSoft, 0.46, 0.035, 0.28, 0, 0.81, 0, false));
+    for (let i = 0; i < 3; i++) g.add(box(MAT.paper, 0.26, 0.012, 0.19, -1.4 + i * 1.4, 0.81, 0.62, false));
+    const seats = Math.max(2, Math.min(3, Math.floor(TW / 1.8)));
+    for (let i = 0; i < seats; i++) {
+      const x = -((seats - 1) * 1.5) / 2 + i * 1.5;
+      [-1, 1].forEach(s => {
+        const c = makeTaskChair();
+        c.position.set(x, 0, s * 1.35);
+        c.rotation.y = s > 0 ? 0 : Math.PI;
+        g.add(c);
+      });
+    }
+    if (o.tv) {
+      const tv = makeWallTV(2.4, 1.38);
+      tv.position.set(0, 1.55, -hd + 0.12);
+      g.add(tv);
+    }
+    if (o.ac) { const u = makeAC(); u.position.set(-hw + 0.4, 2.85, 0); u.rotation.y = Math.PI / 2; g.add(u); }
+  }
+  g.add(makeCeilingFan());
+  return g;
+}
+
+/* two joined desks = one 4-seat bench cluster */
+function makeBenchCluster(W, D) {
+  const g = new THREE.Group();
+  g.add(box(MAT.gloss, W, 0.09, D, 0, 0.76, 0));
+  g.add(box(MAT.glossEdge, W - 0.07, 0.03, D - 0.07, 0, 0.705, 0, false));
+  g.add(box(MAT.gloss, 0.12, 0.62, D - 0.16, -W / 2 + 0.07, 0.42, 0));
+  g.add(box(MAT.gloss, 0.12, 0.62, D - 0.16, W / 2 - 0.07, 0.42, 0));
+  g.add(box(MAT.gloss, W - 0.5, 0.5, 0.55, 0, 0.4, 0));                 // central spine
+  g.add(box(MAT.blackSoft, W - 0.6, 0.12, 0.62, 0, 0.28, 0, false));
+  g.add(box(MAT.gloss, W - 0.24, 0.4, 0.06, 0, 1.0, 0));                // desktop divider
+  g.add(box(MAT.blackFrame, W - 0.24, 0.045, 0.09, 0, 1.21, 0, false));
+  g.add(box(MAT.blackSoft, W - 1.2, 0.06, 0.16, 0, 0.68, 0, false));    // cable tray
+  return g;
+}
+
+/* the tall entrance cupboard: three compartments stacked top to bottom.
+   Top bay is network gear + ethernet coils, the two below hold bags. */
+function makeCaboodh(W, H, rows) {
+  const g = new THREE.Group();
+  W = W || 2.6; H = H || 2.7; rows = rows || 3;
+  const D = 0.66, rh = (H - 0.24) / rows;
+  g.add(box(MAT.gloss, W, H, D, 0, H / 2, 0));
+  g.add(box(MAT.glossEdge, W + 0.08, 0.08, D + 0.08, 0, H + 0.04, 0, false));
+  g.add(box(MAT.blackSoft, W, 0.16, D, 0, 0.08, 0, false));
+  for (let i = 1; i < rows; i++)
+    g.add(box(MAT.glossEdge, W - 0.1, 0.06, D, 0, 0.16 + rh * i, 0, false));
+
+  for (let r = 0; r < rows; r++) {
+    const cy = 0.16 + rh * (rows - 1 - r) + rh / 2;         // r = 0 is the TOP bay
+    g.add(box(MAT.darker, W - 0.14, rh - 0.12, D - 0.1, 0, cy, 0.02, false));
+
+    if (r === 0) {
+      // ---- networking bay
+      g.add(box(MAT.blackFrame, W - 0.34, 0.42, D - 0.22, 0, cy + rh * 0.22, 0.02, false));
+      g.add(box(MAT.blackSoft, W - 0.44, 0.14, 0.05, 0, cy + rh * 0.26, D / 2 - 0.16, false));
+      for (let p = 0; p < 10; p++)
+        g.add(box(MAT.chrome, 0.038, 0.055, 0.02, -W * 0.36 + p * (W * 0.08), cy + rh * 0.26, D / 2 - 0.13, false));
+      g.add(box(MAT.blackSoft, W - 0.44, 0.15, 0.05, 0, cy + rh * 0.09, D / 2 - 0.16, false));
+      const coil = [MAT.plant2, MAT.blackSoft, MAT.chrome, MAT.plant2];
+      for (let k = 0; k < 4; k++) {
+        const ring = mesh(GEO.torus, coil[k], 0.5, 0.5, 0.22, -W * 0.3 + k * (W * 0.2), cy - rh * 0.22, 0.08, false);
+        ring.rotation.y = Math.PI / 2;
+        g.add(ring);
+      }
+      for (let k = 0; k < 5; k++) {
+        const lead = cyl(k % 2 ? MAT.plant2 : MAT.blackSoft, 0.02, W * 0.72, 0, cy - rh * 0.4 + k * 0.045, -0.1 + k * 0.05, true);
+        lead.rotation.z = Math.PI / 2; lead.rotation.y = 0.16 * k;
+        g.add(lead);
+      }
+    } else {
+      // ---- bag bays, two bags side by side
+      [-1, 1].forEach((sx, si) => {
+        const bw = W * 0.38, bh = Math.min(rh * 0.62, 0.5);
+        const bag = new THREE.Group();
+        bag.add(box(si ? MAT.fabric : MAT.blackSoft, bw, bh, 0.32, 0, bh / 2, 0, false));
+        bag.add(box(MAT.blackFrame, bw * 0.9, 0.055, 0.28, 0, bh - 0.05, 0.02, false));
+        bag.add(box(MAT.chrome, 0.07, 0.05, 0.03, bw * 0.22, bh - 0.03, 0.15, false));
+        const handle = mesh(GEO.torus, MAT.blackSoft, 0.36, 0.36, 0.13, 0, bh + 0.09, 0, false);
+        handle.rotation.x = Math.PI / 2;
+        bag.add(handle);
+        bag.position.set(sx * W * 0.22, cy - rh / 2 + 0.1, 0.02);
+        bag.rotation.y = sx * 0.12;
+        g.add(bag);
+      });
+    }
+  }
+  return g;
+}
+
+/* washroom — solid walls, door gap, signed */
+function makeBathroom(w, d, label) {
+  const g = new THREE.Group();
+  const H = 3.0, hw = w / 2, hd = d / 2, T = 0.16;
+  const wall = (ww, x, z, ry) => {
+    const m = box(MAT.wallWhite, ww, H, T, x, H / 2, z, false);
+    m.rotation.y = ry || 0; g.add(m);
+  };
+  wall(w, 0, -hd, 0);
+  wall(d, -hw, 0, Math.PI / 2);
+  wall(d, hw, 0, Math.PI / 2);
+  const doorW = 0.95, seg = (w - doorW) / 2;
+  wall(seg, -(doorW / 2 + seg / 2), hd, 0);
+  wall(seg, (doorW / 2 + seg / 2), hd, 0);
+  g.add(box(MAT.blackFrame, doorW + 0.12, 0.1, T + 0.04, 0, 2.24, hd, false));
+  g.add(box(MAT.blackFrame, 0.06, 2.24, T + 0.04, -doorW / 2, 1.12, hd, false));
+  g.add(box(MAT.blackFrame, 0.06, 2.24, T + 0.04, doorW / 2, 1.12, hd, false));
+  g.add(box(MAT.wallFeature, doorW - 0.06, 2.16, 0.05, doorW * 0.02, 1.1, hd + 0.05, false));  // door leaf
+  g.add(cyl(MAT.chrome, 0.028, 0.16, doorW * 0.34, 1.05, hd + 0.11, true));
+
+  // sign
+  const ladies = /lad|wom/i.test(label);
+  g.add(box(MAT.blackSoft, 0.86, 0.4, 0.05, 0, 2.56, hd + 0.03, false));
+  g.add(plane(new THREE.MeshBasicMaterial({
+    toneMapped: false,
+    map: makeTex(344, 160, (x, ww, hh) => {
+      x.fillStyle = '#12151B'; x.fillRect(0, 0, ww, hh);
+      x.fillStyle = ladies ? '#E39BC0' : '#7FB2FF';
+      x.beginPath(); x.arc(64, 44, 15, 0, 6.3); x.fill();
+      if (ladies) { x.beginPath(); x.moveTo(64, 64); x.lineTo(92, 126); x.lineTo(36, 126); x.closePath(); x.fill(); }
+      else { x.fillRect(52, 64, 24, 38); x.fillRect(52, 100, 9, 28); x.fillRect(67, 100, 9, 28); }
+      x.fillStyle = '#F0F1F3'; x.font = '700 40px ui-sans-serif,Arial,sans-serif';
+      x.fillText(label.toUpperCase(), 120, 98);
+    })
+  }), 0.8, 0.36, 0, 2.56, hd + 0.06));
+
+  // a basin, a mirror and a cubicle so the inside isn't empty
+  g.add(box(MAT.gloss, w - 0.7, 0.16, 0.5, 0, 0.86, -hd + 0.4, false));
+  g.add(box(MAT.glossEdge, 0.5, 0.1, 0.36, -w * 0.16, 0.9, -hd + 0.4, false));
+  g.add(cyl(MAT.chrome, 0.022, 0.24, -w * 0.16, 1.06, -hd + 0.26, true));
+  g.add(box(MAT.darker, w - 0.9, 0.9, 0.04, 0, 1.72, -hd + 0.14, false));
+  g.add(box(MAT.wallWhite, T, H - 0.6, d * 0.5, hw - 0.75, 1.2, hd - d * 0.28, false));
+  g.add(box(MAT.gloss, 0.42, 0.42, 0.6, hw - 0.42, 0.24, hd - d * 0.55, false));
+  return g;
+}
+
+/* wall-mounted screen */
+function makeWallTV(w, h) {
+  const g = new THREE.Group();
+  g.add(box(MAT.blackFrame, w, h, 0.07, 0, 0, 0, false));
+  g.add(plane(MAT.wallTv, w - 0.09, h - 0.09, 0, 0, 0.042));
+  g.add(box(MAT.blackSoft, 0.3, 0.24, 0.08, 0, -h / 2 + 0.1, -0.06, false));
+  return g;
+}
+
+/* wall split AC */
+function makeAC() {
+  const g = new THREE.Group();
+  g.add(box(MAT.wallWhite, 1.15, 0.32, 0.24, 0, 0, 0, false));
+  g.add(box(MAT.glossEdge, 1.1, 0.06, 0.26, 0, -0.12, 0.01, false));
+  g.add(box(MAT.blackSoft, 0.16, 0.05, 0.02, 0.42, 0.02, 0.13, false));
+  return g;
+}
+
+/* the charcoal feature wall with the backlit logo */
+function makeLogoWall(w) {
+  const g = new THREE.Group();
+  const H = 3.5;
+  g.add(box(MAT.wallFeature, w, H, 0.26, 0, H / 2, 0));
+  g.add(plane(MAT.logieLogo, w * 0.82, w * 0.82 * 0.375, 0, H * 0.56, 0.14));
+  g.add(box(MAT.blackSoft, w, 0.1, 0.34, 0, H, 0.05, false));
+  // little track spot
+  const sp = group(w * 0.1, H - 0.28, 0.42);
+  sp.add(cyl(MAT.blackSoft, 0.05, 0.22, 0, 0, 0, true));
+  sp.add(cyl(MAT.light, 0.045, 0.03, 0, -0.12, 0, true));
+  sp.rotation.x = 0.5;
+  g.add(sp);
+  return g;
+}
+
+/* low white credenza, like the counters in the photos */
+function makeCredenza(w) {
+  const g = new THREE.Group();
+  g.add(box(MAT.gloss, w, 0.86, 0.6, 0, 0.43, 0));
+  g.add(box(MAT.glossEdge, w + 0.06, 0.05, 0.66, 0, 0.89, 0, false));
+  g.add(box(MAT.blackSoft, w - 0.2, 0.1, 0.02, 0, 0.34, 0.31, false));
+  return g;
+}
+
+/* recessed downlight */
+function makeDownlights(pts) {
+  const g = new THREE.Group();
+  const inst = new THREE.InstancedMesh(GEO.cylLow, MAT.downlight, pts.length);
+  const dummy = new THREE.Object3D();
+  pts.forEach((p, i) => {
+    dummy.position.set(p[0], 3.6, p[1]);
+    dummy.scale.set(0.26, 0.05, 0.26);
+    dummy.updateMatrix(); inst.setMatrixAt(i, dummy.matrix);
+  });
+  inst.instanceMatrix.needsUpdate = true;
+  g.add(inst);
   return g;
 }
 
@@ -1638,8 +2871,9 @@ function makeNPC(opts) {
    Every clickable thing gets: a floor ring, a billboarded hotspot,
    a focus pose for the camera, and the payload the panel renders.
    ========================================================================== */
-function registerInteractive(obj, cfg) {
-  const rec = Object.assign({ obj, hl: 0, target: 0 }, cfg);
+function registerInteractive(obj, cfg, sc) {
+  sc = sc || ACTIVE;
+  const rec = Object.assign({ obj, hl: 0, target: 0, scene: sc.id }, cfg);
 
   // floor ring
   const ringMat = MAT.ring.clone();
@@ -1664,17 +2898,16 @@ function registerInteractive(obj, cfg) {
   hs.renderOrder = 3;
   obj.add(hs);
   rec.hotspot = hs; rec.hotMat = hMat;
-  HOTSPOTS.push(rec);
 
   // pickable meshes
   obj.traverse(m => {
     if (m.isMesh && m !== ring && m !== dot && m !== rim) {
       m.userData.ix = rec;
-      PICKABLE.push(m);
+      sc.pickable.push(m);
     }
   });
 
-  INTERACTIVES.push(rec);
+  sc.interactives.push(rec);
   return rec;
 }
 
@@ -1688,214 +2921,622 @@ function focusPose(tx, ty, tz, radius, theta, phi) {
 }
 
 /* ==========================================================================
-   9 · OFFICE SCENE  —  floor plan + interactive wiring
-   --------------------------------------------------------------------------
-     x[-21..21]  z[-16..16]
-     workstation pod : x -19..-2   z -12..0
-     meeting room    : x   7..19   z -15..-5
-     lounge / coffee : x -20..-8   z   5..15
-     reception       : x   2..8    z  10..14
-     whiteboard      : left wall,  z 2
-     bookshelf       : right wall, z 5
+   8 · SCENE MANAGER
+   One lobby + four offices. Each scene owns its own pick list, blockers and
+   animated objects; only the active one is visible or ticked.
    ========================================================================== */
-const DESK_POS = [
-  [-16, -9], [-10.5, -9], [-5, -9],
-  [-16, -3], [-10.5, -3], [-5, -3]
-];
+const SCENES = {};
+let ACTIVE = null;
+let HERO = null;
+let SWITCHING = false;
 
-function assembleOffice() {
-  buildShell();
+function newScene(id) {
+  const sc = {
+    id, root: new THREE.Group(), pickable: [], interactives: [],
+    blockers: [], bounds: { x: 10, z: 10 }, animated: [], doors: [],
+    spawn: new THREE.Vector3(), label: '', sub: ''
+  };
+  sc.root.visible = false;
+  scene.add(sc.root);
+  SCENES[id] = sc;
+  return sc;
+}
 
-  // ---------- workstations -> projects
-  DATA.projects.forEach((p, i) => {
-    const [x, z] = DESK_POS[i];
-    const ws = makeWorkstation(p, x, z, i === 0 || i === 3);
-    scene.add(ws);
-    registerInteractive(ws, {
-      type: 'project', id: p.id, title: p.name, sub: p.station,
-      ring: { r: 1.75, z: 0.1 },
-      hotspot: { y: 1.95, z: -0.34 },
-      focus: focusPose(x, 1.05, z - 0.2, 5.6, 0.34, 1.02),
-      data: p
-    });
+function buildScene(id) {
+  if (SCENES[id]) return SCENES[id];
+  const sc = newScene(id);
+  const before = ANIMATED.length;
+  ACTIVE_BUILD = sc;
+  TH = THEMES[(LAYOUTS[id] && LAYOUTS[id].theme) || 'default'];
+  if (id === 'hub') buildHub(sc); else buildOffice(sc, LAYOUTS[id]);
+  TH = THEMES.default;
+  sc.animated = ANIMATED.splice(before);
+  return sc;
+}
+let ACTIVE_BUILD = null;
+
+/* evenly spaced door positions — works for 1 door or 6 */
+function doorXs() {
+  const n = DOORS.length;
+  const pitch = n >= 4 ? 6.4 : 8.6;
+  const start = -((n - 1) * pitch) / 2;
+  return DOORS.map((_, i) => start + i * pitch);
+}
+
+/* ---------- the lobby ---------------------------------------------------- */
+function buildHub(sc) {
+  const L = LAYOUTS.hub;
+  sc.label = L.name; sc.sub = L.sub;
+  const R = L.room;
+  sc.root.add(makeRoom(R, sc));
+  sc.spawn.set(L.spawn[0], 0, L.spawn[1]);
+
+  // runner leading from the entrance to the doors
+  addRug(sc.root, MAT.carpet, 4.6, 20, 0, -1);
+  addRug(sc.root, MAT.carpetW, 9, 7.5, 9, 5.5);
+  addRug(sc.root, MAT.carpet, 8, 6.5, -9.2, 5);
+
+  // doors along the back wall — spacing derived from however many are active
+  const xs = doorXs();
+  DOORS.forEach((d, i) => {
+    const dr = makeDoor(d);
+    dr.group.position.set(xs[i], 0, -R.d / 2 + 0.2);
+    sc.root.add(dr.group);
+    sc.doors.push(dr);
+    blocker(sc, xs[i], -R.d / 2 + 0.1, 1.7, 0.4);
+
+    dr.rec = registerInteractive(dr.group, {
+      type: 'door', id: 'door-' + d.id, title: d.company.replace(' Pvt. Ltd.', '').replace(' Private Limited', ''),
+      sub: d.tierLabel + ' · ' + d.when,
+      ring: { r: 1.9, z: 1.2 }, hotspot: { y: 4.35, z: 0.3 },
+      focus: focusPose(xs[i], 1.7, -R.d / 2 + 2.6, 8.4, 0.0, 1.06),
+      prox: new THREE.Vector3(xs[i], 0, -R.d / 2 + 1.9),
+      proxLabel: 'Open the ' + d.tierLabel + ' door',
+      data: d
+    }, sc);
+    dr.rec.tier = d.tier;
+    dr.rec.doorRef = dr;
+
+    // carpet laid outside the door
+    addRug(sc.root, MAT.carpet, 3.6, 2.8, xs[i], -R.d / 2 + 2.3);
+    const trim = TIERMAT[d.tier].soft;
+    [[3.7, 0.16, 0, -1.42], [3.7, 0.16, 0, 1.42], [0.16, 2.9, -1.77, 0], [0.16, 2.9, 1.77, 0]]
+      .forEach(([tw, td, ox, oz]) => {
+        const m = new THREE.Mesh(GEO.plane, trim);
+        m.rotation.x = -Math.PI / 2;
+        m.scale.set(tw, td, 1);
+        m.position.set(xs[i] + ox, 0.016, -R.d / 2 + 2.3 + oz);
+        sc.root.add(m);
+      });
   });
 
-  // ---------- NPCs
-  const seatOf = {};
-  DATA.projects.forEach((p, i) => { seatOf[p.id] = DESK_POS[i]; });
-
-  DATA.employees.forEach((e, i) => {
-    let pos, ry, seated = true;
-    if (seatOf[e.seatKey]) {
-      const [dx, dz] = seatOf[e.seatKey];
-      pos = [dx + 0.08, 0, dz + 1.0]; ry = Math.PI;      // facing the monitor
-    } else if (e.seatKey === 'board') {
-      pos = [-18.7, 0, 2.6]; ry = -Math.PI / 2; seated = false;
-    } else {
-      pos = [15.4, 0, -13.2]; ry = 0.35; seated = false; // presenting in the meeting room
-    }
-    const npc = makeNPC({ seated, shirt: e.shirt, skin: i, hair: i % 3 });
-    npc.position.set(pos[0], pos[1], pos[2]);
-    npc.rotation.y = ry;
-    scene.add(npc);
-
-    const theta = seated ? Math.PI + 0.4 : (e.seatKey === 'board' ? Math.PI / 2 : 0.5);
-    registerInteractive(npc, {
-      type: 'person', id: e.id, title: e.name, sub: e.designation,
-      ring: { r: 0.62, z: seated ? 0.15 : 0 },
-      hotspot: { y: seated ? 1.62 : 2.0 },
-      focus: focusPose(pos[0], 1.15, pos[2], 3.9, theta, 1.16),
-      data: e
-    });
-  });
-
-  // ---------- meeting room -> experience & teamwork
-  const room = makeMeetingRoom();
-  scene.add(room);
-  registerInteractive(room, {
-    type: 'experience', id: 'meeting', title: 'Meeting room', sub: 'Experience & how I work in a team',
-    ring: { r: 3.6 }, hotspot: { y: 2.5 },
-    focus: focusPose(13, 1.2, -10, 12.5, 0.62, 0.94),
-    data: DATA.experience
-  });
-
-  // ---------- whiteboard -> skills
-  const board = makeWhiteboard();
-  scene.add(board);
-  registerInteractive(board, {
-    type: 'skills', id: 'board', title: 'The whiteboard', sub: 'Stack, workflow, architecture',
-    ring: { r: 1.5, z: 1.3 }, hotspot: { y: 3.35, z: 0.35 },
-    focus: focusPose(-19.4, 1.9, 2, 7.4, Math.PI / 2, 1.12),
-    data: DATA.skills
-  });
-
-  // ---------- reception -> about me
+  // reception -> about me
   const rec = makeReception();
-  scene.add(rec);
+  rec.position.set(9, 0, 5.5);
+  sc.root.add(rec);
+  blocker(sc, 9, 5.5, 1.9, 1.9);
+  blocker(sc, 9, 3.3, 3.2, 0.3);
   registerInteractive(rec, {
-    type: 'about', id: 'about', title: DATA.owner.name, sub: DATA.owner.role + ' · ' + DATA.owner.years,
-    ring: { r: 2.5, z: 0.2 }, hotspot: { y: 2.1, z: 0.4 },
-    focus: focusPose(4.5, 1.3, 12.2, 8.2, 0.22, 1.0),
+    type: 'about', id: 'about', title: DATA.owner.name,
+    sub: DATA.owner.role + ' · ' + DATA.owner.years,
+    ring: { r: 2.5, z: 0.2 }, hotspot: { y: 2.1, z: 0.5 },
+    focus: focusPose(9, 1.3, 5.3, 8, 0.22, 1.0),
+    prox: new THREE.Vector3(9, 0, 8.3), proxLabel: 'Read about me',
     data: DATA.owner
+  }, sc);
+
+  // waiting area
+  const s1 = makeSofa(2.8); s1.position.set(-11.4, 0, 5); s1.rotation.y = Math.PI / 2; sc.root.add(s1);
+  const s2 = makeSofa(2.2); s2.position.set(-7, 0, 5); s2.rotation.y = -Math.PI / 2; sc.root.add(s2);
+  const ct = new THREE.Group();
+  ct.add(box(MAT.wood, 1.7, 0.09, 0.95, 0, 0.44, 0));
+  [[-0.72, -0.36], [0.72, -0.36], [-0.72, 0.36], [0.72, 0.36]].forEach(([x, z]) =>
+    ct.add(cyl(MAT.metal, 0.035, 0.44, x, 0.22, z, true)));
+  ct.position.set(-9.2, 0, 5); sc.root.add(ct);
+  blocker(sc, -11.4, 5, 0.6, 1.5); blocker(sc, -7, 5, 0.6, 1.2); blocker(sc, -9.2, 5, 0.9, 0.6);
+
+}
+
+/* ---------- an office ---------------------------------------------------- */
+function buildOffice(sc, L) {
+  const door = DOORS.find(d => d.id === sc.id);
+  sc.label = L.name; sc.sub = L.sub;
+  sc.door = door;
+  const R = Object.assign({}, L.room, { frontGap: 3.4, frontGapX: L.exit ? L.exit[0] : 0 });
+  sc.root.add(makeRoom(R, sc));
+  sc.spawn.set(L.spawn[0], 0, L.spawn[1]);
+  const hd = L.room.d / 2, hw = L.room.w / 2;
+
+  // exit portal back to the lobby
+  const portal = makeExitPortal();
+  portal.position.set(L.exit[0], 0, hd);
+  sc.root.add(portal);
+  registerInteractive(portal, {
+    type: 'exit', id: 'exit', title: 'Back to the lobby', sub: 'Leave this office',
+    ring: { r: 1.5, z: -1.2 }, hotspot: { y: 3.4, z: -0.1 },
+    focus: focusPose(L.exit[0], 1.5, hd - 3.4, 7, Math.PI, 1.08),
+    prox: new THREE.Vector3(L.exit[0], 0, hd - 1.5), proxLabel: 'Go back to the lobby',
+    data: null
+  }, sc);
+
+  // desk pod rug
+  if (L.desks.length > 1 && TH.rugs) {
+    const xs = L.desks.map(d => d.x), zs = L.desks.map(d => d.z);
+    const cx = (Math.min(...xs) + Math.max(...xs)) / 2, cz = (Math.min(...zs) + Math.max(...zs)) / 2;
+    addRug(sc.root, MAT.carpet, Math.max(...xs) - Math.min(...xs) + 6, Math.max(...zs) - Math.min(...zs) + 7, cx, cz + 0.4);
+  }
+
+  // ---- desks
+  L.desks.forEach(cfg => {
+    const proj = cfg.p === 'side' ? DATA.sideProject : (cfg.p === 'vacancy' ? null : DATA.projects.find(p => p.id === cfg.p));
+    const screen = cfg.vacant ? 'vacant' : (cfg.screen || (proj && proj.screen) || 'code');
+    const ws = new THREE.Group();
+    ws.position.set(cfg.x, 0, cfg.z);
+    ws.add(TH.bench ? makeBenchDesk(screen, cfg.dual) : makeDesk(screen, cfg.dual));
+    const ch = TH.bench ? makeTaskChair() : makeChair(MAT.fabric);
+    ch.position.set(0.08, 0, TH.bench ? 1.25 : 1.05); ch.rotation.y = 0.12;
+    ws.add(ch);
+    sc.root.add(ws);
+    blocker(sc, cfg.x, cfg.z, 1.35, 0.75);
+    blocker(sc, cfg.x, cfg.z + 1.05, 0.45, 0.45);
+
+    const type = cfg.vacant ? 'vacancy' : (cfg.side ? 'side' : 'project');
+    const data = cfg.vacant ? VACANCY : (cfg.side ? DATA.sideProject : proj);
+    registerInteractive(ws, {
+      type, id: cfg.p, title: data.name || data.title, sub: cfg.vacant ? 'Unoccupied' : (proj ? proj.station : 'Side project'),
+      ring: { r: 1.75, z: 0.1 }, hotspot: { y: 1.95, z: -0.34 },
+      focus: focusPose(cfg.x, 1.05, cfg.z - 0.2, 5.6, 0.34, 1.02),
+      prox: new THREE.Vector3(cfg.x, 0, cfg.z + 2.5),
+      proxLabel: cfg.vacant ? 'Look at the empty desk' : 'Open ' + (data.name || data.title),
+      data
+    }, sc);
+
+    if (cfg.npc) placeNPC(sc, cfg.npc, cfg.x + 0.08, cfg.z + 1.0, Math.PI, true);
   });
 
-  // ---------- bookshelf -> education
-  const shelf = makeBookshelf();
-  scene.add(shelf);
-  registerInteractive(shelf, {
-    type: 'education', id: 'edu', title: 'The shelf', sub: 'Education & how I keep learning',
-    ring: { r: 1.5, z: 1.2 }, hotspot: { y: 3.0, z: 0.4 },
-    focus: focusPose(19.2, 1.5, 5, 6.8, -Math.PI / 2, 1.1),
-    data: DATA.education
+  // ---- joined bench tables: one interactive per occupied seat
+  const SEAT = [[-1.4, 1], [1.4, 1], [-1.4, -1], [1.4, -1]];
+  (L.tables || []).forEach((T, ti) => {
+    const tw = T.w || 5.8, td = T.d || 2.3;
+    const g = group(T.x, 0, T.z);
+    g.add(makeBenchCluster(tw, td));
+    sc.root.add(g);
+    blocker(sc, T.x, T.z, tw / 2, td / 2 + 0.15);
+
+    (T.seats || []).forEach((seat, i) => {
+      const [sx, side] = SEAT[i];
+      const proj = seat.p ? DATA.projects.find(p => p.id === seat.p) : null;
+      const scr = proj ? proj.screen : 'code';
+
+      const seatG = group(sx, 0, 0);
+      const mon = makeMonitor(scr, seat.dual ? 1.12 : 1.02);
+      mon.position.set(0, 0.805, side * 0.5);
+      if (side < 0) mon.rotation.y = Math.PI;
+      seatG.add(mon);
+      seatG.add(box(MAT.blackSoft, 0.62, 0.022, 0.2, 0, 0.815, side * 1.02, false));
+      seatG.add(box(MAT.blackSoft, 0.085, 0.03, 0.12, 0.42, 0.82, side * 1.05, false));
+      if (i % 2 === 0) seatG.add(cyl(MAT.potWhite, 0.05, 0.1, -0.62, 0.855, side * 0.95, true));
+      const ch = makeTaskChair();
+      ch.position.set(0.06, 0, side * 1.55);
+      ch.rotation.y = side > 0 ? 0.1 : Math.PI + 0.1;
+      seatG.add(ch);
+      g.add(seatG);
+      blocker(sc, T.x + sx, T.z + side * 1.55, 0.45, 0.45);
+
+      const wx = T.x + sx, wz = T.z + side * 1.55;
+      if (seat.npc) placeNPC(sc, seat.npc, wx + 0.06, wz, side > 0 ? Math.PI : 0, true);
+      if (!proj) return;
+      registerInteractive(seatG, {
+        type: 'project', id: proj.id, title: proj.name, sub: proj.station,
+        ring: { r: 1.15, z: side * 1.0 },
+        hotspot: { y: 1.95, z: side * 0.5 },
+        focus: focusPose(wx, 1.05, T.z + side * 0.7, 5.2, side > 0 ? 0.34 : Math.PI + 0.34, 1.02),
+        prox: new THREE.Vector3(wx, 0, T.z + side * 2.5),
+        proxLabel: 'Open ' + proj.name,
+        data: proj
+      }, sc);
+    });
   });
 
-  // ---------- lounge, laptop -> side project
-  const lounge = makeLounge();
-  scene.add(lounge);
-  const laptop = makeLaptop();
-  laptop.position.set(-13.75, 0.49, 9.5);
-  laptop.rotation.y = 2.5;
-  scene.add(laptop);
-  registerInteractive(laptop, {
-    type: 'side', id: 'side', title: DATA.sideProject.name, sub: 'Side project · open laptop',
-    ring: { r: 1.05, y: -0.47 }, hotspot: { y: 1.0 },
-    focus: focusPose(-13.7, 0.85, 9.5, 4.4, 2.45, 1.1),
-    data: DATA.sideProject
+  // ---- glass cabins (meeting room, director's cabin)
+  (L.cabins || []).forEach(C => {
+    const cab = makeGlassCabin(C.w, C.d, { style: C.style, sides: C.sides, door: C.door, label: C.label, ac: C.ac, tv: C.tv });
+    cab.position.set(C.x, 0, C.z);
+    sc.root.add(cab);
+    const hcw = C.w / 2, hcd = C.d / 2, GAP = 1.5;
+    ['n', 's', 'e', 'w'].forEach(k => {
+      if (!C.sides[k]) return;
+      const horiz = (k === 'n' || k === 's');
+      const len = horiz ? C.w : C.d;
+      const bx = C.x + (k === 'e' ? hcw : k === 'w' ? -hcw : 0);
+      const bz = C.z + (k === 's' ? hcd : k === 'n' ? -hcd : 0);
+      if (C.door !== k) {
+        blocker(sc, bx, bz, horiz ? hcw : 0.18, horiz ? 0.18 : hcd);
+      } else {
+        const seg = (len - GAP) / 4, off = GAP / 2 + seg;
+        blocker(sc, bx - (horiz ? off : 0), bz - (horiz ? 0 : off), horiz ? seg : 0.18, horiz ? 0.18 : seg);
+        blocker(sc, bx + (horiz ? off : 0), bz + (horiz ? 0 : off), horiz ? seg : 0.18, horiz ? 0.18 : seg);
+      }
+    });
+    blocker(sc, C.x, C.z + (C.style === 'director' ? -hcd + 2.3 : 0), 1.6, 0.9);
+    if (C.id !== 'meeting') return;
+    const DIR = { n: [0, -1], s: [0, 1], e: [1, 0], w: [-1, 0] }[C.door] || [0, 1];
+    const px = C.x + DIR[0] * (hcw + 1.5);
+    const pz = C.z + DIR[1] * (hcd + 1.5);
+    registerInteractive(cab, {
+      type: 'experience', id: 'meeting', title: 'Meeting room', sub: 'Experience & how I work in a team',
+      ring: { r: Math.min(hcw, hcd) * 0.9 }, hotspot: { y: 3.5 },
+      focus: focusPose(C.x, 1.2, C.z, Math.max(C.w, C.d) + 3, 0.62, 0.94),
+      prox: new THREE.Vector3(px, 0, pz), proxLabel: 'Step into the meeting room',
+      data: DATA.experience
+    }, sc);
   });
 
-  // ---------- coffee point -> easter egg
-  const coffee = makeCoffeePoint();
-  scene.add(coffee);
-  registerInteractive(coffee, {
-    type: 'coffee', id: 'coffee', title: 'Coffee machine', sub: 'Purely operational equipment',
-    ring: { r: 1.15, x: -1.1, z: -1.0 }, hotspot: { y: 2.7, x: -1.1, z: -0.2 },
-    focus: focusPose(-15.4, 1.4, 13.9, 6.4, Math.PI + 0.28, 1.08),
-    data: DATA.coffee
+  // ---- the entrance cupboard: ethernet bay + two bag bays
+  (L.caboodh || []).forEach(lk => {
+    const u = makeCaboodh(lk.w || 2.6, lk.h || 2.7, 3);
+    u.position.set(lk.x, 0, lk.z); u.rotation.y = lk.ry || 0;
+    sc.root.add(u);
+    const along = Math.abs(Math.cos(lk.ry || 0)) > 0.5;
+    const half = (lk.w || 2.6) / 2;
+    blocker(sc, lk.x, lk.z, along ? half : 0.4, along ? 0.4 : half);
   });
 
-  // ---------- exit sign -> contact
-  const exit = makeExitSign();
-  scene.add(exit);
-  registerInteractive(exit, {
-    type: 'contact', id: 'contact', title: 'Say hello', sub: 'Contact & resume',
-    ring: { r: 1.6, y: -0.0, z: -1.2 }, hotspot: { y: 1.85, z: 0.0 },
-    focus: focusPose(0, 2.0, 14.6, 8.0, Math.PI + 0.12, 1.14),
-    data: DATA.contact
+  // ---- standalone NPCs
+  (L.npcs || []).forEach(n => placeNPC(sc, n.id, n.x, n.z, n.ry || 0, !!n.seated));
+
+  // ---- meeting room
+  if (L.meeting) {
+    const mw = L.meeting.w || 12, md = L.meeting.d || 10.4;
+    const room = TH.bench ? makeGlassCabin(mw, md, {}) : makeMeetingRoom();
+    room.position.set(L.meeting.x, 0, L.meeting.z);
+    sc.root.add(room);
+    if (TH.rugs) addRug(sc.root, MAT.carpet, 11.5, 9.6, L.meeting.x, L.meeting.z);
+    blocker(sc, L.meeting.x, L.meeting.z, 3.1, 1.1);
+    blocker(sc, L.meeting.x - mw / 2, L.meeting.z, 0.2, md / 2);
+    blocker(sc, L.meeting.x - (mw / 4 + 0.3), L.meeting.z + md / 2, mw / 4, 0.2);
+    blocker(sc, L.meeting.x + (mw / 4 + 0.3), L.meeting.z + md / 2, mw / 4, 0.2);
+    registerInteractive(room, {
+      type: 'experience', id: 'meeting', title: 'Meeting room', sub: 'Experience & how I work in a team',
+      ring: { r: 3.6 }, hotspot: { y: 2.5 },
+      focus: focusPose(L.meeting.x, 1.2, L.meeting.z, 12.5, 0.62, 0.94),
+      prox: new THREE.Vector3(L.meeting.x, 0, L.meeting.z + (L.meeting.d || 10.4) / 2 + 1.2),
+      proxLabel: 'Step into the meeting room',
+      data: DATA.experience
+    }, sc);
+  }
+
+  // ---- whiteboard
+  if (L.whiteboard) {
+    const wb = makeWhiteboard();
+    wb.position.set(L.whiteboard.x, 0, L.whiteboard.z);
+    wb.rotation.y = L.whiteboard.ry;
+    sc.root.add(wb);
+    const f = facing(L.whiteboard, 1.6);
+    registerInteractive(wb, {
+      type: 'skills', id: 'board', title: 'The whiteboard', sub: 'Stack, workflow, architecture',
+      ring: { r: 1.5, z: 1.3 }, hotspot: { y: 3.35, z: 0.35 },
+      focus: focusPose(f.x, 1.9, f.z, 7.4, L.whiteboard.ry, 1.12),
+      prox: new THREE.Vector3(f.x, 0, f.z), proxLabel: 'Read the whiteboard',
+      data: DATA.skills
+    }, sc);
+  }
+
+  // ---- bookshelf / education
+  if (L.shelf) {
+    const sh = makeBookshelf();
+    sh.position.set(L.shelf.x, 0, L.shelf.z);
+    sh.rotation.y = L.shelf.ry;
+    sc.root.add(sh);
+    const f = facing(L.shelf, 1.5);
+    blocker(sc, L.shelf.x, L.shelf.z, 0.6, 2.3);
+    registerInteractive(sh, {
+      type: 'education', id: 'edu', title: 'The shelf', sub: 'Education & how I keep learning',
+      ring: { r: 1.5, z: 1.2 }, hotspot: { y: 3.0, z: 0.4 },
+      focus: focusPose(f.x, 1.5, f.z, 6.8, L.shelf.ry, 1.1),
+      prox: new THREE.Vector3(f.x, 0, f.z), proxLabel: 'Look at the shelf',
+      data: DATA.education
+    }, sc);
+  }
+
+  // ---- lounge (+ optional side-project laptop)
+  if (L.lounge) {
+    const lg = makeLounge();
+    lg.position.set(L.lounge.x, 0, L.lounge.z);
+    sc.root.add(lg);
+    addRug(sc.root, MAT.carpetW, 9.5, 7.5, L.lounge.x, L.lounge.z);
+    blocker(sc, L.lounge.x - 2.6, L.lounge.z, 0.6, 1.5);
+    blocker(sc, L.lounge.x + 2.6, L.lounge.z, 0.6, 1.3);
+    blocker(sc, L.lounge.x, L.lounge.z, 0.9, 0.6);
+    if (L.lounge.laptop) {
+      const lap = makeLaptop();
+      lap.position.set(L.lounge.x - 0.15, 0.49, L.lounge.z - 0.1);
+      lap.rotation.y = 2.5;
+      sc.root.add(lap);
+    }
+  }
+
+  // ---- coffee point
+  if (L.coffee) {
+    const cf = makeCoffeePoint();
+    cf.position.set(L.coffee.x, 0, L.coffee.z);
+    sc.root.add(cf);
+    blocker(sc, L.coffee.x, L.coffee.z, 2.4, 0.5);
+    registerInteractive(cf, {
+      type: 'coffee', id: 'coffee', title: 'Coffee machine', sub: 'Purely operational equipment',
+      ring: { r: 1.15, x: -1.1, z: 1.2 }, hotspot: { y: 2.7, x: -1.1, z: 0.2 },
+      focus: focusPose(L.coffee.x - 1.1, 1.4, L.coffee.z + 1.4, 6, 0.2, 1.08),
+      prox: new THREE.Vector3(L.coffee.x - 1.1, 0, L.coffee.z + 1.6), proxLabel: 'Make a coffee',
+      data: DATA.coffee
+    }, sc);
+  }
+
+  // ---- contact sign
+  if (L.contact) {
+    const sg = makeExitSign();
+    sg.position.set(L.contact.x, 0, L.contact.z);
+    sc.root.add(sg);
+    registerInteractive(sg, {
+      type: 'contact', id: 'contact', title: 'Say hello', sub: 'Contact & resume',
+      ring: { r: 1.6, z: 1.4 }, hotspot: { y: 1.9 },
+      focus: focusPose(L.contact.x, 2.0, L.contact.z + 1.4, 7.4, 0.1, 1.14),
+      prox: new THREE.Vector3(L.contact.x, 0, L.contact.z + 2), proxLabel: 'Get in touch',
+      data: DATA.contact
+    }, sc);
+  }
+
+  // ---- the wall plaque for this chapter
+  if (L.plaque && door) {
+    const pq = makeRolePlaque(door);
+    pq.position.set(L.plaque.x, 0, L.plaque.z);
+    pq.rotation.y = L.plaque.ry;
+    sc.root.add(pq);
+    const f = facing(L.plaque, 2.2);
+    registerInteractive(pq, {
+      type: 'door', id: 'chapter', title: door.company.replace(' Pvt. Ltd.', '').replace(' Private Limited', ''),
+      sub: door.tierLabel + ' · ' + door.when,
+      ring: { r: 1.4, z: 1.9 }, hotspot: { y: 3.2, z: 0.3 },
+      focus: focusPose(f.x, 1.9, f.z, 6.2, L.plaque.ry, 1.08),
+      prox: new THREE.Vector3(f.x, 0, f.z), proxLabel: 'Read this chapter',
+      data: door, inside: true
+    }, sc);
+  }
+
+  if (L.breakout) {
+    const bt = makeBreakoutTable();
+    bt.position.set(L.breakout.x, 0, L.breakout.z);
+    sc.root.add(bt);
+    blocker(sc, L.breakout.x, L.breakout.z, 0.9, 0.9);
+  }
+
+  (L.storage || []).forEach(([x, z]) => {
+    sc.root.add(box(MAT.wallDark, 3.2, 1.1, 0.55, x, 0.55, z));
+    sc.root.add(box(MAT.deskTop, 3.3, 0.08, 0.6, x, 1.14, z, false));
+    blocker(sc, x, z, 1.6, 0.35);
   });
 
-  // ---------- non-interactive dressing
-  scene.add(makeBreakoutTable());
-  [[-20, -13.4, 'tree', 1.1], [19.6, -1.2, 'leaf', 1.0], [-2.3, 0.6, 'leaf', 0.95],
-   [8.2, 13.6, 'tree', 1.15], [-20, 5.6, 'leaf', 0.9], [19.4, 13.8, 'tree', 1.0],
-   [-2.4, -12.4, 'tree', 1.05]].forEach(([x, z, k, s]) => {
-    const pl = makePlant(k, s); pl.position.set(x, 0, z); scene.add(pl);
+  // ---- logo feature wall
+  if (L.logo) {
+    const lw = makeLogoWall(L.logo.w || 6.5);
+    lw.position.set(L.logo.x, 0, L.logo.z);
+    lw.rotation.y = L.logo.ry || 0;
+    sc.root.add(lw);
+    const lAlong = Math.abs(Math.cos(L.logo.ry || 0)) > 0.5;
+    const lHalf = (L.logo.w || 6.5) / 2;
+    blocker(sc, L.logo.x, L.logo.z, lAlong ? lHalf : 0.35, lAlong ? 0.35 : lHalf);
+  }
+
+  // ---- black tube shelving
+  (L.shelves || []).forEach(sh => {
+    const u = makeShelfUnit(sh.len || 5, sh.bays || 3, sh.levels || 4);
+    u.position.set(sh.x, 0, sh.z);
+    u.rotation.y = sh.ry || 0;
+    sc.root.add(u);
+    const along = Math.abs(Math.cos(sh.ry || 0)) > 0.5;
+    blocker(sc, sh.x, sh.z, along ? (sh.len || 5) / 2 : 0.3, along ? 0.3 : (sh.len || 5) / 2);
   });
 
-  // storage units along the back of the pod
-  [-19.4, -8.4].forEach(x => {
-    const c = box(MAT.wallDark, 3.2, 1.1, 0.55, x, 0.55, -12.6);
-    scene.add(c);
-    scene.add(box(MAT.deskTop, 3.3, 0.08, 0.6, x, 1.14, -12.6, false));
-    const pl = makePlant('leaf', 0.7); pl.position.set(x + 1.1, 1.18, -12.6); scene.add(pl);
+  // ---- washrooms
+  (L.bathrooms || []).forEach(b => {
+    const r = makeBathroom(b.w, b.d, b.label);
+    r.position.set(b.x, 0, b.z);
+    r.rotation.y = b.ry || 0;
+    sc.root.add(r);
+    blocker(sc, b.x, b.z, b.w / 2, b.d / 2);
   });
-  // printer
-  const pr = group(-13.9, 0, -12.6);
-  pr.add(box(MAT.dark, 0.9, 0.8, 0.7, 0, 0.4, 0));
-  pr.add(box(MAT.darker, 0.8, 0.06, 0.5, 0, 0.83, 0.06, false));
-  pr.add(box(MAT.paper, 0.6, 0.03, 0.4, 0, 0.87, 0.14, false));
-  scene.add(pr);
 
-  // static geometry never moves — stop recomputing its matrices every frame
-  SHELL.traverse(o => { o.updateMatrix(); o.matrixAutoUpdate = false; });
+  // ---- ceiling fans (light fittings removed on request)
+  (L.fans || []).forEach(([x, z]) => {
+    const f = makeCeilingFan(); f.position.set(x, 0, z); sc.root.add(f);
+  });
+
+  // ---- wall screen
+  if (L.tv) {
+    const tv = makeWallTV(L.tv.w || 2.4, L.tv.h || 1.4);
+    tv.position.set(L.tv.x, L.tv.y || 1.7, L.tv.z);
+    tv.rotation.y = L.tv.ry || 0;
+    sc.root.add(tv);
+  }
+
+  // ---- split ACs
+  (L.acs || []).forEach(a => {
+    const u = makeAC(); u.position.set(a.x, a.y || 3.05, a.z); u.rotation.y = a.ry || 0;
+    sc.root.add(u);
+  });
+
+  // ---- white credenzas
+  (L.credenzas || []).forEach(c => {
+    const u = makeCredenza(c.w || 2.6);
+    u.position.set(c.x, 0, c.z); u.rotation.y = c.ry || 0;
+    sc.root.add(u);
+    const along = Math.abs(Math.cos(c.ry || 0)) > 0.5;
+    blocker(sc, c.x, c.z, along ? (c.w || 2.6) / 2 : 0.35, along ? 0.35 : (c.w || 2.6) / 2);
+  });
+
+  (L.plants || []).forEach(([x, z, k, s]) => {
+    const p = makePlant(k, s); p.position.set(x, 0, z); sc.root.add(p);
+    blocker(sc, x, z, 0.4, 0.4);
+  });
+}
+
+/* the point in front of a wall-mounted object */
+function facing(cfg, dist) {
+  return { x: cfg.x + Math.sin(cfg.ry) * dist, z: cfg.z + Math.cos(cfg.ry) * dist };
+}
+
+function placeNPC(sc, id, x, z, ry, seated) {
+  const e = DATA.employees.find(n => n.id === id);
+  if (!e) return;
+  const npc = makeNPC({ seated, shirt: e.shirt, skin: DATA.employees.indexOf(e), hair: DATA.employees.indexOf(e) % 3 });
+  npc.position.set(x, 0, z);
+  npc.rotation.y = ry;
+  sc.root.add(npc);
+  if (!seated) blocker(sc, x, z, 0.4, 0.4);
+  registerInteractive(npc, {
+    type: 'person', id: e.id, title: e.name, sub: e.designation,
+    ring: { r: 0.62, z: seated ? 0.15 : 0 },
+    hotspot: { y: seated ? 1.62 : 2.0 },
+    focus: focusPose(x, 1.15, z, 3.9, ry + Math.PI, 1.16),
+    prox: new THREE.Vector3(x - Math.sin(ry) * (seated ? 1.5 : -1.4), 0,
+                            z - Math.cos(ry) * (seated ? 1.5 : -1.4)),
+    proxLabel: 'Talk to ' + e.name.split(' ')[0],
+    data: e
+  }, sc);
+}
+
+/* ---------- switching ---------------------------------------------------- */
+function gotoScene(id, opts) {
+  opts = opts || {};
+  if (SWITCHING) return;
+  const sc = buildScene(id);
+  SWITCHING = true;
+  el('fade').classList.add('on');
+  setTimeout(() => {
+    if (ACTIVE) ACTIVE.root.visible = false;
+    ACTIVE = sc;
+    sc.root.visible = true;
+    STATE.hovered = null; STATE.selected = null;
+    el('panel').classList.remove('open');
+    el('tip').classList.remove('on');
+
+    const sp = opts.at || sc.spawn;
+    HERO.group.position.set(sp.x, 0, sp.z);
+    HERO.group.rotation.y = opts.face === undefined ? Math.PI : opts.face;
+    CAM.target.set(sp.x, 1.15, sp.z);
+    CAM.goalTarget.copy(CAM.target);
+    CAM.goalTheta = CAM.theta = opts.face === undefined ? 0 : opts.face + Math.PI;
+    CAM.goalPhi = CAM.phi = 1.02;
+    CAM.goalRadius = CAM.radius = CAM.mode === 'follow' ? 8.5 : 20;
+    CAM.tween = null; CAM.hold = false;
+    camApply();
+
+    el('roomlbl').querySelector('.rn').textContent = sc.label;
+    el('roomlbl').querySelector('.rs').textContent = sc.sub;
+    el('exitBtn').classList.toggle('on', id !== 'hub');
+    document.querySelectorAll('#nav button').forEach(b => b.classList.toggle('on', b.dataset.scene === id));
+
+    setTimeout(() => { el('fade').classList.remove('on'); SWITCHING = false; }, 60);
+  }, 430);
+}
+
+function enterDoor(id) {
+  const dr = SCENES.hub && SCENES.hub.doors.find(d => d.door.id === id);
+  if (dr) dr.want = 1;
+  closePanel(true);
+  setTimeout(() => gotoScene(id), dr ? 520 : 0);
+}
+
+function leaveOffice() {
+  const from = ACTIVE.id;
+  const i = DOORS.findIndex(d => d.id === from);
+  const x = i >= 0 ? doorXs()[i] : 0;
+  gotoScene('hub', { at: new THREE.Vector3(x, 0, -LAYOUTS.hub.room.d / 2 + 3.6), face: 0 });
+  const dr = SCENES.hub.doors[i];
+  if (dr) { dr.want = 1; setTimeout(() => { dr.want = 0; }, 2600); }
 }
 
 /* ==========================================================================
-   10 · CAMERA CONTROLLER
-   Orbit + dolly + WASD pan, with eased "focus" transitions and a
-   remembered pose so closing a panel returns you where you were.
+   9 · CHARACTER + CAMERA CONTROLLER
+   follow mode : WASD walks the character, camera orbits around them
+   free mode   : WASD pans the camera target, character stays put
    ========================================================================== */
 const CAM = {
-  target: new THREE.Vector3(0, 0.8, -1),
-  goalTarget: new THREE.Vector3(0, 0.8, -1),
-  theta: 0.55, goalTheta: 0.55,
-  phi: 0.86, goalPhi: 0.86,
-  radius: 62, goalRadius: 62,
-  tween: null,
-  prev: null,
-  keys: {},
-  drag: null,
-  pointers: new Map(),
-  pinch: 0
+  mode: 'follow',
+  target: new THREE.Vector3(0, 1.15, 8.5),
+  goalTarget: new THREE.Vector3(0, 1.15, 8.5),
+  theta: 0, goalTheta: 0,
+  phi: 1.02, goalPhi: 1.02,
+  radius: 46, goalRadius: 46,
+  tween: null, prev: null, hold: false,
+  keys: {}, drag: null, pointers: new Map(), pinch: 0
 };
-const HOME = { t: new THREE.Vector3(0, 0.8, -1), theta: 0.55, phi: 0.86, radius: 34 };
+const POINTER = { x: 0, y: 0, sx: 0, sy: 0, dirty: false };
+const HERO_SPEED = 4.4;
 
 function camApply() {
   const sp = new THREE.Spherical(CAM.radius, CAM.phi, CAM.theta);
-  const p = new THREE.Vector3().setFromSpherical(sp).add(CAM.target);
-  camera.position.copy(p);
+  camera.position.setFromSpherical(sp).add(CAM.target);
   camera.lookAt(CAM.target);
 }
-
 function shortAngle(from, to) {
   let d = (to - from) % (Math.PI * 2);
   if (d > Math.PI) d -= Math.PI * 2;
   if (d < -Math.PI) d += Math.PI * 2;
   return from + d;
 }
-
 function camFocus(pose, ms) {
   CAM.tween = {
-    t: 0, dur: (ms || 1050) / 1000,
+    t: 0, dur: (ms || 1000) / 1000,
     from: { t: CAM.target.clone(), theta: CAM.theta, phi: CAM.phi, radius: CAM.radius },
-    to: {
-      t: pose.target.clone(),
-      theta: shortAngle(CAM.theta, pose.theta),
-      phi: pose.phi, radius: pose.radius
-    }
+    to: { t: pose.target.clone(), theta: shortAngle(CAM.theta, pose.theta), phi: pose.phi, radius: pose.radius }
   };
 }
 function camSnapshot() {
   return { target: CAM.goalTarget.clone(), theta: CAM.goalTheta, phi: CAM.goalPhi, radius: CAM.goalRadius };
+}
+
+/* keep the character out of the furniture */
+function collide(p, r) {
+  const b = ACTIVE.bounds;
+  p.x = THREE.MathUtils.clamp(p.x, -b.x, b.x);
+  p.z = THREE.MathUtils.clamp(p.z, -b.z, b.z);
+  const list = ACTIVE.blockers;
+  for (let i = 0; i < list.length; i++) {
+    const o = list[i];
+    const dx = p.x - o.x, dz = p.z - o.z;
+    const ox = o.hw + r - Math.abs(dx), oz = o.hd + r - Math.abs(dz);
+    if (ox > 0 && oz > 0) {
+      if (ox < oz) p.x += dx > 0 ? ox : -ox;
+      else p.z += dz > 0 ? oz : -oz;
+    }
+  }
+}
+
+let heroSpeed = 0;
+function updateHero(dt) {
+  const k = CAM.keys;
+  const f = (k.w || k.arrowup ? 1 : 0) - (k.s || k.arrowdown ? 1 : 0);
+  const r = (k.d || k.arrowright ? 1 : 0) - (k.a || k.arrowleft ? 1 : 0);
+  const walking = (f || r) && CAM.mode === 'follow' && !STATE.selected && STATE.ready;
+
+  if (walking) {
+    STATE.idle = 0;
+    CAM.tween = null;
+    const sp = (k.shift ? HERO_SPEED * 1.9 : HERO_SPEED);
+    const fwd = new THREE.Vector3(-Math.sin(CAM.theta), 0, -Math.cos(CAM.theta));
+    const right = new THREE.Vector3(-fwd.z, 0, fwd.x);
+    const dir = new THREE.Vector3().addScaledVector(fwd, f).addScaledVector(right, r).normalize();
+    const p = HERO.group.position;
+    p.addScaledVector(dir, sp * dt);
+    collide(p, 0.42);
+    const want = Math.atan2(dir.x, dir.z);
+    const cur = shortAngle(HERO.group.rotation.y, want);
+    HERO.group.rotation.y = cur + (want - cur) * Math.min(1, dt * 14);
+    heroSpeed = sp;
+  } else {
+    heroSpeed += (0 - heroSpeed) * Math.min(1, dt * 8);
+  }
+  HERO.tick(dt, walking ? heroSpeed : 0);
 }
 
 function camUpdate(dt) {
@@ -1903,7 +3544,7 @@ function camUpdate(dt) {
     const tw = CAM.tween;
     tw.t += dt;
     let k = Math.min(1, tw.t / tw.dur);
-    k = k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;   // easeInOutCubic
+    k = k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
     CAM.target.lerpVectors(tw.from.t, tw.to.t, k);
     CAM.theta = tw.from.theta + (tw.to.theta - tw.from.theta) * k;
     CAM.phi = tw.from.phi + (tw.to.phi - tw.from.phi) * k;
@@ -1917,24 +3558,27 @@ function camUpdate(dt) {
     return;
   }
 
-  // keyboard walk
-  const k = CAM.keys;
-  const f = (k.w || k.arrowup ? 1 : 0) - (k.s || k.arrowdown ? 1 : 0);
-  const r = (k.d || k.arrowright ? 1 : 0) - (k.a || k.arrowleft ? 1 : 0);
-  if (f || r) {
-    STATE.idle = 0;
-    const speed = (k.shift ? 19 : 9.5) * dt;
-    const fwd = new THREE.Vector3(-Math.sin(CAM.theta), 0, -Math.cos(CAM.theta));
-    const right = new THREE.Vector3(fwd.z, 0, -fwd.x);
-    CAM.goalTarget.addScaledVector(fwd, f * speed).addScaledVector(right, r * speed);
-    CAM.goalTarget.x = THREE.MathUtils.clamp(CAM.goalTarget.x, -BOUNDS.x, BOUNDS.x);
-    CAM.goalTarget.z = THREE.MathUtils.clamp(CAM.goalTarget.z, -BOUNDS.z, BOUNDS.z);
+  if (CAM.mode === 'follow' && !CAM.hold) {
+    CAM.goalTarget.set(HERO.group.position.x, 1.15, HERO.group.position.z);
+  } else if (CAM.mode === 'free') {
+    const k = CAM.keys;
+    const f = (k.w || k.arrowup ? 1 : 0) - (k.s || k.arrowdown ? 1 : 0);
+    const r = (k.d || k.arrowright ? 1 : 0) - (k.a || k.arrowleft ? 1 : 0);
+    if (f || r) {
+      STATE.idle = 0;
+      const speed = (k.shift ? 20 : 10) * dt;
+      const fwd = new THREE.Vector3(-Math.sin(CAM.theta), 0, -Math.cos(CAM.theta));
+      const right = new THREE.Vector3(-fwd.z, 0, fwd.x);
+      CAM.goalTarget.addScaledVector(fwd, f * speed).addScaledVector(right, r * speed);
+      const b = ACTIVE.bounds;
+      CAM.goalTarget.x = THREE.MathUtils.clamp(CAM.goalTarget.x, -b.x, b.x);
+      CAM.goalTarget.z = THREE.MathUtils.clamp(CAM.goalTarget.z, -b.z, b.z);
+    }
   }
 
-  // gentle drift when nobody has touched anything for a while
-  if (STATE.ready && STATE.idle > 14 && !STATE.selected) CAM.goalTheta += dt * 0.035;
+  if (STATE.ready && STATE.idle > 18 && !STATE.selected && CAM.mode === 'free') CAM.goalTheta += dt * 0.03;
 
-  const s = 1 - Math.exp(-dt * 7.5);
+  const s = 1 - Math.exp(-dt * 8);
   CAM.target.lerp(CAM.goalTarget, s);
   CAM.theta += (CAM.goalTheta - CAM.theta) * s;
   CAM.phi += (CAM.goalPhi - CAM.phi) * s;
@@ -1942,15 +3586,30 @@ function camUpdate(dt) {
   camApply();
 }
 
+function setCamMode(mode) {
+  CAM.mode = mode;
+  CAM.hold = false;
+  el('btnMode').classList.toggle('active', mode === 'follow');
+  el('btnMode').title = mode === 'follow' ? 'Camera: following you' : 'Camera: free look';
+  CAM.tween = null;
+  if (mode === 'follow') {
+    CAM.goalTarget.set(HERO.group.position.x, 1.15, HERO.group.position.z);
+    CAM.goalRadius = 8.5; CAM.goalPhi = 1.02;
+  } else {
+    CAM.goalRadius = Math.max(16, ACTIVE ? ACTIVE.bounds.x * 1.3 : 20);
+    CAM.goalPhi = 0.92;
+  }
+}
+
 /* ---- input -------------------------------------------------------------- */
-function bindCameraInput() {
+function bindInput() {
   const cv = canvas;
 
   cv.addEventListener('pointerdown', (e) => {
     cv.setPointerCapture(e.pointerId);
     CAM.pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
     if (CAM.pointers.size === 1) {
-      CAM.drag = { x: e.clientX, y: e.clientY, sx: e.clientX, sy: e.clientY, moved: 0, pan: e.button === 2 || e.shiftKey };
+      CAM.drag = { x: e.clientX, y: e.clientY, moved: 0, pan: (e.button === 2 || e.shiftKey) && CAM.mode === 'free' };
       cv.classList.add('grabbing');
     }
     STATE.idle = 0;
@@ -1963,25 +3622,20 @@ function bindCameraInput() {
     POINTER.y = -(e.clientY / window.innerHeight) * 2 + 1;
     POINTER.sx = e.clientX; POINTER.sy = e.clientY;
     POINTER.dirty = true;
-
-    if (CAM.pointers.size === 2) { handlePinch(); return; }
+    if (CAM.pointers.size === 2) { pinch(); return; }
     if (!CAM.drag) return;
     const dx = e.clientX - CAM.drag.x, dy = e.clientY - CAM.drag.y;
     CAM.drag.x = e.clientX; CAM.drag.y = e.clientY;
     CAM.drag.moved += Math.abs(dx) + Math.abs(dy);
-    STATE.idle = 0;
-    CAM.tween = null;
-
+    STATE.idle = 0; CAM.tween = null;
     if (CAM.drag.pan) {
       const k = CAM.radius * 0.0016;
       const fwd = new THREE.Vector3(-Math.sin(CAM.theta), 0, -Math.cos(CAM.theta));
-      const right = new THREE.Vector3(fwd.z, 0, -fwd.x);
-      CAM.goalTarget.addScaledVector(right, -dx * k).addScaledVector(fwd, -dy * k);
-      CAM.goalTarget.x = THREE.MathUtils.clamp(CAM.goalTarget.x, -BOUNDS.x, BOUNDS.x);
-      CAM.goalTarget.z = THREE.MathUtils.clamp(CAM.goalTarget.z, -BOUNDS.z, BOUNDS.z);
+      const right = new THREE.Vector3(-fwd.z, 0, fwd.x);
+      CAM.goalTarget.addScaledVector(right, dx * k).addScaledVector(fwd, -dy * k);
     } else {
       CAM.goalTheta -= dx * 0.0052;
-      CAM.goalPhi = THREE.MathUtils.clamp(CAM.goalPhi - dy * 0.0042, 0.2, 1.36);
+      CAM.goalPhi = THREE.MathUtils.clamp(CAM.goalPhi - dy * 0.0042, 0.22, 1.34);
     }
   });
 
@@ -1990,7 +3644,7 @@ function bindCameraInput() {
     if (CAM.pointers.size < 2) CAM.pinch = 0;
     if (CAM.pointers.size === 0) {
       cv.classList.remove('grabbing');
-      if (CAM.drag && CAM.drag.moved < 7) handleClick();
+      if (CAM.drag && CAM.drag.moved < 8) handleClick();
       CAM.drag = null;
     }
   };
@@ -1999,18 +3653,17 @@ function bindCameraInput() {
   cv.addEventListener('contextmenu', e => e.preventDefault());
 
   cv.addEventListener('wheel', (e) => {
-    e.preventDefault();
-    CAM.tween = null;
-    STATE.idle = 0;
-    CAM.goalRadius = THREE.MathUtils.clamp(CAM.goalRadius * Math.exp(e.deltaY * 0.0011), 2.6, 66);
+    e.preventDefault(); CAM.tween = null; STATE.idle = 0;
+    const lo = CAM.mode === 'follow' ? 3.4 : 2.8;
+    CAM.goalRadius = THREE.MathUtils.clamp(CAM.goalRadius * Math.exp(e.deltaY * 0.0011), lo, 60);
   }, { passive: false });
 
-  function handlePinch() {
+  function pinch() {
     const pts = [...CAM.pointers.values()];
     const d = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
     if (CAM.pinch) {
       CAM.tween = null;
-      CAM.goalRadius = THREE.MathUtils.clamp(CAM.goalRadius * (CAM.pinch / d), 2.6, 66);
+      CAM.goalRadius = THREE.MathUtils.clamp(CAM.goalRadius * (CAM.pinch / d), 3.4, 60);
     }
     CAM.pinch = d;
   }
@@ -2021,26 +3674,27 @@ function bindCameraInput() {
       CAM.keys[k] = true;
       if (k !== 'shift') { CAM.tween = null; e.preventDefault(); }
     }
+    if (k === 'e') activateNearest();
     if (k === 'escape') closePanel();
   });
   addEventListener('keyup', (e) => { CAM.keys[e.key.toLowerCase()] = false; });
   addEventListener('blur', () => { CAM.keys = {}; });
 }
 
-const POINTER = { x: 0, y: 0, sx: 0, sy: 0, dirty: false };
-
 /* ==========================================================================
-   11 · PICKING + TOOLTIP
+   10 · PICKING, PROXIMITY, TOOLTIP
    ========================================================================== */
 const KIND = {
   project: 'Workstation', person: 'Colleague', skills: 'Whiteboard',
   experience: 'Meeting room', about: 'Reception', education: 'Shelf',
-  contact: 'Exit', coffee: 'Break area', side: 'Side project'
+  contact: 'Contact', coffee: 'Break area', side: 'Side project',
+  door: 'Chapter', exit: 'Exit', vacancy: 'Empty desk'
 };
 
 function pick() {
+  if (!ACTIVE) return null;
   RAY.setFromCamera(POINTER, camera);
-  const hits = RAY.intersectObjects(PICKABLE, false);
+  const hits = RAY.intersectObjects(ACTIVE.pickable, false);
   return hits.length ? hits[0].object.userData.ix : null;
 }
 
@@ -2053,9 +3707,8 @@ function setHover(rec) {
     tip.querySelector('.s').textContent = KIND[rec.type] || '';
     tip.querySelector('.t').textContent = rec.title;
     tip.classList.add('on');
-  } else {
-    tip.classList.remove('on');
-  }
+  } else tip.classList.remove('on');
+  updateDoorHud();
 }
 
 function moveTip() {
@@ -2065,20 +3718,92 @@ function moveTip() {
   t.style.top = POINTER.sy + 'px';
 }
 
+function nearest() {
+  if (!ACTIVE || !HERO) return null;
+  const p = HERO.group.position;
+  let best = null, bd = 2.9;
+  for (let i = 0; i < ACTIVE.interactives.length; i++) {
+    const r = ACTIVE.interactives[i];
+    if (!r.prox) continue;
+    const d = Math.hypot(p.x - r.prox.x, p.z - r.prox.z);
+    if (d < bd) { bd = d; best = r; }
+  }
+  return best;
+}
+
+let NEAR = null;
+function updateProximity() {
+  const n = (CAM.mode === 'follow' && STATE.ready && !STATE.selected) ? nearest() : null;
+  if (n === NEAR) return;
+  NEAR = n;
+  const pr = el('prompt');
+  if (n) {
+    pr.querySelector('.txt').innerHTML = n.proxLabel.replace(/^(\w+)/, '<b>$1</b>');
+    pr.classList.add('on');
+  } else pr.classList.remove('on');
+  updateDoorHud();
+}
+
+function updateDoorHud() {
+  const d = (STATE.hovered && STATE.hovered.type === 'door' && !STATE.hovered.inside && STATE.hovered.data)
+    || (NEAR && NEAR.type === 'door' && !NEAR.inside && NEAR.data);
+  const hud = el('doorhud');
+  if (d && !STATE.selected) {
+    hud.querySelector('.tier').textContent = d.tierLabel;
+    hud.querySelector('.tier').style.color = TIERS[d.tier].css;
+    hud.querySelector('.co').textContent = d.company;
+    hud.querySelector('.dt').textContent = d.when + '  ·  ' + d.span;
+    hud.classList.add('on');
+  } else hud.classList.remove('on');
+}
+
+function activateNearest() {
+  if (!NEAR || SWITCHING) return;
+  if (NEAR.type === 'door' && !NEAR.inside) enterDoor(NEAR.data.id);
+  else if (NEAR.type === 'exit') leaveOffice();
+  else openPanel(NEAR);
+}
+
 function handleClick() {
   const rec = pick();
-  if (rec) openPanel(rec);
-  else if (STATE.selected) closePanel();
+  if (!rec) { if (STATE.selected) closePanel(); return; }
+  if (rec.type === 'exit') { leaveOffice(); return; }
+  openPanel(rec);
 }
 
 /* ==========================================================================
-   12 · INFO PANEL
+   11 · INFO PANELS
    ========================================================================== */
 const esc = (s) => String(s).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
-const tags = (arr, hot) => `<div class="tags">${arr.map(t => `<span class="tag${hot ? ' hot' : ''}">${esc(t)}</span>`).join('')}</div>`;
-const list = (arr, amber) => `<ul class="list${amber ? ' amber' : ''}">${arr.map(i => `<li>${esc(i)}</li>`).join('')}</ul>`;
+const tags = (a, hot) => `<div class="tags">${a.map(t => `<span class="tag${hot ? ' hot' : ''}">${esc(t)}</span>`).join('')}</div>`;
+const list = (a, amber) => `<ul class="list${amber ? ' amber' : ''}">${a.map(i => `<li>${esc(i)}</li>`).join('')}</ul>`;
 const sec = (h, inner) => `<div class="sec">${h ? `<h3>${h}</h3>` : ''}${inner}</div>`;
-const meta = (pairs) => `<dl class="meta">${pairs.filter(p => p[1]).map(p => `<dt>${p[0]}</dt><dd>${esc(p[1])}</dd>`).join('')}</dl>`;
+const meta = (p) => `<dl class="meta">${p.filter(x => x[1]).map(x => `<dt>${x[0]}</dt><dd>${esc(x[1])}</dd>`).join('')}</dl>`;
+
+function renderDoor(d) {
+  const inHub = ACTIVE && ACTIVE.id === 'hub';
+  return [
+    sec('', `<span class="chip t-${d.tier}">${esc(d.tierLabel)} · ${esc(d.span)}</span>`),
+    sec('', meta([['Role', d.role], ['When', d.when]])),
+    sec(d.headline, `<p>${esc(d.blurb)}</p>`),
+    sec('Stack on this floor', tags(d.stack, true)),
+    sec(d.id === 'vacant' ? 'What would fill it' : 'What it taught me', list(d.learned)),
+    inHub ? sec('', `<div class="act">
+      <button class="btn primary" data-enter="${d.id}">
+        <svg viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg>
+        Step into this office
+      </button></div>`) : ''
+  ].join('');
+}
+
+function renderVacancy(v) {
+  return [
+    sec('', `<p>${esc(v.intro)}</p>`),
+    sec('What I\'m looking for', list(v.looking, true)),
+    sec('What I bring', list(v.bring)),
+    sec('', `<div class="act"><button class="btn primary" data-open="contact">Get in touch</button></div>`)
+  ].join('');
+}
 
 function renderProject(p) {
   return [
@@ -2088,11 +3813,9 @@ function renderProject(p) {
     sec('What I did', list(p.responsibilities)),
     p.features ? sec('Key features', list(p.features, true)) : '',
     p.apis ? sec('APIs & integrations', tags(p.apis)) : '',
-    p.challenge ? sec('Challenge → solution', `
-      <div class="split">
+    p.challenge ? sec('Challenge → solution', `<div class="split">
         <div class="card"><h4>The problem</h4><p>${esc(p.challenge)}</p></div>
-        <div class="card"><h4>What I changed</h4><p>${esc(p.solution)}</p></div>
-      </div>`) : '',
+        <div class="card"><h4>What I changed</h4><p>${esc(p.solution)}</p></div></div>`) : '',
     p.impact ? sec('Result', `<p>${esc(p.impact)}</p>`) : ''
   ].join('');
 }
@@ -2101,11 +3824,9 @@ function renderPerson(e) {
   return [
     sec('', meta([['Role', e.designation], ['Team', e.department], ['Overlap', e.duration]])),
     sec('Projects together', tags(e.projects, true)),
-    sec('Split of work', `
-      <div class="split">
-        <div class="card"><h4>My side</h4>${list(e.mine)}</div>
-        <div class="card"><h4>Their side</h4>${list(e.theirs)}</div>
-      </div>`),
+    sec('Split of work', `<div class="split">
+      <div class="card"><h4>My side</h4>${list(e.mine)}</div>
+      <div class="card"><h4>Their side</h4>${list(e.theirs)}</div></div>`),
     sec('How it actually worked', `<p>${esc(e.collab)}</p>`),
     sec('Shared stack', tags(e.tech)),
     sec('', `<p class="note">Colleagues here are stand-ins, not named individuals — the collaboration each one describes is real.</p>`)
@@ -2122,13 +3843,10 @@ function renderSkills(s) {
 
 function renderExperience(x) {
   return [
-    sec('Roles', `<div class="tl">${x.roles.map(r => `
-      <div class="item">
-        <div class="when">${esc(r.when)}</div>
-        <div class="what">${esc(r.what)}</div>
-        <div class="who">${esc(r.who)}</div>
-        ${list(r.points)}
-      </div>`).join('')}</div>`),
+    sec('Roles', `<div class="tl">${x.roles.map(r => `<div class="item">
+      <div class="when">${esc(r.when)}</div>
+      <div class="what">${esc(r.what)}</div>
+      <div class="who">${esc(r.who)}</div>${list(r.points)}</div>`).join('')}</div>`),
     sec('In the room', list(x.teamwork, true)),
     sec('Who I worked for', `<p>${esc(x.clients)}</p>`)
   ].join('');
@@ -2138,11 +3856,9 @@ function renderAbout(o) {
   return [
     sec('', `<p>${esc(o.summary)}</p>`),
     sec('The short version', list(o.pitch, true)),
-    sec('', meta([['Based in', o.location], ['Experience', o.years], ['Stack', 'React · Angular · React Native · Next.js']])),
-    sec('', `<div class="act">
-        <button class="btn primary" data-open="contact"><svg viewBox="0 0 24 24"><path d="M4 6h16v12H4z"/><path d="M4 7l8 6 8-6"/></svg>Get in touch</button>
-        <button class="btn" data-open="board">See the stack</button>
-      </div>`),
+    sec('', meta([['Based in', o.location], ['Experience', o.years]])),
+    sec('The four doors', `<div class="tags">${DOORS.map(d =>
+      `<span class="chip t-${d.tier}" style="cursor:pointer" data-enter="${d.id}">${esc(d.tierLabel)}</span>`).join('')}</div>`),
     sec('', `<p class="note">Resume link placeholder: ${esc(o.resumeUrl)} — drop your real file URL into DATA.owner.resumeUrl.</p>`)
   ].join('');
 }
@@ -2156,17 +3872,12 @@ function renderEducation(e) {
 }
 
 function renderContact(c) {
-  const line = (label, val, href) => {
-    const placeholder = /^\{\{/.test(val);
-    return `<div class="card" style="margin-bottom:8px">
-      <h4>${label}</h4>
-      <p style="font-family:var(--mono);font-size:12px;color:${placeholder ? 'var(--dim)' : '#DDE3EC'}">${esc(val)}</p>
-    </div>`;
-  };
+  const line = (label, val) => `<div class="card" style="margin-bottom:8px"><h4>${label}</h4>
+    <p style="font-family:var(--mono);font-size:12px;color:${/^\{\{/.test(val) ? 'var(--dim)' : '#DDE3EC'}">${esc(val)}</p></div>`;
   return [
     sec('', `<p>${esc(c.note)}</p>`),
     sec('Reach me', line('Email', c.email) + line('Phone', c.phone) + line('LinkedIn', c.linkedin) + line('GitHub', c.github)),
-    sec('', `<p class="note">These are placeholders. Open DATA.contact at the top of the file and replace the {{ }} values — the panel updates itself.</p>`)
+    sec('', `<p class="note">These are placeholders. Open DATA.contact at the top of the file and replace the {{ }} values.</p>`)
   ].join('');
 }
 
@@ -2183,12 +3894,11 @@ function renderSide(p) {
 
 function renderCoffee() {
   STATE.coffee = Math.min(STATE.coffee + 1, DATA.coffee.length);
-  const msg = DATA.coffee[STATE.coffee - 1];
   return [
     sec('', `<div class="stat"><b>${STATE.coffee}</b><span>cup${STATE.coffee > 1 ? 's' : ''} today</span></div>`),
-    sec('', `<p>${esc(msg)}</p>`),
+    sec('', `<p>${esc(DATA.coffee[STATE.coffee - 1])}</p>`),
     STATE.coffee >= DATA.coffee.length
-      ? sec('', `<p class="note">You found the end of the coffee jokes. Genuinely, thanks for exploring this far — the meeting room and the whiteboard are the two worth clicking next.</p>`)
+      ? sec('', `<p class="note">That's the end of the coffee jokes. Thanks for exploring this far.</p>`)
       : sec('', `<p class="note">Click it again.</p>`)
   ].join('');
 }
@@ -2196,15 +3906,16 @@ function renderCoffee() {
 const RENDER = {
   project: renderProject, person: renderPerson, skills: renderSkills,
   experience: renderExperience, about: renderAbout, education: renderEducation,
-  contact: renderContact, coffee: renderCoffee, side: renderSide
+  contact: renderContact, coffee: renderCoffee, side: renderSide,
+  door: renderDoor, vacancy: renderVacancy
 };
 
 function openPanel(rec) {
+  if (!rec || !RENDER[rec.type]) return;
   if (!STATE.selected) CAM.prev = camSnapshot();
   if (STATE.selected && STATE.selected !== rec) STATE.selected.target = 0;
   STATE.selected = rec;
-  rec.target = 1;
-
+  CAM.hold = true;
   el('panelKind').textContent = KIND[rec.type] || 'Info';
   el('panelTitle').textContent = rec.title;
   el('panelSub').textContent = rec.sub || '';
@@ -2212,83 +3923,58 @@ function openPanel(rec) {
   el('body').scrollTop = 0;
   el('panel').classList.add('open');
   el('legend').classList.add('hide');
-  camFocus(rec.focus, 950);
+  el('prompt').classList.remove('on');
+  updateDoorHud();
+  camFocus(rec.focus, 900);
   STATE.idle = 0;
 }
 
-function closePanel() {
+function closePanel(silent) {
   if (!STATE.selected) return;
-  STATE.selected.target = 0;
   STATE.selected = null;
   el('panel').classList.remove('open');
-  el('legend').classList.remove('hide');
-  if (CAM.prev) {
-    camFocus({ target: CAM.prev.target, theta: CAM.prev.theta, phi: CAM.prev.phi, radius: CAM.prev.radius }, 850);
-    CAM.prev = null;
-  }
+  if (!STATE.mobile) el('legend').classList.remove('hide');
+  if (!silent && CAM.prev) camFocus({
+    target: CAM.prev.target, theta: CAM.prev.theta, phi: CAM.prev.phi, radius: CAM.prev.radius
+  }, 800);
+  CAM.prev = null;
+  CAM.hold = false;
+  NEAR = null;
 }
 
 function openById(id) {
-  const rec = INTERACTIVES.find(r => r.id === id);
+  const rec = ACTIVE && ACTIVE.interactives.find(r => r.id === id);
   if (rec) openPanel(rec);
 }
 
 /* ==========================================================================
-   13 · NAVIGATION
-   ========================================================================== */
-const NAV = {
-  overview: { pose: () => focusPose(0, 0.8, -1, 34, 0.55, 0.86) },
-  about: { pose: () => focusPose(4.5, 1.3, 12.2, 9.5, 0.22, 1.0), open: 'about' },
-  projects: { pose: () => focusPose(-10.5, 0.9, -6, 17, 0.5, 0.92) },
-  experience: { pose: () => focusPose(13, 1.2, -10, 13, 0.62, 0.94), open: 'meeting' },
-  skills: { pose: () => focusPose(-19.4, 1.9, 2, 8, Math.PI / 2, 1.12), open: 'board' },
-  people: { pose: () => focusPose(-10.6, 1.1, -8.4, 11, 0.42, 1.0) },
-  contact: { pose: () => focusPose(0, 2.0, 14.6, 8.5, Math.PI + 0.12, 1.14), open: 'contact' }
-};
-
-function goTo(key) {
-  const n = NAV[key];
-  if (!n) return;
-  document.querySelectorAll('#nav button').forEach(b => b.classList.toggle('on', b.dataset.goto === key));
-  if (STATE.selected && (!n.open || STATE.selected.id !== n.open)) {
-    STATE.selected.target = 0; STATE.selected = null;
-    el('panel').classList.remove('open');
-  }
-  CAM.prev = null;
-  camFocus(n.pose(), 1150);
-  STATE.idle = 0;
-  if (n.open) setTimeout(() => { if (!STATE.selected) openById(n.open); }, 620);
-}
-
-/* ==========================================================================
-   14 · CLASSIC VIEW  (mobile-lite / no-WebGL fallback)
+   12 · CLASSIC VIEW
    ========================================================================== */
 function buildClassic() {
   const p = (h, inner) => `<section><h2>${h}</h2>${inner}</section>`;
-  const entry = (title, m, body) => `<div class="entry"><h3>${esc(title)}</h3><div class="m">${esc(m)}</div>${body}</div>`;
+  const entry = (title, m, body) => `<div class="entry"><h3>${esc(title)}</h3><div class="m">${esc(m)}</div>${body || ''}</div>`;
   const o = DATA.owner;
   el('classicBody').innerHTML = [
     p('About', `<p style="font-size:14px;line-height:1.7;color:#C9D1DE;margin:0 0 14px">${esc(o.summary)}</p>${list(o.pitch, true)}`),
-    p('Experience', DATA.experience.roles.map(r => entry(r.what + ' · ' + r.who, r.when, list(r.points))).join('')),
-    p('Projects', DATA.projects.map(pr =>
-      entry(pr.name, `${pr.company} · ${pr.duration}`, `<p>${esc(pr.description)}</p>${tags(pr.tech)}`)).join('')
+    p('Chapters', DOORS.map(d => entry(d.company + ' — ' + d.tierLabel, `${d.role} · ${d.when}`,
+      `<p>${esc(d.blurb)}</p>${tags(d.stack)}`)).join('')),
+    p('Projects', DATA.projects.map(pr => entry(pr.name, `${pr.company} · ${pr.duration}`,
+      `<p>${esc(pr.description)}</p>${tags(pr.tech)}`)).join('')
       + entry(DATA.sideProject.name, DATA.sideProject.company, `<p>${esc(DATA.sideProject.description)}</p>${tags(DATA.sideProject.tech)}`)),
     p('Skills', DATA.skills.groups.map(g => `<div class="entry"><h3>${esc(g.label)}</h3>${tags(g.items, g.hot)}</div>`).join('')),
-    p('Collaboration', DATA.employees.map(e =>
-      entry(e.designation, e.projects.join(' · '), `<p>${esc(e.collab)}</p>`)).join('')),
+    p('Collaboration', DATA.employees.map(e => entry(e.designation, e.projects.join(' · '), `<p>${esc(e.collab)}</p>`)).join('')),
     p('Education', entry(DATA.education.degree, `${DATA.education.school} · ${DATA.education.year} · ${DATA.education.score}`, list(DATA.education.extra))),
     p('Contact', `<p style="font-size:14px;color:#C9D1DE;margin:0 0 12px">${esc(DATA.contact.note)}</p>
       ${tags([DATA.contact.email, DATA.contact.phone, DATA.contact.linkedin, DATA.contact.github])}`)
   ].join('');
 }
-
 function showClassic(on) {
   el('classic').classList.toggle('on', on);
   el('btnBack3D').style.display = STATE.webgl ? '' : 'none';
 }
 
 /* ==========================================================================
-   15 · BOOT + RENDER LOOP
+   13 · RENDER LOOP
    ========================================================================== */
 let frames = 0, fpsAcc = 0, checked = false;
 
@@ -2298,46 +3984,39 @@ function animate() {
   const t = CLOCK.elapsedTime;
   STATE.idle += dt;
 
+  if (HERO) updateHero(dt);
   camUpdate(dt);
+  updateProximity();
 
-  // hover picking — every other frame is plenty
-  if (POINTER.dirty && !CAM.drag) {
-    frames % 2 === 0 && setHover(pick());
-    moveTip();
-  }
+  if (POINTER.dirty && !CAM.drag && frames % 2 === 0) { setHover(pick()); moveTip(); }
+  else if (POINTER.dirty) moveTip();
 
-  // highlight easing
-  for (let i = 0; i < INTERACTIVES.length; i++) {
-    const r = INTERACTIVES[i];
-    const want = (r === STATE.selected) ? 1 : (r === STATE.hovered ? 0.75 : 0);
-    r.hl += (want - r.hl) * Math.min(1, dt * 9);
-    if (r.hl > 0.002 || r.ringMat.opacity > 0.002) {
+  if (ACTIVE) {
+    const list = ACTIVE.interactives;
+    for (let i = 0; i < list.length; i++) {
+      const r = list[i];
+      const want = (r === STATE.selected) ? 1 : (r === STATE.hovered ? 0.8 : (r === NEAR ? 0.55 : 0));
+      r.hl += (want - r.hl) * Math.min(1, dt * 9);
       const sel = r === STATE.selected;
       r.ringMat.opacity = r.hl * 0.85;
-      r.ringMat.color.setHex(sel ? 0xF5A524 : 0x7FB2FF);
-      const pulse = 1 + Math.sin(t * 3.4) * 0.03 * r.hl;
-      r.ring.scale.setScalar(r.ringR * pulse);
-      r.obj.scale.setScalar(1 + r.hl * 0.012);
+      if (r.tier) r.ringMat.color.setHex(sel ? 0xF5A524 : TIERS[r.tier].glow);
+      else r.ringMat.color.setHex(sel ? 0xF5A524 : 0x7FB2FF);
+      r.ring.scale.setScalar(r.ringR * (1 + Math.sin(t * 3.4) * 0.03 * r.hl));
+      r.obj.scale.setScalar(1 + r.hl * 0.01);
+      r.hotMat.opacity = (STATE.selected ? 0.1 : 0.5) + r.hl * 0.45;
+      r.hotspot.scale.setScalar((0.85 + Math.sin(t * 2.2 + i) * 0.07) * (1 + r.hl * 0.35));
+      r.hotspot.lookAt(camera.position);
     }
-    // hotspot
-    const vis = STATE.ready && !STATE.selected;
-    r.hotMat.opacity = (vis ? 0.55 : 0.12) + r.hl * 0.45;
-    r.hotspot.scale.setScalar((0.85 + Math.sin(t * 2.2 + i) * 0.07) * (1 + r.hl * 0.35));
-    r.hotspot.lookAt(camera.position);
+    const an = ACTIVE.animated;
+    for (let i = 0; i < an.length; i++) an[i].fn(t, dt);
   }
-
-  for (let i = 0; i < ANIMATED.length; i++) ANIMATED[i].fn(t);
 
   renderer.render(scene, camera);
 
-  // one-shot performance check
   frames++;
   if (!checked && STATE.ready) {
     fpsAcc += dt;
-    if (frames > 140) {
-      checked = true;
-      if (140 / fpsAcc < 38) downgrade();
-    }
+    if (frames > 150) { checked = true; if (150 / fpsAcc < 38) downgrade(); }
   }
 }
 
@@ -2360,6 +4039,9 @@ function step(pct, label) {
   if (label) el('loadLbl').textContent = label;
 }
 
+/* ==========================================================================
+   14 · BOOT
+   ========================================================================== */
 function boot() {
   buildClassic();
 
@@ -2375,19 +4057,31 @@ function boot() {
 
   requestAnimationFrame(() => {
     buildTextures(); buildMaterials(); buildGeometry(); buildNpcGeo();
-    step(55, 'Moving in the furniture');
+    buildThemeAssets(); buildTierMaterials(); TH = THEMES.default;
+    step(48, 'Hanging the doors');
 
     requestAnimationFrame(() => {
-      assembleOffice();
-      bindCameraInput();
+      const hub = buildScene('hub');
+      HERO = makeHero();
+      scene.add(HERO.group);
+      ACTIVE = hub;
+      hub.root.visible = true;
+      HERO.group.position.set(hub.spawn.x, 0, hub.spawn.z);
+      HERO.group.rotation.y = Math.PI;
+      bindInput();
       addEventListener('resize', onResize);
-      step(92, 'Hiring the team');
+      step(94, 'Handing you the badge');
 
       requestAnimationFrame(() => {
+        CAM.target.set(hub.spawn.x, 1.15, hub.spawn.z);
+        CAM.goalTarget.copy(CAM.target);
+        CAM.radius = CAM.goalRadius = 46;
+        CAM.phi = CAM.goalPhi = 0.72;
+        CAM.theta = CAM.goalTheta = 0.35;
         camApply();
         renderer.compile(scene, camera);
         step(100, 'Ready');
-        setTimeout(() => el('loader').classList.add('gone'), 260);
+        setTimeout(() => el('loader').classList.add('gone'), 240);
         animate();
       });
     });
@@ -2397,26 +4091,220 @@ function boot() {
   el('btnExplore').onclick = () => {
     el('intro').classList.add('gone');
     STATE.ready = true;
-    camFocus({ target: HOME.t.clone(), theta: HOME.theta, phi: HOME.phi, radius: HOME.radius }, 2200);
-    setTimeout(() => el('legend').classList.remove('hide'), 900);
+    setCamMode('follow');
+    CAM.goalTheta = 0;
+    camFocus({ target: new THREE.Vector3(HERO.group.position.x, 1.15, HERO.group.position.z), theta: 0, phi: 1.02, radius: 8.5 }, 2400);
+    if (!STATE.mobile) setTimeout(() => el('legend').classList.remove('hide'), 1200);
   };
   el('btnSkip').onclick = () => { el('intro').classList.add('gone'); STATE.ready = true; showClassic(true); };
   el('btnClassic').onclick = () => showClassic(true);
   el('btnBack3D').onclick = () => showClassic(false);
   el('btnHelp').onclick = () => el('legend').classList.toggle('hide');
-  el('close').onclick = closePanel;
-  document.querySelectorAll('#nav button').forEach(b => { b.onclick = () => goTo(b.dataset.goto); });
+  el('btnMode').onclick = () => setCamMode(CAM.mode === 'follow' ? 'free' : 'follow');
+  el('exitBtn').onclick = () => leaveOffice();
+  el('close').onclick = () => closePanel();
+  document.querySelectorAll('#nav button').forEach(b => {
+    b.onclick = () => { if (b.dataset.scene !== (ACTIVE && ACTIVE.id)) gotoScene(b.dataset.scene); };
+  });
   el('body').addEventListener('click', (e) => {
-    const b = e.target.closest('[data-open]');
-    if (b) openById(b.dataset.open);
+    const en = e.target.closest('[data-enter]');
+    if (en) { enterDoor(en.dataset.enter); return; }
+    const op = e.target.closest('[data-open]');
+    if (op) openById(op.dataset.open);
   });
 
-  if (STATE.mobile) {
-    el('legend').classList.add('hide');
+  if (STATE.mobile) el('legend').classList.add('hide');
+}
+
+/* ==========================================================================
+   15 · CONTENT EDITOR
+   Everything readable in this portfolio is a string in DATA or DOORS.
+   This walks those objects and builds a form for them, so you never have to
+   open the code. Export writes a JSON file; Import reads it back.
+   ========================================================================== */
+
+/* baked-into-3D text (door plaques, wall plaques, the reception logo)
+   registers itself here so an edit can regenerate the texture */
+const SIGNAGE = [];
+function signage(mat, make) { SIGNAGE.push({ mat, make }); return mat; }
+function refreshSignage() {
+  SIGNAGE.forEach(s => {
+    try {
+      const t = s.make();
+      if (s.mat.map && s.mat.map.dispose) s.mat.map.dispose();
+      s.mat.map = t;
+      s.mat.needsUpdate = true;
+    } catch (e) { /* a plaque for a parked door — ignore */ }
+  });
+}
+
+const ROOTS = () => ({ DATA, DOORS });
+let PRISTINE = null;
+
+/* ---- path helpers ------------------------------------------------------- */
+function getPath(p) {
+  return p.split('.').reduce((o, k) => (o == null ? o : o[/^\d+$/.test(k) ? +k : k]), ROOTS());
+}
+function setPath(p, v) {
+  const keys = p.split('.');
+  const last = keys.pop();
+  const host = keys.reduce((o, k) => o[/^\d+$/.test(k) ? +k : k], ROOTS());
+  host[/^\d+$/.test(last) ? +last : last] = v;
+}
+
+/* keys the reader never sees, or that would break the scene if edited as text */
+const EDIT_SKIP = new Set(['id', 'screen', 'shirt', 'seatKey', 'tier', 'hot', 'station']);
+const LONG_KEYS = new Set(['summary', 'description', 'collab', 'blurb', 'challenge',
+  'solution', 'impact', 'architecture', 'note', 'intro', 'clients', 'headline']);
+
+const titleOf = (o, i) => o.name || o.title || o.company || o.label || o.what || o.designation || ('Item ' + (i + 1));
+const labelOf = (k) => k.replace(/([A-Z])/g, ' $1').replace(/^./, c => c.toUpperCase());
+
+function fieldHTML(key, path, val) {
+  const id = 'f_' + path.replace(/[^\w]/g, '_');
+  const long = LONG_KEYS.has(key) || String(val).length > 78;
+  const input = long
+    ? `<textarea id="${id}" data-path="${path}" rows="${Math.min(8, Math.ceil(String(val).length / 46) + 1)}">${esc(val)}</textarea>`
+    : `<input id="${id}" data-path="${path}" value="${esc(val).replace(/"/g, '&quot;')}">`;
+  return `<div class="efield"><label for="${id}">${esc(labelOf(key))}</label>${input}</div>`;
+}
+
+function listHTML(key, path, arr) {
+  const id = 'f_' + path.replace(/[^\w]/g, '_');
+  return `<div class="efield">
+    <label for="${id}">${esc(labelOf(key))}</label>
+    <textarea id="${id}" data-path="${path}" data-list="1" rows="${Math.min(10, arr.length + 1)}">${esc(arr.join('\n'))}</textarea>
+    <div class="hint">one per line</div>
+  </div>`;
+}
+
+function nodeHTML(key, path, val, depth) {
+  if (EDIT_SKIP.has(key)) return '';
+  if (typeof val === 'string') return fieldHTML(key, path, val);
+  if (typeof val === 'number' || typeof val === 'boolean') return '';
+  if (Array.isArray(val)) {
+    if (!val.length) return '';
+    if (typeof val[0] === 'string') return listHTML(key, path, val);
+    return `<details class="egrp"${depth < 1 ? '' : ''}>
+      <summary>${esc(labelOf(key))} <span style="color:var(--dim);font-family:var(--mono);font-size:10px">${val.length}</span></summary>
+      <div class="inner">${val.map((item, i) => `
+        <details class="egrp"><summary>${esc(titleOf(item, i))}</summary>
+          <div class="inner">${Object.keys(item).map(k => nodeHTML(k, path + '.' + i + '.' + k, item[k], depth + 1)).join('')}</div>
+        </details>`).join('')}</div></details>`;
   }
+  if (val && typeof val === 'object') {
+    return `<details class="egrp"><summary>${esc(labelOf(key))}</summary>
+      <div class="inner">${Object.keys(val).map(k => nodeHTML(k, path + '.' + k, val[k], depth + 1)).join('')}</div>
+    </details>`;
+  }
+  return '';
+}
+
+function buildEditor() {
+  const html = [
+    `<div class="esec">Who you are</div>`,
+    nodeHTML('owner', 'DATA.owner', DATA.owner, 0),
+    nodeHTML('contact', 'DATA.contact', DATA.contact, 0),
+    `<div class="esec">The doors</div>`,
+    nodeHTML('doors', 'DOORS', DOORS, 0),
+    `<div class="esec">Work</div>`,
+    nodeHTML('projects', 'DATA.projects', DATA.projects, 0),
+    nodeHTML('sideProject', 'DATA.sideProject', DATA.sideProject, 0),
+    nodeHTML('experience', 'DATA.experience', DATA.experience, 0),
+    `<div class="esec">People & skills</div>`,
+    nodeHTML('employees', 'DATA.employees', DATA.employees, 0),
+    nodeHTML('skills', 'DATA.skills', DATA.skills, 0),
+    `<div class="esec">Everything else</div>`,
+    nodeHTML('education', 'DATA.education', DATA.education, 0),
+    nodeHTML('coffee', 'DATA.coffee', DATA.coffee, 0)
+  ].join('');
+  el('ebody').innerHTML = html;
+}
+
+let refreshTimer = null;
+function contentChanged() {
+  clearTimeout(refreshTimer);
+  refreshTimer = setTimeout(() => {
+    refreshSignage();
+    buildClassic();
+    el('brand').querySelector('.n').textContent = DATA.owner.name;
+    el('brand').querySelector('.r').textContent = DATA.owner.role + ' · ' + DATA.owner.location;
+    el('mark').textContent = DATA.owner.name.split(/\s+/).map(w => w[0]).join('').slice(0, 2).toUpperCase();
+    if (STATE.selected && RENDER[STATE.selected.type]) {
+      const r = STATE.selected;
+      el('panelTitle').textContent = r.title = (r.data && (r.data.name || r.data.title || r.data.company)) || r.title;
+      el('body').innerHTML = RENDER[r.type](r.data);
+    }
+  }, 350);
+}
+
+function toast(msg) {
+  const t = el('etoast');
+  t.textContent = msg;
+  t.classList.add('on');
+  clearTimeout(t._h);
+  t._h = setTimeout(() => t.classList.remove('on'), 2200);
+}
+
+function wireEditor() {
+  buildEditor();
+  PRISTINE = JSON.stringify({ DATA, DOORS });
+
+  el('ebody').addEventListener('input', (e) => {
+    const f = e.target.closest('[data-path]');
+    if (!f) return;
+    const v = f.dataset.list ? f.value.split('\n').map(s => s.trim()).filter(Boolean) : f.value;
+    setPath(f.dataset.path, v);
+    contentChanged();
+  });
+
+  el('btnEdit').onclick = () => {
+    const on = el('editor').classList.toggle('on');
+    el('btnEdit').classList.toggle('active', on);
+    if (on) { closePanel(); el('legend').classList.add('hide'); }
+    else if (!STATE.mobile) el('legend').classList.remove('hide');
+  };
+  el('eclose').onclick = () => { el('btnEdit').onclick(); };
+
+  el('btnExport').onclick = () => {
+    const blob = new Blob([JSON.stringify({ DATA, DOORS }, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'portfolio-content.json';
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    toast('Saved portfolio-content.json');
+  };
+
+  el('btnImport').onclick = () => el('fileIn').click();
+  el('fileIn').onchange = (e) => {
+    const f = e.target.files && e.target.files[0];
+    if (!f) return;
+    const rd = new FileReader();
+    rd.onload = () => {
+      try {
+        const j = JSON.parse(rd.result);
+        if (j.DATA) Object.keys(j.DATA).forEach(k => { if (k in DATA) DATA[k] = j.DATA[k]; });
+        if (Array.isArray(j.DOORS)) j.DOORS.forEach((d, i) => { if (DOORS[i]) Object.assign(DOORS[i], d); });
+        buildEditor(); contentChanged();
+        toast('Content loaded');
+      } catch (err) { toast('That file could not be read'); }
+    };
+    rd.readAsText(f);
+    e.target.value = '';
+  };
+
+  el('btnReset').onclick = () => {
+    const j = JSON.parse(PRISTINE);
+    Object.keys(j.DATA).forEach(k => { DATA[k] = j.DATA[k]; });
+    j.DOORS.forEach((d, i) => { if (DOORS[i]) Object.assign(DOORS[i], d); });
+    buildEditor(); contentChanged();
+    toast('Reset to the original text');
+  };
 }
 
 boot();
+wireEditor();
 </script>
 </body>
 </html>
