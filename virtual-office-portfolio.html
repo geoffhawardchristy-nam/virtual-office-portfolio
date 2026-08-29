@@ -280,7 +280,6 @@ ul.list.amber li::before{background:var(--amber)}
   *{transition-duration:.01ms !important;animation-duration:.01ms !important}
 }
 </style>
-</head>
 <style>
 /* ===================== v2 · HUB, DOORS, CHARACTER ===================== */
 #fade{position:fixed;inset:0;z-index:55;background:#05060A;opacity:0;pointer-events:none;
@@ -409,6 +408,81 @@ details.egrp details.egrp{background:rgba(255,255,255,.03)}
 #etoast.on{opacity:1;transform:translate(-50%,0)}
 @media (max-width:900px){ #editor{width:100vw} }
 </style>
+<style>
+/* ===================== v4 · LANDING PAGE (its own screen) ===================== */
+#intro{
+  background:#07090E;                     /* opaque — the 3D behind it is hidden */
+  backdrop-filter:none;-webkit-backdrop-filter:none;
+  display:grid;place-items:center;padding:28px;overflow:hidden;
+}
+#intro::before{                            /* soft glows */
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:
+    radial-gradient(58% 46% at 22% 18%,rgba(245,165,36,.16),transparent 62%),
+    radial-gradient(52% 44% at 82% 82%,rgba(90,140,255,.16),transparent 64%);
+}
+#intro::after{                             /* faint grid */
+  content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;
+  background-image:
+    linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);
+  background-size:64px 64px;
+  mask-image:radial-gradient(70% 60% at 50% 45%,#000 30%,transparent 100%);
+  -webkit-mask-image:radial-gradient(70% 60% at 50% 45%,#000 30%,transparent 100%);
+}
+#introCard{
+  position:relative;z-index:1;
+  background:none;border:0;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none;
+  max-width:820px;text-align:center;padding:0 18px;
+}
+#introCard .eyebrow{
+  display:inline-flex;align-items:center;gap:9px;margin-bottom:26px;
+  padding:7px 15px;border-radius:99px;border:1px solid var(--hair);
+  background:rgba(255,255,255,.03);letter-spacing:.22em;
+}
+#introCard .eyebrow::before{
+  content:"";width:6px;height:6px;border-radius:99px;background:var(--amber);
+  box-shadow:0 0 10px var(--amber);animation:beacon 2.4s ease-in-out infinite;
+}
+@keyframes beacon{0%,100%{opacity:.3}50%{opacity:1}}
+#introCard h1{
+  margin:0;font-size:clamp(34px,6.6vw,62px);line-height:1.03;letter-spacing:-.04em;font-weight:700;
+}
+#introCard .tagline{
+  margin:14px 0 0;font-size:clamp(15px,2.4vw,22px);font-weight:600;letter-spacing:-.01em;
+  background:linear-gradient(100deg,#FFD98A,#F5A524 42%,#7FB2FF);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+#introCard .lede{
+  margin:20px auto 0;font-size:clamp(13.5px,1.7vw,16px);line-height:1.72;
+  color:#98A2B3;max-width:54ch;
+}
+#introCard .keys{
+  grid-template-columns:repeat(4,auto);justify-content:center;gap:10px 26px;
+  border-color:var(--hair-2);margin:34px auto 32px;max-width:660px;
+}
+#introCard .cta{justify-content:center;gap:12px}
+#introCard .btn.primary{
+  padding:16px 34px;font-size:15px;border-radius:14px;
+  box-shadow:0 14px 44px rgba(245,165,36,.32);
+}
+#introCard .btn.primary:hover{box-shadow:0 18px 56px rgba(245,165,36,.45);transform:translateY(-2px)}
+#introCard .fineprint{
+  margin:26px 0 0;font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--dim);
+}
+@media (max-width:900px){
+  #introCard .keys{grid-template-columns:repeat(2,auto);gap:9px 20px;margin:26px auto}
+}
+</style>
+<style>
+#bootErr{
+  display:none;position:fixed;left:16px;right:16px;bottom:16px;z-index:90;
+  padding:12px 16px;border-radius:12px;font-family:var(--mono);font-size:12px;
+  background:#3A1414;border:1px solid #7A2A2A;color:#FFD9D9;
+}
+</style>
+</head>
 <body>
 <canvas id="scene"></canvas>
 
@@ -434,6 +508,9 @@ details.egrp details.egrp{background:rgba(255,255,255,.03)}
   </nav>
 
   <div id="tools">
+    <button class="icobtn" id="btnSky" title="Daytime — switch to night" aria-label="Toggle day and night">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.4 1.4M17.6 17.6L19 19M19 5l-1.4 1.4M6.4 17.6L5 19"/></svg>
+    </button>
     <button class="icobtn active" id="btnMode" title="Camera: follow / free" aria-label="Toggle camera mode">
       <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.2"/><path d="M5.5 20a6.5 6.5 0 0 1 13 0"/></svg>
     </button>
@@ -501,25 +578,29 @@ details.egrp details.egrp{background:rgba(255,255,255,.03)}
 
 <!-- ================= INTRO ================= -->
 <div id="intro">
-  <div id="introCard" class="glass">
-    <span class="eyebrow">Portfolio · Four doors, four chapters</span>
-    <h1>You're standing in my <em>lobby</em>.</h1>
-    <p class="lede">That's me by the reception desk. Walk to a door and step into the office where that chapter happened. Every desk, screen and colleague inside holds a piece of the work.</p>
+  <div id="introCard">
+    <span class="eyebrow">Frontend Developer · Gandhinagar, India</span>
+    <h1>Hello, I'm GeoffHaward Christy</h1>
+    <p class="tagline">Want to explore my 3D virtual portfolio?</p>
+    <p class="lede">Three and a half years of frontend work — HR platforms, dashboards, a React Native app, a Chrome extension. Instead of scrolling a page, you walk through it: a lobby, two doors, and the actual offices where the work happened.</p>
     <div class="keys">
       <div class="row"><kbd>WASD</kbd> Walk</div>
-      <div class="row"><kbd>Drag</kbd> Turn camera</div>
-      <div class="row"><kbd>E</kbd> Open a door</div>
+      <div class="row"><kbd>Drag</kbd> Look</div>
       <div class="row"><kbd>Click</kbd> Inspect</div>
+      <div class="row"><kbd>E</kbd> Open</div>
     </div>
     <div class="cta">
       <button class="btn primary" id="btnExplore">
         <svg viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg>
-        Step into the lobby
+        Explore
       </button>
       <button class="btn" id="btnSkip">Read the text version</button>
     </div>
+    <p class="fineprint">Best on a desktop · takes a moment to load</p>
   </div>
 </div>
+
+<div id="bootErr"></div>
 
 <!-- ================= LOADER ================= -->
 <div id="loader"><div class="in">
@@ -837,11 +918,11 @@ const DATA = {
   /* ---------- WHITEBOARD -> skills */
   skills: {
     groups: [
-      { label: "Core frontend",   hot: true,  items: ["React", "Angular", "Next.js", "React Native", "JavaScript (ES6+)", "TypeScript"] },
-      { label: "State & data",    hot: false, items: ["Redux", "Redux Toolkit", "RxJS", "REST API integration", "Reactive Forms"] },
-      { label: "Styling",         hot: false, items: ["Tailwind CSS", "SCSS", "CSS Grid / Flexbox", "Responsive design"] },
-      { label: "Backend I touch", hot: false, items: ["Java Spring Boot", "Node.js + Express", "PostgreSQL", "REST design"] },
-      { label: "Platform",        hot: false, items: ["Shopify Liquid", "Chrome Extension APIs", "Firebase", "Git"] }
+      { label: "Core frontend",   hot: true,  years: "3 yrs 5 mos", items: ["React", "Angular", "Next.js", "React Native", "JavaScript (ES6+)", "TypeScript"] },
+      { label: "State & data",    hot: false, years: "3 yrs", items: ["Redux", "Redux Toolkit", "RxJS", "REST API integration", "Reactive Forms"] },
+      { label: "Styling",         hot: false, years: "3 yrs 5 mos", items: ["Tailwind CSS", "SCSS", "CSS Grid / Flexbox", "Responsive design"] },
+      { label: "Backend I touch", hot: false, years: "2 yrs", items: ["Java Spring Boot", "Node.js + Express", "PostgreSQL", "REST design"] },
+      { label: "Platform",        hot: false, years: "2 yrs", items: ["Shopify Liquid", "Chrome Extension APIs", "Firebase", "Git"] }
     ],
     workflow: [
       "Read the API contract before writing a component",
@@ -992,7 +1073,9 @@ const VACANCY = {
 const LAYOUTS = {
   hub: {
     name: 'Reception lobby', sub: 'Four doors. Each one is a chapter.',
-    room: { w: 30, d: 24, tone: 'cool', windows: { left: true, right: true } },
+    room: { w: 30, d: 24, tone: 'cool', windows: { left: true, right: true },
+      // only over the places worth lighting, not a full grid
+      lights: 'none' },
     spawn: [0, 8.5], exit: null
   },
 
@@ -1015,43 +1098,52 @@ const LAYOUTS = {
   logieagle: {
     name: 'Logieagle floor', sub: 'Four products, one frontend, three teammates',
     theme: 'logieagle',
-    room: { w: 36, d: 28, windows: { back: true } },     // garden view on the back wall only
-    spawn: [9.6, 11.5], exit: [9.6, 14],
+    /* another 30% off: 29 x 22.5 -> 20.5 x 16. Rooms, tables, rigs and props
+       scaled with it; chairs, monitors and people stay at human scale. */
+    room: { w: 20.5, d: 16, windows: { back: true } },
+    spawn: [7.65, 6.3], exit: [7.65, 8],
 
-    /* seat 0 = front-left, 1 = front-right, 2 = back-left, 3 = back-right */
+    /* still 4 seats a side. Table 2 (right) and table 3 (left) share z = 0. */
     tables: [
-      { x: 6, z: -11, w: 5.8, d: 2.3, seats: [                       // table 1
-        { p: 'ws01', npc: 'npc02', dual: true }, { p: 'ws02' }, {}, {} ] },
-      { x: 6, z: -4.9, w: 5.8, d: 2.3, seats: [                      // table 2 — first one you meet
-        { p: 'ws03', npc: 'npc01' }, { p: 'ws06' }, {}, {} ] },
-      { x: -11.5, z: -2.9, w: 5.8, d: 2.3, seats: [                  // table 3
-        { npc: 'npc03' }, {}, {}, {} ] }
+      { x: 6.75, z: -5, w: 7, d: 2.3, seats: [                        // table 1, right, far
+        { p: 'ws01', npc: 'npc02', dual: true }, { p: 'ws02' }, {}, {}, {}, {}, {}, {} ] },
+      { x: 6.75, z: 0, w: 7, d: 2.3, seats: [                         // table 2, right, near
+        { p: 'ws03', npc: 'npc01' }, { p: 'ws06' }, {}, {}, {}, {}, {}, {} ] },
+      { x: -6.75, z: 0, w: 7, d: 2.3, endStore: 'right', seats: [      // table 3, left wall
+        { npc: 'npc03' }, {}, {}, {}, {}, {}, {}, {} ] }
     ],
 
-    /* both cabins sit hard against the building walls */
     cabins: [
-      { id: 'director', x: -14.05, z: -10.6, w: 8.1, d: 6.8, style: 'director',
-        sides: { e: 1, s: 1 }, door: 's', label: 'Director', ac: true },
-      { id: 'meeting', x: -12.6, z: 10.05, w: 11, d: 8, style: 'meeting',
-        sides: { e: 1, n: 1 }, door: 'n', label: 'Meeting', ac: true }
+      { id: 'director', x: -6.8, z: -5.8, w: 7.1, d: 4.4, style: 'director',
+        sides: { e: 1, s: 1 }, door: 'e', label: 'Director', ac: true },
+      { id: 'meeting', x: -6.8, z: 5.8, w: 7.1, d: 4.4, style: 'briefing',
+        sides: { n: 1 }, door: 'n', label: 'Meeting', ac: true, whiteTop: true }
     ],
 
-    /* washrooms: back against the front wall, doors facing into the office */
     bathrooms: [
-      { x: -5.8, z: 12.55, w: 2.6, d: 3, ry: Math.PI, label: 'Men' },
-      { x: -3.2, z: 12.55, w: 2.6, d: 3, ry: Math.PI, label: 'Ladies' }
+      { x: -1.725, z: 5.8, w: 3.05, d: 4.4, ry: Math.PI, label: 'Men', basin: 'left' },
+      { x: 1.325, z: 5.8, w: 3.05, d: 4.4, ry: Math.PI, label: 'Ladies', basin: 'right', omit: ['right'] }
     ],
+
+    logoPanel: { x: 2.97, y: 1.85, z: 5.8, ry: Math.PI / 2, w: 2.6 },   // clear of the 2.93 wall face
 
     desks: [],
     npcs: [],
-    whiteboard: { x: -17.8, z: 10.05, ry: Math.PI / 2 },             // inside the meeting room
-    plaque: { x: 0.95, z: 10, ry: -Math.PI / 2 },                    // back face of the logo wall
-    logo: { x: 1.2, z: 10.25, ry: Math.PI / 2, w: 7.7 },             // runs up to the front wall
-    caboodh: [{ x: 4.8, z: 13.55, ry: Math.PI, w: 2.6, h: 2.7 }],
-    shelves: [{ x: 14.5, z: 4.6, ry: 0, len: 5.4, bays: 3, levels: 4 }],
-    rings: [],
-    fans: [[6, -8], [-11.5, -3]],
-    acs: [{ x: 17.88, z: -4.9, ry: -Math.PI / 2 }],                  // right of table 2
+    whiteboard: { x: -6.8, z: 7.88, ry: Math.PI, s: 0.7 },
+    plaque: null,
+    caboodh: [{ x: 4.25, z: 7.64, ry: Math.PI, w: 2.8, h: 3.7 }],   // runs from the washroom wall to the gate jamb
+    shelves: [{ x: 8.2, z: 3.6, ry: 0, len: 3.1, bays: 3, levels: 4 }],
+    wallDecor: [],
+    overhead: [{ x: -5.3, z: 0, ry: 0, w: 0.8 }],
+    rigs: [[6.75, -5, 5, 3], [6.75, 0, 5, 3], [-6.75, 0, 5, 3]],
+    fans: [],
+    tv: { x: 10.13, z: -2.5, ry: -Math.PI / 2, w: 2.2, h: 1.26, y: 1.66, big: true },
+    switches: [{ x: 10.15, z: 2.5, ry: -Math.PI / 2, y: 1.25, gangs: 6 }],
+    acs: [
+      { x: 10.13, z: 0, ry: -Math.PI / 2, y: 3.15 },      // right wall, over table 2
+      { x: 10.13, z: -5, ry: -Math.PI / 2, y: 3.15 },     // right wall, over table 1
+      { x: -10.13, z: 0, ry: Math.PI / 2, y: 3.15 }       // left wall, over table 3
+    ],
     credenzas: [],
     storage: [],
     plants: []
@@ -1117,6 +1209,7 @@ const STATE = {
 STATE.mobile = STATE.coarse || STATE.small;
 
 let renderer, scene, camera, sun;
+const LIGHTS = { points: [] };
 try {
   renderer = new THREE.WebGLRenderer({
     canvas, antialias: !STATE.mobile, powerPreference: 'high-performance', alpha: false
@@ -1148,6 +1241,7 @@ function setupEngine() {
   // --- lighting: one shadow-casting key light, everything else is cheap fill
   const hemi = new THREE.HemisphereLight(0xDCEBFF, 0x4A4238, 0.62);
   scene.add(hemi);
+  LIGHTS.hemi = hemi;
 
   sun = new THREE.DirectionalLight(0xFFF3E0, 1.15);
   sun.position.set(20, 27, 15);
@@ -1160,16 +1254,25 @@ function setupEngine() {
     sun.shadow.normalBias = 0.02;
   }
   scene.add(sun);
+  LIGHTS.key = sun;
 
   // window bounce from the glazed side
   const bounce = new THREE.DirectionalLight(0xBFD8FF, 0.34);
   bounce.position.set(-18, 10, -20);
   scene.add(bounce);
+  LIGHTS.fill = bounce;
 
   // warm pools, no shadows
-  const p1 = new THREE.PointLight(0xFFD9A0, 0.5, 18, 2); p1.position.set(12, 3.1, -8.5); scene.add(p1);
-  const p2 = new THREE.PointLight(0xFFCE93, 0.45, 16, 2); p2.position.set(-13, 3.0, 9);  scene.add(p2);
-  const p3 = new THREE.PointLight(0xFFE2BE, 0.4, 15, 2);  p3.position.set(4, 3.0, 11.5); scene.add(p3);
+  // warm pools that come up at night; base intensity is remembered so the
+  // day/night switch can scale them
+  [[0xFFD9A0, 0.16, 6, 3.1, -5], [0xFFCE93, 0.16, -7, 3.0, 4],
+   [0xFFE2BE, 0.14, 0, 3.0, 9], [0xFFD9A0, 0.14, 9, 3.0, -11]].forEach(([c, i, x, y, z]) => {
+    const pt = new THREE.PointLight(c, i, 20, 2);
+    pt.position.set(x, y, z);
+    pt.userData.base = i;
+    scene.add(pt);
+    LIGHTS.points.push(pt);
+  });
 }
 
 /* ==========================================================================
@@ -1432,6 +1535,8 @@ function buildTextures() {
   // reception backdrop — regenerated whenever the owner details are edited
   TEX.logo = ownerLogoTexture();
 
+  buildSkyTextures();
+
   TEX.exit = makeTex(256, 96, (x, w, h) => {
     x.fillStyle = '#0F1319'; x.fillRect(0, 0, w, h);
     x.fillStyle = '#7ED9A7'; x.font = '700 40px ui-sans-serif,sans-serif';
@@ -1466,9 +1571,10 @@ function buildMaterials() {
   MAT.paper   = std({ color: 0xF6F5F1, roughness: 0.9 });
   MAT.amber   = std({ color: 0xF5A524, roughness: 0.45, emissive: 0x3A2200 });
   MAT.glass   = std({ color: 0xC8E6F2, roughness: 0.06, metalness: 0.1, transparent: true, opacity: 0.16, side: THREE.DoubleSide });
-  MAT.window  = new THREE.MeshBasicMaterial({ color: 0xDCEEFF, toneMapped: false });
-  MAT.light   = new THREE.MeshBasicMaterial({ color: 0xFFF6E4, toneMapped: false });
+  MAT.window  = new THREE.MeshBasicMaterial({ map: TEX.viewDay, toneMapped: false });
+  MAT.light   = lamp(new THREE.MeshBasicMaterial({ color: 0xFFF6E4, toneMapped: false }));
   MAT.board   = new THREE.MeshBasicMaterial({ map: TEX.board, toneMapped: false });
+  MAT.contactSign = signage(new THREE.MeshBasicMaterial({ map: contactSignTexture(), toneMapped: false }), contactSignTexture);
   MAT.logo    = signage(new THREE.MeshBasicMaterial({ map: TEX.logo, toneMapped: false }), ownerLogoTexture);
   MAT.present = new THREE.MeshBasicMaterial({ map: TEX.present, toneMapped: false });
   MAT.exitSig = new THREE.MeshBasicMaterial({ map: TEX.exit, toneMapped: false });
@@ -1593,6 +1699,54 @@ function buildThemeAssets() {
     x.fillText('LOGICAL  |  FOCUSED  |  SHARP', 296, 246);
   });
 
+  // ---- the same mark, but cut out — no panel behind it
+  TEX.logieMark = makeTex(1024, 384, (x, w, h) => {
+    x.clearRect(0, 0, w, h);
+    const cx = 152, cy = 172, s = 66;
+    const face = (pts, col) => {
+      x.fillStyle = col; x.beginPath();
+      pts.forEach((p, i) => i ? x.lineTo(p[0], p[1]) : x.moveTo(p[0], p[1]));
+      x.closePath(); x.fill();
+    };
+    face([[cx, cy - s], [cx + s * 0.92, cy - s * 0.45], [cx, cy + s * 0.1], [cx - s * 0.92, cy - s * 0.45]], '#E8B923');
+    face([[cx - s * 0.92, cy - s * 0.42], [cx, cy + s * 0.13], [cx, cy + s * 1.05], [cx - s * 0.92, cy + s * 0.5]], '#D63C2E');
+    face([[cx + s * 0.92, cy - s * 0.42], [cx, cy + s * 0.13], [cx, cy + s * 1.05], [cx + s * 0.92, cy + s * 0.5]], '#3AA6D6');
+    x.fillStyle = '#23262C';
+    x.font = '800 104px ui-sans-serif,Arial,sans-serif';
+    x.fillText('LOGIEAGLE', 274, 200);
+    x.fillStyle = '#6A7078';
+    x.font = '600 36px ui-sans-serif,Arial,sans-serif';
+    x.fillText('LOGICAL  |  FOCUSED  |  SHARP', 278, 262);
+  });
+
+  // ---- antique wall art: aged plaster with a brass art-deco relief
+  TEX.wallArt = makeTex(512, 384, (x, w, h) => {
+    x.fillStyle = '#2B2620'; x.fillRect(0, 0, w, h);
+    for (let i = 0; i < 3000; i++) {
+      x.fillStyle = 'rgba(255,235,200,' + (Math.random() * 0.035) + ')';
+      x.fillRect(Math.random() * w, Math.random() * h, 2, 2);
+    }
+    const cx = w / 2, cy = h / 2;
+    x.strokeStyle = '#B08D57'; x.lineWidth = 3;
+    for (let r = 40; r < 150; r += 26) {
+      x.beginPath(); x.arc(cx, cy + 40, r, Math.PI * 1.06, Math.PI * 1.94); x.stroke();
+    }
+    x.lineWidth = 2.2;
+    for (let i = 0; i <= 10; i++) {
+      const a = Math.PI * 1.06 + (Math.PI * 0.88) * (i / 10);
+      x.beginPath();
+      x.moveTo(cx + Math.cos(a) * 40, cy + 40 + Math.sin(a) * 40);
+      x.lineTo(cx + Math.cos(a) * 150, cy + 40 + Math.sin(a) * 150);
+      x.stroke();
+    }
+    x.fillStyle = '#C9A063';
+    x.beginPath();
+    x.moveTo(cx, cy - 132); x.lineTo(cx + 30, cy - 96); x.lineTo(cx, cy - 60); x.lineTo(cx - 30, cy - 96);
+    x.closePath(); x.fill();
+    x.strokeStyle = '#8A6B3E'; x.lineWidth = 5;
+    x.strokeRect(22, 22, w - 44, h - 44);
+  });
+
   // ---- wall screen for the open floor
   TEX.wallTv = makeTex(512, 288, (x, w, h) => {
     x.fillStyle = '#0B0E13'; x.fillRect(0, 0, w, h);
@@ -1619,11 +1773,17 @@ function buildThemeAssets() {
   MAT.mesh       = std({ color: 0x1A1D23, roughness: 0.92 });
   MAT.chrome     = std({ color: 0x9AA0A8, roughness: 0.25, metalness: 0.8 });
   MAT.potWhite   = std({ color: 0xF0EFEC, roughness: 0.55 });
+  MAT.brass      = std({ color: 0xB08D57, roughness: 0.32, metalness: 0.72 });
+  MAT.cream      = std({ color: 0xEDE6D6, roughness: 0.6 });
+  MAT.wallArt    = new THREE.MeshBasicMaterial({ map: TEX.wallArt, toneMapped: false });
   MAT.glassClear = std({ color: 0xD6ECF4, roughness: 0.04, metalness: 0.08, transparent: true, opacity: 0.13, side: THREE.DoubleSide });
   MAT.outside    = new THREE.MeshBasicMaterial({ map: TEX.outside, toneMapped: false });
   MAT.logieLogo  = new THREE.MeshBasicMaterial({ map: TEX.logieLogo, toneMapped: false });
+  MAT.logieMark  = new THREE.MeshBasicMaterial({
+    map: TEX.logieMark, toneMapped: false, transparent: true, alphaTest: 0.04, depthWrite: false
+  });
   MAT.wallTv     = new THREE.MeshBasicMaterial({ map: TEX.wallTv, toneMapped: false });
-  MAT.downlight  = new THREE.MeshBasicMaterial({ color: 0xFFF4E2, toneMapped: false });
+  MAT.downlight  = lamp(new THREE.MeshBasicMaterial({ color: 0xFFF4E2, toneMapped: false }));
 
   THEMES.default = {
     id: 'default',
@@ -1656,6 +1816,7 @@ function floorMaterialFor(cfg) {
    character can't walk through anything.
    ========================================================================== */
 const WALL_H = 3.9;
+const TRANSOM_Y = 2.35;   // one horizontal line shared by the glazing and the glass cabins
 
 function makeRoom(cfg, ctx) {
   const g = new THREE.Group();
@@ -1679,8 +1840,10 @@ function makeRoom(cfg, ctx) {
     b.rotation.y = ry || 0; g.add(b);
   };
   addWall(w, 0, -hd - 0.15, 0);
-  addWall(d, -hw - 0.15, 0, Math.PI / 2);
-  addWall(d, hw + 0.15, 0, Math.PI / 2);
+  // side walls run 0.3 long at each end so they close the corners; without the
+  // overrun each corner was left with a 0.3 x 0.3 notch open to the outside
+  addWall(d + 0.6, -hw - 0.15, 0, Math.PI / 2);
+  addWall(d + 0.6, hw + 0.15, 0, Math.PI / 2);
   if (cfg.frontGap) {
     const gx = cfg.frontGapX || 0, hg = cfg.frontGap / 2;
     const l = (gx - hg) + hw, r = hw - (gx + hg);
@@ -1707,17 +1870,31 @@ function makeRoom(cfg, ctx) {
     q.add(box(MAT.trim, 0.07, gh, 0.11, 0, 0, 0.07, false));
     g.add(q);
   };
-  const curtainWall = (len, x, z, ry) => {
-    const run = len - 1.0, H = 3.3;
-    const bays = Math.max(2, Math.round(run / 2.35));
-    const bw = run / bays;
+  const curtainWall = (len, x, z, ry, hard) => {
+    // corner to corner, and the head lands on the same line as the cabin and
+    // washroom tops so there is no odd white band above the glass
+    const sill = 0.14;
+    const headY = (typeof WALL_H === 'number' ? WALL_H : 3.9) * 0.95;
+    const run = len, H = headY - sill;
     const q = group(x, 0, z, ry);
     q.add(box(TH.pane, run, H, 0.05, 0, 0.14 + H / 2, 0, false));
     q.add(box(TH.frame, run + 0.2, 0.13, 0.16, 0, 0.14 + H, 0.06, false));   // head
     q.add(box(TH.frame, run + 0.2, 0.16, 0.18, 0, 0.1, 0.06, false));        // sill
-    for (let i = 0; i <= bays; i++)
-      q.add(box(TH.frame, 0.09, H, 0.16, -run / 2 + bw * i, 0.14 + H / 2, 0.06, false));
-    q.add(box(TH.frame, run, 0.06, 0.13, 0, 2.5, 0.06, false));              // transom
+    // split the run wherever a cabin wall meets this glazing, then subdivide
+    // each span evenly, so the mullions line up with the cabin edges
+    const stops = [-run / 2]
+      .concat((hard || []).filter(p => p > -run / 2 + 0.4 && p < run / 2 - 0.4))
+      .concat([run / 2])
+      .sort((p, q2) => p - q2);
+    const posts = [];
+    for (let i = 0; i < stops.length - 1; i++) {
+      const from = stops[i], span = stops[i + 1] - from;
+      const n = Math.max(1, Math.round(span / 2.3));
+      for (let k = 0; k < n; k++) posts.push(from + (span * k) / n);
+    }
+    posts.push(run / 2);
+    posts.forEach(px => q.add(box(TH.frame, 0.09, H, 0.16, px, 0.14 + H / 2, 0.06, false)));
+    q.add(box(TH.frame, run, 0.06, 0.13, 0, TRANSOM_Y, 0.06, false));        // transom, on the shared line
     g.add(q);
   };
   const wallRun = (side) => (side === 'back' ? w : d);
@@ -1726,13 +1903,36 @@ function makeRoom(cfg, ctx) {
     const ry = side === 'back' ? 0 : (side === 'right' ? -Math.PI / 2 : Math.PI / 2);
     const px = side === 'back' ? 0 : (side === 'right' ? hw + 0.02 : -hw - 0.02);
     const pz = side === 'back' ? -hd - 0.02 : 0;
-    if (full) curtainWall(wallRun(side), px, pz, ry);
+    if (full) curtainWall(wallRun(side), px, pz, ry, (cfg.mullionAt || {})[side]);
     else span(wallRun(side), 5.8).forEach(o =>
       stripBay(side === 'back' ? o : px, 2.15, side === 'back' ? pz : o, 4.3, 2.3, ry));
   });
 
-  // ---- no ceiling fixtures: all light hardware removed on request.
-  //      Illumination still comes from the scene's hemisphere/key/fill lights.
+  // ---- ceiling fittings. They read as switched-off hardware by day and
+  //      light up at night, because MAT.light is registered as a lamp.
+  // rooms with suspended rigs already have their lighting from the layout, so
+  // only the plain ceilings get panels here
+  if (cfg.lights !== 'none' && !(TH && TH.ceiling === 'rings')) {
+    // a layout can name the spots worth lighting instead of taking a full grid
+    const cells = cfg.lights || (() => {
+      const out = [];
+      span(w, 7.0).forEach(x => span(d, 6.2).forEach(z => out.push([x, z])));
+      return out;
+    })();
+    const dummy = new THREE.Object3D();
+    const panels = new THREE.InstancedMesh(GEO.box, MAT.light, cells.length);
+    const rails = new THREE.InstancedMesh(GEO.box, MAT.trim, cells.length);
+    cells.forEach((c, i) => {
+      dummy.position.set(c[0], 3.6, c[1]); dummy.scale.set(2.4, 0.06, 0.55);
+      dummy.updateMatrix(); panels.setMatrixAt(i, dummy.matrix);
+      dummy.position.y = 3.66; dummy.scale.set(2.6, 0.06, 0.72);
+      dummy.updateMatrix(); rails.setMatrixAt(i, dummy.matrix);
+    });
+    panels.instanceMatrix.needsUpdate = true;
+    rails.instanceMatrix.needsUpdate = true;
+    g.add(panels); g.add(rails);
+  }
+
 
   return g;
 }
@@ -1917,7 +2117,7 @@ function makeWhiteboard() {
 }
 
 /* ---- reception ---------------------------------------------------------- */
-function makeReception() {
+function makeReception(signMat, hideBackdrop) {
   const g = group();
   // curved counter
   const front = new THREE.Mesh(
@@ -1938,12 +2138,15 @@ function makeReception() {
   );
   inner.position.y = 0.52; g.add(inner);
   g.add(box(MAT.wood, 3.3, 0.1, 1.0, 0, 1.05, -0.9));               // work surface behind
-  g.add(makeMonitor('code', 0.8).translateY(1.1).translateZ(-0.85).rotateY(Math.PI));
+  // faces the visitor side of the counter — nobody sits behind this desk now,
+  // so a screen showing its back read as a mistake
+  g.add(makeMonitor('code', 0.8).translateY(1.1).translateZ(-0.85));
 
   // backdrop with the name on it
+  if (hideBackdrop) return g;
   const bd = group(0, 0, -2.2);
   bd.add(box(MAT.wallDark, 6.4, 3.1, 0.16, 0, 1.6, 0, false));
-  bd.add(plane(MAT.logo, 5.6, 1.4, 0, 1.9, 0.09));
+  bd.add(plane(signMat || MAT.logo, 5.6, 1.4, 0, 1.9, 0.09));
   bd.add(box(MAT.amber, 6.4, 0.06, 0.2, 0, 0.16, 0.02, false));
   g.add(bd);
 
@@ -2131,10 +2334,6 @@ function makeDoor(door) {
     const leaf = new THREE.Group();
     leaf.position.x = -side * lw / 2;
     leaf.add(box(T.metal, lw - 0.03, OH - 0.06, 0.085, 0, OH / 2, 0));
-    const rank = ['silver', 'gold', 'platinum', 'diamond'].indexOf(door.tier) + 1;
-    for (let i = 0; i < rank; i++) {
-      leaf.add(box(T.glow, lw - 0.5, 0.05, 0.03, 0, 0.75 + i * 0.5, side * 0.05, false));
-    }
     if (door.tier === 'diamond') {
       for (let i = 0; i < 3; i++) {
         const gem = mesh(GEO.ico, T.glow, 0.16, 0.22, 0.16, 0, 2.35 - i * 0.3, side * 0.07, false);
@@ -2176,11 +2375,15 @@ function makeDoor(door) {
 /* ---- portal back to the lobby ------------------------------------------ */
 function makeExitPortal() {
   const g = new THREE.Group();
-  const OW = 2.6, OH = 2.9;
-  g.add(box(MAT.darker, OW, OH, 0.36, 0, OH / 2, 0.12, false));
-  g.add(box(MAT.metal, 0.2, OH + 0.26, 0.44, -OW / 2 - 0.1, (OH + 0.26) / 2, 0));
-  g.add(box(MAT.metal, 0.2, OH + 0.26, 0.44, OW / 2 + 0.1, (OH + 0.26) / 2, 0));
-  g.add(box(MAT.metal, OW + 0.4, 0.24, 0.44, 0, OH + 0.13, 0));
+  const top = (typeof WALL_H === 'number' ? WALL_H : 3.9);
+  const OW = 3.82, OH = 3.55, T = 0.3, JW = 0.09;   // T is exactly the wall thickness
+  // every part lives between z = 0 and z = T, so the frame sits inside the wall
+  // line instead of standing proud of it
+  g.add(box(MAT.darker, OW, OH, T + 0.01, 0, OH / 2, T / 2, false));
+  g.add(box(MAT.metal, JW, OH + 0.14, T, -OW / 2 - JW / 2, (OH + 0.14) / 2, T / 2));
+  g.add(box(MAT.metal, JW, OH + 0.14, T, OW / 2 + JW / 2, (OH + 0.14) / 2, T / 2));
+  g.add(box(MAT.metal, OW + JW * 2, 0.14, T, 0, OH + 0.07, T / 2));
+  g.add(box(MAT.wallWhite, OW + JW * 2, top - OH - 0.14, T, 0, (OH + 0.14 + top) / 2, T / 2, false));
   const sign = plane(new THREE.MeshBasicMaterial({
     toneMapped: false,
     map: makeTex(320, 96, (x, w, h) => {
@@ -2188,7 +2391,9 @@ function makeExitPortal() {
       x.fillStyle = '#7ED9A7'; x.font = '700 38px ui-sans-serif,sans-serif';
       x.textAlign = 'center'; x.fillText('LOBBY', w / 2, 62);
     })
-  }), 1.5, 0.45, 0, OH + 0.13, 0.24);
+  }), 1.9, 0.5, 0, OH + 0.42, -0.02);
+  sign.rotation.y = Math.PI;                        // faces back into the office
+  g.add(box(MAT.blackSoft, 2.0, 0.58, 0.05, 0, OH + 0.42, 0.012, false));
   g.add(sign);
   const glow = new THREE.Mesh(GEO.plane, new THREE.MeshBasicMaterial({
     color: 0x7ED9A7, transparent: true, opacity: 0.26, toneMapped: false, depthWrite: false
@@ -2350,6 +2555,44 @@ function makeHero() {
    Modelled from the reference photos of the real office.
    ========================================================================== */
 
+/* every fan in the building is the same size and hangs at the same height */
+const FAN_SPAN = 0.54;
+const FAN_TOP = 3.70;
+
+/* suspended rectangular rig: chunky black frame, light strip running round the
+   inside of it, and a ceiling fan hanging in the middle of the opening */
+function makeCeilingRig(W, D) {
+  const g = new THREE.Group();
+  const y = 3.1, T = 0.34, H = 0.16;
+  const bar = (bw, bd, x, z) => {
+    g.add(box(MAT.blackFrame, bw, H, bd, x, y, z, false));
+    g.add(box(MAT.blackSoft, bw + 0.02, 0.035, bd + 0.02, x, y + H / 2, z, false));
+  };
+  bar(W, T, 0, -D / 2 + T / 2);
+  bar(W, T, 0, D / 2 - T / 2);
+  bar(T, D - T * 2, -W / 2 + T / 2, 0);
+  bar(T, D - T * 2, W / 2 - T / 2, 0);
+  // light strip around the inner face
+  const iw = W - T * 2, id = D - T * 2;
+  const strip = (sw, sd, x, z) => g.add(box(MAT.light, sw, 0.055, sd, x, y - H / 2 + 0.03, z, false));
+  strip(iw, 0.05, 0, -id / 2);
+  strip(iw, 0.05, 0, id / 2);
+  strip(0.05, id, -iw / 2, 0);
+  strip(0.05, id, iw / 2, 0);
+  // and a soft downward glow line under each frame member
+  const under = (uw, ud, x, z) => g.add(box(MAT.light, uw, 0.03, ud, x, y - H / 2 - 0.01, z, false));
+  under(W - 0.12, 0.09, 0, -D / 2 + T / 2);
+  under(W - 0.12, 0.09, 0, D / 2 - T / 2);
+  under(0.09, D - T * 2, -W / 2 + T / 2, 0);
+  under(0.09, D - T * 2, W / 2 - T / 2, 0);
+  // suspension
+  [[-W / 2 + T, -D / 2 + T], [W / 2 - T, -D / 2 + T], [-W / 2 + T, D / 2 - T], [W / 2 - T, D / 2 - T]]
+    .forEach(([x, z]) => g.add(cyl(MAT.blackSoft, 0.013, 0.66, x, y + 0.41, z, true)));
+  // fan hangs inside the opening — span shrinks to fit, height does not
+  g.add(makeCeilingFan(Math.min(FAN_SPAN, (D - T * 2 - 0.4) / 3.4), FAN_TOP));
+  return g;
+}
+
 /* black rectangular ring pendant, recessed white tray above it */
 function makeRingLight(w, d) {
   const g = new THREE.Group();
@@ -2371,14 +2614,15 @@ function makeRingLight(w, d) {
 }
 
 /* white ceiling fan */
-function makeCeilingFan() {
+function makeCeilingFan(span, topY) {
+  const s = span || 1, top = topY === undefined ? 3.72 : topY;
   const g = new THREE.Group();
-  g.add(cyl(MAT.wallWhite, 0.035, 0.5, 0, 3.42, 0, true));
-  g.add(cyl(MAT.wallWhite, 0.13, 0.16, 0, 3.14, 0, true));
+  g.add(cyl(MAT.wallWhite, 0.035, 0.5, 0, top - 0.25, 0, true));        // downrod
+  g.add(cyl(MAT.wallWhite, 0.13 * s, 0.16, 0, top - 0.56, 0, true));    // motor
   const hub = new THREE.Group();
-  hub.position.y = 3.12;
+  hub.position.y = top - 0.62;
   for (let i = 0; i < 4; i++) {
-    const b = box(MAT.wallWhite, 1.5, 0.025, 0.19, 0.85, 0, 0, false);
+    const b = box(MAT.wallWhite, 1.5 * s, 0.025, 0.19 * s, 0.85 * s, 0, 0, false);
     const arm = new THREE.Group();
     arm.rotation.y = (i / 4) * Math.PI * 2;
     arm.add(b);
@@ -2432,14 +2676,12 @@ function makeTaskChair() {
   const g = new THREE.Group();
   for (let i = 0; i < 5; i++) {
     const a = (i / 5) * Math.PI * 2;
-    const spoke = box(MAT.blackSoft, 0.46, 0.05, 0.08, Math.cos(a) * 0.21, 0.09, Math.sin(a) * 0.21, false);
+    const spoke = box(MAT.blackSoft, 0.56, 0.06, 0.09, Math.cos(a) * 0.24, 0.07, Math.sin(a) * 0.24, false);
     spoke.rotation.y = -a;
     g.add(spoke);
-    g.add(cyl(MAT.blackSoft, 0.035, 0.07, Math.cos(a) * 0.4, 0.04, Math.sin(a) * 0.4, true));
   }
   g.add(cyl(MAT.chrome, 0.042, 0.34, 0, 0.27, 0, true));
   g.add(box(MAT.mesh, 0.5, 0.09, 0.48, 0, 0.46, 0));
-  g.add(box(MAT.blackSoft, 0.52, 0.04, 0.5, 0, 0.41, 0, false));
   const back = box(MAT.mesh, 0.46, 0.62, 0.06, 0, 0.83, 0.25);
   back.rotation.x = -0.16; g.add(back);
   g.add(box(MAT.blackFrame, 0.5, 0.66, 0.03, 0, 0.83, 0.29, false));
@@ -2483,21 +2725,37 @@ function makeGlassCabin(w, d, opts) {
   const sides = o.sides || { w: 1, s: 1 };
   const doorSide = o.door || 's';
   const g = new THREE.Group();
-  const H = 3.05, hw = w / 2, hd = d / 2;
+  const H = (typeof WALL_H === 'number' ? WALL_H : 3.9) * 0.95;   // 5% below the wall line
+  const DH = (typeof TRANSOM_Y === 'number' ? TRANSOM_Y : 2.35);  // door head, on the shared line
+  const hw = w / 2, hd = d / 2;
 
-  const pane = (pw, x, z, ry) => {
+  // One post per corner, not two. Each pane can drop an end post when the
+  // neighbouring pane (or the door jamb) already puts one there.
+  const pane = (pw, x, z, ry, skip) => {
     if (pw < 0.3) return;
+    const s = skip || {};
     const p = group(x, 0, z, ry);
     p.add(box(MAT.glassClear, pw, H - 0.16, 0.03, 0, H / 2, 0, false));
-    p.add(box(MAT.blackFrame, pw, 0.09, 0.09, 0, H, 0, false));
+    p.add(box(o.whiteTop ? MAT.wallWhite : MAT.blackFrame, pw, 0.09, o.whiteTop ? 0.1 : 0.09, 0, H, 0, false));
     p.add(box(MAT.blackFrame, pw, 0.09, 0.09, 0, 0.06, 0, false));
-    p.add(box(MAT.blackFrame, 0.07, H, 0.09, -pw / 2, H / 2, 0, false));
-    p.add(box(MAT.blackFrame, 0.07, H, 0.09, pw / 2, H / 2, 0, false));
+    p.add(box(MAT.blackFrame, pw, 0.05, 0.07, 0, DH, 0, false));         // transom, shared line
+    if (!s.start) p.add(box(MAT.blackFrame, 0.07, H, 0.09, -pw / 2, H / 2, 0, false));
+    if (!s.end) p.add(box(MAT.blackFrame, 0.07, H, 0.09, pw / 2, H / 2, 0, false));
     const mull = Math.max(0, Math.round(pw / 1.7) - 1);
     for (let i = 1; i <= mull; i++)
       p.add(box(MAT.blackFrame, 0.05, H - 0.2, 0.06, -pw / 2 + (pw / (mull + 1)) * i, H / 2, 0, false));
     g.add(p);
   };
+
+  // a pane's -pw/2 end is west on n/s walls and south on e/w walls
+  const ORDER = ['n', 's', 'e', 'w'];
+  const ENDS = { n: ['w', 'e'], s: ['w', 'e'], e: ['s', 'n'], w: ['s', 'n'] };
+  const atWall = o.atWall || {};
+  const dropPost = (self, corner) =>
+    // the neighbouring pane already carries the corner post...
+    (!!sides[corner] && ORDER.indexOf(corner) < ORDER.indexOf(self)) ||
+    // ...or the pane dies into a building wall, which draws the line itself
+    !!atWall[corner];
 
   const SIDE = {
     n: { len: w, x: 0, z: -hd, ry: 0, ax: 'x' },
@@ -2508,18 +2766,29 @@ function makeGlassCabin(w, d, opts) {
   Object.keys(SIDE).forEach(k => {
     if (!sides[k]) return;
     const S = SIDE[k];
+    const [cStart, cEnd] = ENDS[k];
     if (k === doorSide) {
       const doorW = 1.15, seg = (S.len - doorW) / 2;
       const off = doorW / 2 + seg / 2;
-      pane(seg, S.ax === 'x' ? -off : S.x, S.ax === 'x' ? S.z : -off, S.ry);
-      pane(seg, S.ax === 'x' ? off : S.x, S.ax === 'x' ? S.z : off, S.ry);
+      // the jamb supplies the post on each segment's inner end
+      const segA = S.ax === 'x' ? { start: dropPost(k, cStart), end: true }
+                                : { start: true, end: dropPost(k, cEnd) };
+      const segB = S.ax === 'x' ? { start: true, end: dropPost(k, cEnd) }
+                                : { start: dropPost(k, cStart), end: true };
+      pane(seg, S.ax === 'x' ? -off : S.x, S.ax === 'x' ? S.z : -off, S.ry, segA);
+      pane(seg, S.ax === 'x' ? off : S.x, S.ax === 'x' ? S.z : off, S.ry, segB);
       const dj = group(S.x, 0, S.z, S.ry);
-      dj.add(box(MAT.blackFrame, doorW + 0.1, 0.09, 0.1, 0, H, 0, false));
+      dj.add(box(o.whiteTop ? MAT.wallWhite : MAT.blackFrame, doorW + 0.1, 0.09, o.whiteTop ? 0.11 : 0.1, 0, H, 0, false));
       dj.add(box(MAT.blackFrame, 0.06, H, 0.07, -doorW / 2, H / 2, 0, false));
       dj.add(box(MAT.blackFrame, 0.06, H, 0.07, doorW / 2, H / 2, 0, false));
+      dj.add(box(MAT.blackFrame, doorW + 0.1, 0.08, 0.09, 0, DH, 0, false));            // door head
+      dj.add(box(MAT.glassClear, doorW, H - DH - 0.13, 0.03, 0, (DH + H) / 2 + 0.04, 0, false)); // glass over the door
       if (o.label) {
-        dj.add(box(MAT.blackSoft, 1.15, 0.3, 0.06, 0, H + 0.24, 0.02, false));
-        dj.add(plane(new THREE.MeshBasicMaterial({
+        // 'n' and 'w' jambs have their local +z pointing into the room, so the
+        // sign has to be pushed the other way and turned to face outward.
+        const so = (doorSide === 'n' || doorSide === 'w') ? -1 : 1;
+        dj.add(box(MAT.blackSoft, 1.15, 0.3, 0.06, 0, DH + 0.28, 0.02 * so, false));
+        const sgnMesh = plane(new THREE.MeshBasicMaterial({
           toneMapped: false,
           map: makeTex(320, 84, (x, ww, hh) => {
             x.fillStyle = '#12151B'; x.fillRect(0, 0, ww, hh);
@@ -2527,51 +2796,93 @@ function makeGlassCabin(w, d, opts) {
             x.fillStyle = '#F0F1F3'; x.font = '700 34px ui-sans-serif,Arial,sans-serif';
             x.textAlign = 'center'; x.fillText(o.label.toUpperCase(), ww / 2, 50);
           })
-        }), 1.05, 0.26, 0, H + 0.24, 0.055));
+        }), 1.05, 0.26, 0, DH + 0.28, 0.055 * so);
+        if (so < 0) sgnMesh.rotation.y = Math.PI;
+        dj.add(sgnMesh);
       }
       g.add(dj);
     } else {
-      pane(S.len, S.x, S.z, S.ry);
+      pane(S.len, S.x, S.z, S.ry, { start: dropPost(k, cStart), end: dropPost(k, cEnd) });
     }
   });
 
-  if (o.style === 'director') {
-    // desk across the room, chair behind it, two visitor chairs in front
-    g.add(box(MAT.gloss, 2.9, 0.1, 1.35, 0, 0.76, -hd + 2.3));
-    g.add(box(MAT.glossEdge, 2.84, 0.03, 1.29, 0, 0.705, -hd + 2.3, false));
-    g.add(box(MAT.gloss, 2.6, 0.62, 0.16, 0, 0.43, -hd + 1.7));
-    g.add(box(MAT.gloss, 0.12, 0.62, 1.2, -1.32, 0.43, -hd + 2.3));
-    g.add(box(MAT.gloss, 0.12, 0.62, 1.2, 1.32, 0.43, -hd + 2.3));
+  if (o.style === 'briefing') {
+    // no table at all — rows of chairs facing the board wall
+    const n = Math.max(3, Math.min(7, Math.floor((w - 1.8) / 1.3)));
+    const rows = d > 6 ? 3 : (d > 4 ? 2 : 1);
+    for (let r = 0; r < rows; r++) {
+      for (let i = 0; i < n; i++) {
+        const ch = makeTaskChair();
+        ch.position.set(-((n - 1) * 1.3) / 2 + i * 1.3 + (r % 2 ? 0.65 : 0), 0, hd - 1.9 - r * 1.25);
+        ch.rotation.y = Math.PI;                       // facing the board wall (+z)
+        g.add(ch);
+      }
+    }
+    if (o.ac) { const u = makeAC(); u.position.set(-hw + 0.4, 2.85, 0); u.rotation.y = Math.PI / 2; g.add(u); }
+  } else if (o.style === 'director') {
+    // the desk runs along z and the director looks east through the glass,
+    // out across the open floor to the right-hand tables
+    const deskX = -hw + Math.min(2.9, w * 0.42);
+    g.add(box(MAT.gloss, 1.35, 0.1, 2.9, deskX, 0.76, 0));
+    g.add(box(MAT.glossEdge, 1.29, 0.03, 2.84, deskX, 0.705, 0, false));
+    g.add(box(MAT.gloss, 0.16, 0.62, 2.6, deskX + 0.6, 0.43, 0));        // modesty panel, visitor side
+    g.add(box(MAT.gloss, 1.2, 0.62, 0.12, deskX, 0.43, -1.32));
+    g.add(box(MAT.gloss, 1.2, 0.62, 0.12, deskX, 0.43, 1.32));
     const mon = makeMonitor('charts');
-    mon.position.set(-0.3, 0.81, -hd + 2.66);
-    mon.rotation.y = Math.PI;
+    mon.position.set(deskX + 0.36, 0.81, -0.3);
+    mon.rotation.y = -Math.PI / 2;                                        // faces the director
     g.add(mon);
-    g.add(box(MAT.blackSoft, 0.6, 0.022, 0.2, -0.3, 0.815, -hd + 2.1, false));
-    g.add(box(MAT.blackFrame, 0.34, 0.09, 0.1, 0.95, 0.83, -hd + 2.0, false));   // name block
-    const ch = makeTaskChair(); ch.position.set(-0.3, 0, -hd + 3.4); ch.rotation.y = Math.PI; g.add(ch);
-    [-0.85, 0.85].forEach(x => {
-      const v = makeTaskChair(); v.position.set(x, 0, -hd + 1.05); g.add(v);
+    g.add(box(MAT.blackSoft, 0.2, 0.022, 0.6, deskX - 0.2, 0.815, -0.3, false));
+    g.add(box(MAT.blackFrame, 0.1, 0.09, 0.34, deskX + 0.3, 0.83, 0.95, false));   // name block
+    const ch = makeTaskChair();
+    ch.position.set(deskX - 0.9, 0, -0.3);
+    ch.rotation.y = -Math.PI / 2;                                         // director looks east
+    g.add(ch);
+    [-0.85, 0.85].forEach(z => {
+      const v = makeTaskChair();
+      v.position.set(deskX + 1.15, 0, z);
+      v.rotation.y = Math.PI / 2;                                         // visitors look back west
+      g.add(v);
     });
-    g.add(makeCredenza(2.4).translateX(-hw + 0.55).translateZ(-hd + 4.2).rotateY(Math.PI / 2));
-    g.add(box(MAT.gloss, 1.6, 0.09, 0.9, 0, 0.44, hd - 2.2, false));             // low coffee table
-    if (o.ac) { const u = makeAC(); u.position.set(-hw + 0.4, 2.85, -hd + 2.0); u.rotation.y = Math.PI / 2; g.add(u); }
+    const cw = Math.min(2.4, d - 1.2);
+    if (cw > 0.9) {
+      const cr = makeCredenza(cw);
+      cr.position.set(-hw + 0.36, 0, 0);                                   // back on the side wall
+      cr.rotation.y = Math.PI / 2;
+      g.add(cr);
+    }
+    if (o.ac) { const u = makeAC(); u.position.set(-hw + 0.4, 2.85, hd - 0.9); u.rotation.y = Math.PI / 2; g.add(u); }
   } else {
-    const TW = Math.min(w - 3.6, 6.0);
-    g.add(box(MAT.gloss, TW, 0.1, 1.7, 0, 0.75, 0));
-    g.add(box(MAT.glossEdge, TW - 0.06, 0.03, 1.64, 0, 0.695, 0, false));
-    g.add(box(MAT.gloss, TW - 1.6, 0.56, 0.5, 0, 0.42, 0));
-    g.add(box(MAT.blackSoft, TW - 1.7, 0.1, 0.56, 0, 0.28, 0, false));
-    g.add(box(MAT.blackSoft, 0.46, 0.035, 0.28, 0, 0.81, 0, false));
-    for (let i = 0; i < 3; i++) g.add(box(MAT.paper, 0.26, 0.012, 0.19, -1.4 + i * 1.4, 0.81, 0.62, false));
+    // the board wall stays clear of furniture: the table sits away from it
+    const off = o.board === 'w' ? 1.9 : 0;
+    const TW = Math.min(w - 3.6 - Math.abs(off), 6.0);
+    const tg = new THREE.Group(); tg.position.x = off;
+    tg.add(box(MAT.gloss, TW, 0.1, 1.7, 0, 0.75, 0));
+    tg.add(box(MAT.glossEdge, TW - 0.06, 0.03, 1.64, 0, 0.695, 0, false));
+    tg.add(box(MAT.gloss, TW - 1.6, 0.56, 0.5, 0, 0.42, 0));
+    tg.add(box(MAT.blackSoft, TW - 1.7, 0.1, 0.56, 0, 0.28, 0, false));
+    tg.add(box(MAT.blackSoft, 0.46, 0.035, 0.28, 0, 0.81, 0, false));
+    for (let i = 0; i < 3; i++) tg.add(box(MAT.paper, 0.26, 0.012, 0.19, -1.4 + i * 1.4, 0.81, 0.62, false));
     const seats = Math.max(2, Math.min(3, Math.floor(TW / 1.8)));
     for (let i = 0; i < seats; i++) {
       const x = -((seats - 1) * 1.5) / 2 + i * 1.5;
       [-1, 1].forEach(s => {
-        const c = makeTaskChair();
-        c.position.set(x, 0, s * 1.35);
-        c.rotation.y = s > 0 ? 0 : Math.PI;
-        g.add(c);
+        const ch = makeTaskChair();
+        ch.position.set(x, 0, s * 1.35);
+        ch.rotation.y = s > 0 ? 0 : Math.PI;
+        tg.add(ch);
       });
+    }
+    g.add(tg);
+    if (off) {
+      // a row of chairs facing the board, nothing else on that side
+      const n = Math.max(3, Math.min(5, Math.floor(d / 1.5)));
+      for (let i = 0; i < n; i++) {
+        const ch = makeTaskChair();
+        ch.position.set(-hw + 1.85, 0, -((n - 1) * 1.35) / 2 + i * 1.35);
+        ch.rotation.y = Math.PI / 2;
+        g.add(ch);
+      }
     }
     if (o.tv) {
       const tv = makeWallTV(2.4, 1.38);
@@ -2580,102 +2891,143 @@ function makeGlassCabin(w, d, opts) {
     }
     if (o.ac) { const u = makeAC(); u.position.set(-hw + 0.4, 2.85, 0); u.rotation.y = Math.PI / 2; g.add(u); }
   }
-  g.add(makeCeilingFan());
+  g.add(makeCeilingFan(FAN_SPAN, FAN_TOP));
   return g;
 }
 
 /* two joined desks = one 4-seat bench cluster */
-function makeBenchCluster(W, D) {
+function makeBenchCluster(W, D, opts) {
+  const o = opts || {};
   const g = new THREE.Group();
+  const s = o.endStore === 'left' ? -1 : 1;
+  const CW = 1.3;                                    // storage bay, inside the run
+  const has = !!o.endStore;
+
   g.add(box(MAT.gloss, W, 0.09, D, 0, 0.76, 0));
   g.add(box(MAT.glossEdge, W - 0.07, 0.03, D - 0.07, 0, 0.705, 0, false));
-  g.add(box(MAT.gloss, 0.12, 0.62, D - 0.16, -W / 2 + 0.07, 0.42, 0));
-  g.add(box(MAT.gloss, 0.12, 0.62, D - 0.16, W / 2 - 0.07, 0.42, 0));
-  g.add(box(MAT.gloss, W - 0.5, 0.5, 0.55, 0, 0.4, 0));                 // central spine
-  g.add(box(MAT.blackSoft, W - 0.6, 0.12, 0.62, 0, 0.28, 0, false));
+  if (!has || s < 0) g.add(box(MAT.gloss, 0.12, 0.62, D - 0.16, W / 2 - 0.07, 0.42, 0));
+  if (!has || s > 0) g.add(box(MAT.gloss, 0.12, 0.62, D - 0.16, -W / 2 + 0.07, 0.42, 0));
+
+  // central spine, shortened where the storage bay sits
+  const sw = has ? W - 0.5 - CW : W - 0.5;
+  const sx = has ? -s * CW / 2 : 0;
+  g.add(box(MAT.gloss, sw, 0.5, 0.55, sx, 0.4, 0));
+  g.add(box(MAT.blackSoft, sw - 0.1, 0.12, 0.62, sx, 0.28, 0, false));
   g.add(box(MAT.gloss, W - 0.24, 0.4, 0.06, 0, 1.0, 0));                // desktop divider
   g.add(box(MAT.blackFrame, W - 0.24, 0.045, 0.09, 0, 1.21, 0, false));
-  g.add(box(MAT.blackSoft, W - 1.2, 0.06, 0.16, 0, 0.68, 0, false));    // cable tray
-  return g;
-}
+  g.add(box(MAT.blackSoft, sw - 0.7, 0.06, 0.16, sx, 0.68, 0, false));  // cable tray
 
-/* the tall entrance cupboard: three compartments stacked top to bottom.
-   Top bay is network gear + ethernet coils, the two below hold bags. */
-function makeCaboodh(W, H, rows) {
-  const g = new THREE.Group();
-  W = W || 2.6; H = H || 2.7; rows = rows || 3;
-  const D = 0.66, rh = (H - 0.24) / rows;
-  g.add(box(MAT.gloss, W, H, D, 0, H / 2, 0));
-  g.add(box(MAT.glossEdge, W + 0.08, 0.08, D + 0.08, 0, H + 0.04, 0, false));
-  g.add(box(MAT.blackSoft, W, 0.16, D, 0, 0.08, 0, false));
-  for (let i = 1; i < rows; i++)
-    g.add(box(MAT.glossEdge, W - 0.1, 0.06, D, 0, 0.16 + rh * i, 0, false));
-
-  for (let r = 0; r < rows; r++) {
-    const cy = 0.16 + rh * (rows - 1 - r) + rh / 2;         // r = 0 is the TOP bay
-    g.add(box(MAT.darker, W - 0.14, rh - 0.12, D - 0.1, 0, cy, 0.02, false));
-
-    if (r === 0) {
-      // ---- networking bay
-      g.add(box(MAT.blackFrame, W - 0.34, 0.42, D - 0.22, 0, cy + rh * 0.22, 0.02, false));
-      g.add(box(MAT.blackSoft, W - 0.44, 0.14, 0.05, 0, cy + rh * 0.26, D / 2 - 0.16, false));
-      for (let p = 0; p < 10; p++)
-        g.add(box(MAT.chrome, 0.038, 0.055, 0.02, -W * 0.36 + p * (W * 0.08), cy + rh * 0.26, D / 2 - 0.13, false));
-      g.add(box(MAT.blackSoft, W - 0.44, 0.15, 0.05, 0, cy + rh * 0.09, D / 2 - 0.16, false));
-      const coil = [MAT.plant2, MAT.blackSoft, MAT.chrome, MAT.plant2];
+  // ---- storage built into the end of the run: entirely under the worktop,
+  //      and entirely inside the table's footprint. Nothing protrudes.
+  if (has) {
+    const cd = D - 0.12, H = 0.66, y0 = 0.05;
+    const x0 = s * (W / 2 - CW / 2);
+    g.add(box(MAT.gloss, CW, H, cd, x0, y0 + H / 2, 0));
+    g.add(box(MAT.blackSoft, CW, 0.05, cd, x0, y0, 0, false));           // plinth shadow
+    [-1, 1].forEach(d2 => {                                              // two doors, facing the room
+      const dx = x0 + d2 * CW * 0.245;
+      g.add(box(MAT.glossEdge, CW * 0.46, H - 0.12, 0.025, dx, y0 + H / 2, cd / 2 + 0.008, false));
+      g.add(box(MAT.blackFrame, 0.1, 0.026, 0.026, dx + d2 * CW * 0.16, y0 + H / 2, cd / 2 + 0.026, false));
+    });
+    // open cubbies on the end face, flush with the table edge
+    const ex = s * (W / 2 - 0.03);
+    [y0 + H * 0.72, y0 + H * 0.26].forEach((cy, ci) => {
+      g.add(box(MAT.darker, 0.05, H * 0.36, cd - 0.24, ex, cy, 0, false));
       for (let k = 0; k < 4; k++) {
-        const ring = mesh(GEO.torus, coil[k], 0.5, 0.5, 0.22, -W * 0.3 + k * (W * 0.2), cy - rh * 0.22, 0.08, false);
-        ring.rotation.y = Math.PI / 2;
-        g.add(ring);
+        g.add(box([MAT.pot, MAT.fabric, MAT.paper, MAT.plant2][(k + ci) % 4],
+          0.04, H * 0.28, 0.05, ex - s * 0.02, cy, -cd * 0.2 + k * 0.07, false));
       }
-      for (let k = 0; k < 5; k++) {
-        const lead = cyl(k % 2 ? MAT.plant2 : MAT.blackSoft, 0.02, W * 0.72, 0, cy - rh * 0.4 + k * 0.045, -0.1 + k * 0.05, true);
-        lead.rotation.z = Math.PI / 2; lead.rotation.y = 0.16 * k;
-        g.add(lead);
-      }
-    } else {
-      // ---- bag bays, two bags side by side
-      [-1, 1].forEach((sx, si) => {
-        const bw = W * 0.38, bh = Math.min(rh * 0.62, 0.5);
-        const bag = new THREE.Group();
-        bag.add(box(si ? MAT.fabric : MAT.blackSoft, bw, bh, 0.32, 0, bh / 2, 0, false));
-        bag.add(box(MAT.blackFrame, bw * 0.9, 0.055, 0.28, 0, bh - 0.05, 0.02, false));
-        bag.add(box(MAT.chrome, 0.07, 0.05, 0.03, bw * 0.22, bh - 0.03, 0.15, false));
-        const handle = mesh(GEO.torus, MAT.blackSoft, 0.36, 0.36, 0.13, 0, bh + 0.09, 0, false);
-        handle.rotation.x = Math.PI / 2;
-        bag.add(handle);
-        bag.position.set(sx * W * 0.22, cy - rh / 2 + 0.1, 0.02);
-        bag.rotation.y = sx * 0.12;
-        g.add(bag);
-      });
-    }
+    });
   }
   return g;
 }
 
-/* washroom — solid walls, door gap, signed */
-function makeBathroom(w, d, label) {
+/* entrance cupboard: one long horizontal cabinet on top (network gear and
+   ethernet), and two wide, shorter cabinets under it for bags.
+/* entrance cupboard: two columns of doors, three rows deep.
+   The top row is the tall one; the two below it are half-height. */
+function makeCaboodh(W, H) {
   const g = new THREE.Group();
-  const H = 3.0, hw = w / 2, hd = d / 2, T = 0.16;
+  W = W || 2.8; H = H || 2.9;
+  const D = 0.62, rev = 0.028, margin = 0.055;
+  const rows = [0.5, 0.25, 0.25];                    // top row is twice the others
+
+  g.add(box(MAT.gloss, W, H, D, 0, H / 2, 0));                              // carcass
+  g.add(box(MAT.blackSoft, W - 0.09, H - 0.16, 0.02, 0, H / 2 + 0.01, D / 2 + 0.006, false)); // shadow behind the reveals
+  g.add(box(MAT.blackSoft, W, 0.1, D, 0, 0.05, 0, false));                  // plinth
+  g.add(box(MAT.gloss, W, 0.07, D, 0, H - 0.035, 0, false));               // flush top, no overhang
+
+  const yTop = H - margin, yBot = 0.1 + margin * 0.5;
+  const availH = (yTop - yBot) - rev * (rows.length - 1);
+  const x0 = -W / 2 + margin, x1 = W / 2 - margin;
+  const cw = ((x1 - x0) - rev) / 2;
+
+  let cursor = yTop;
+  rows.forEach((fr, ri) => {
+    const rh = availH * fr;
+    const cy = cursor - rh / 2;
+    for (let ci = 0; ci < 2; ci++) {
+      const cx = x0 + cw / 2 + ci * (cw + rev);
+      g.add(box(MAT.gloss, cw, rh, 0.05, cx, cy, D / 2 + 0.032));           // door
+      g.add(box(MAT.glossEdge, cw - 0.05, rh - 0.05, 0.012, cx, cy, D / 2 + 0.062, false));
+      const hx = cx + (ci === 0 ? cw / 2 - 0.085 : -cw / 2 + 0.085);        // handle by the meeting edge
+      g.add(box(MAT.chrome, 0.022, Math.min(rh * 0.42, 0.32), 0.026, hx, cy, D / 2 + 0.072, false));
+    }
+    cursor -= rh + rev;
+  });
+  return g;
+}
+
+
+/* WC pan, cistern and seat. Cistern sits on -z, so rotate to face a wall. */
+function makeToilet() {
+  const g = new THREE.Group();
+  g.add(box(MAT.gloss, 0.44, 0.44, 0.18, 0, 0.56, -0.28));                 // cistern
+  g.add(box(MAT.glossEdge, 0.47, 0.05, 0.21, 0, 0.8, -0.28, false));
+  g.add(box(MAT.chrome, 0.1, 0.07, 0.02, 0.09, 0.7, -0.18, false));        // flush plate
+  g.add(box(MAT.gloss, 0.21, 0.34, 0.32, 0, 0.17, -0.08, false));          // pedestal
+  g.add(cyl(MAT.gloss, 0.19, 0.24, 0, 0.4, 0.1, false));                   // bowl
+  g.add(cyl(MAT.glossEdge, 0.2, 0.05, 0, 0.54, 0.1, false));               // seat
+  g.add(box(MAT.gloss, 0.35, 0.035, 0.33, 0, 0.58, 0.1, false));           // lid
+  return g;
+}
+
+/* washroom — solid walls, door gap, signed */
+function makeBathroom(w, d, label, opts) {
+  const o = opts || {};
+  const g = new THREE.Group();
+  const H = (typeof WALL_H === 'number' ? WALL_H : 3.9) * 0.95;
+  const DH = 2.24;
+  const hw = w / 2, hd = d / 2, T = 0.16;
   const wall = (ww, x, z, ry) => {
     const m = box(MAT.wallWhite, ww, H, T, x, H / 2, z, false);
     m.rotation.y = ry || 0; g.add(m);
   };
   wall(w, 0, -hd, 0);
-  wall(d, -hw, 0, Math.PI / 2);
-  wall(d, hw, 0, Math.PI / 2);
+  // a side wall can be omitted when the neighbouring room already builds it;
+  // two coplanar walls z-fight badly
+  const omit = o.omit || [];
+  if (omit.indexOf('left') < 0) wall(d, -hw, 0, Math.PI / 2);
+  if (omit.indexOf('right') < 0) wall(d, hw, 0, Math.PI / 2);
   const doorW = 0.95, seg = (w - doorW) / 2;
   wall(seg, -(doorW / 2 + seg / 2), hd, 0);
   wall(seg, (doorW / 2 + seg / 2), hd, 0);
-  g.add(box(MAT.blackFrame, doorW + 0.12, 0.1, T + 0.04, 0, 2.24, hd, false));
-  g.add(box(MAT.blackFrame, 0.06, 2.24, T + 0.04, -doorW / 2, 1.12, hd, false));
-  g.add(box(MAT.blackFrame, 0.06, 2.24, T + 0.04, doorW / 2, 1.12, hd, false));
-  g.add(box(MAT.wallFeature, doorW - 0.06, 2.16, 0.05, doorW * 0.02, 1.1, hd + 0.05, false));  // door leaf
-  g.add(cyl(MAT.chrome, 0.028, 0.16, doorW * 0.34, 1.05, hd + 0.11, true));
+  g.add(box(MAT.wallWhite, doorW + 0.1, H - DH - 0.1, T, 0, (DH + H) / 2 + 0.05, hd, false)); // over-door panel
+  g.add(box(MAT.blackFrame, doorW + 0.12, 0.1, T + 0.04, 0, DH, hd, false));
+  g.add(box(MAT.blackFrame, 0.06, DH, T + 0.04, -doorW / 2, DH / 2, hd, false));
+  g.add(box(MAT.blackFrame, 0.06, DH, T + 0.04, doorW / 2, DH / 2, hd, false));
+  // door leaf, set into the opening: white to match the wall, black frame round it
+  const lw = doorW - 0.07, lh = DH - 0.1, lx = doorW * 0.02;
+  g.add(box(MAT.gloss, lw, lh, 0.05, lx, lh / 2 + 0.04, hd + 0.02, false));
+  g.add(box(MAT.glossEdge, lw - 0.11, lh - 0.16, 0.014, lx, lh / 2 + 0.04, hd + 0.05, false));  // recessed panel
+  g.add(box(MAT.chrome, 0.15, 0.032, 0.032, lx - lw * 0.32, 1.04, hd + 0.07, false));           // lever
+  g.add(box(MAT.chrome, 0.05, 0.075, 0.02, lx - lw * 0.32 + 0.06, 1.04, hd + 0.055, false));    // rose
+  [0.4, lh - 0.28].forEach(hy =>
+    g.add(box(MAT.chrome, 0.028, 0.1, 0.045, lx + lw * 0.47, hy, hd + 0.03, false)));           // hinges
 
   // sign
   const ladies = /lad|wom/i.test(label);
-  g.add(box(MAT.blackSoft, 0.86, 0.4, 0.05, 0, 2.56, hd + 0.03, false));
+  g.add(box(MAT.blackSoft, 0.86, 0.4, 0.05, 0, DH + 0.32, hd + 0.11, false));
   g.add(plane(new THREE.MeshBasicMaterial({
     toneMapped: false,
     map: makeTex(344, 160, (x, ww, hh) => {
@@ -2687,15 +3039,150 @@ function makeBathroom(w, d, label) {
       x.fillStyle = '#F0F1F3'; x.font = '700 40px ui-sans-serif,Arial,sans-serif';
       x.fillText(label.toUpperCase(), 120, 98);
     })
-  }), 0.8, 0.36, 0, 2.56, hd + 0.06));
+  }), 0.8, 0.36, 0, DH + 0.32, hd + 0.14));
 
-  // a basin, a mirror and a cubicle so the inside isn't empty
-  g.add(box(MAT.gloss, w - 0.7, 0.16, 0.5, 0, 0.86, -hd + 0.4, false));
-  g.add(box(MAT.glossEdge, 0.5, 0.1, 0.36, -w * 0.16, 0.9, -hd + 0.4, false));
-  g.add(cyl(MAT.chrome, 0.022, 0.24, -w * 0.16, 1.06, -hd + 0.26, true));
-  g.add(box(MAT.darker, w - 0.9, 0.9, 0.04, 0, 1.72, -hd + 0.14, false));
-  g.add(box(MAT.wallWhite, T, H - 0.6, d * 0.5, hw - 0.75, 1.2, hd - d * 0.28, false));
-  g.add(box(MAT.gloss, 0.42, 0.42, 0.6, hw - 0.42, 0.24, hd - d * 0.55, false));
+  // ---- lighter floor finish so it reads as a separate room
+  const fl = new THREE.Mesh(GEO.plane, MAT.glossEdge);
+  fl.rotation.x = -Math.PI / 2;
+  fl.scale.set(w - 0.22, d - 0.22, 1);
+  fl.position.y = 0.016;
+  fl.receiveShadow = !STATE.mobile;
+  g.add(fl);
+
+  // ---- basin hangs on the SIDE wall immediately beside the door, so you meet
+  //      it the moment the door opens. Built facing +z then turned to the wall,
+  //      which leaves it running lengthwise toward the far (entrance-gate) wall.
+  const sgn = o.basinSign || -1;
+  const bs = new THREE.Group();
+  bs.add(box(MAT.cream, 0.52, 0.14, 0.36, 0, 0.85, 0, false));               // basin
+  bs.add(box(MAT.glossEdge, 0.44, 0.05, 0.28, 0, 0.895, 0, false));
+  bs.add(cyl(MAT.chrome, 0.017, 0.2, 0, 0.95, -0.14, true));                 // tap
+  bs.add(box(MAT.chrome, 0.03, 0.02, 0.1, 0, 1.04, -0.07, false));           // spout
+  bs.add(cyl(MAT.chrome, 0.033, 0.3, 0, 0.63, 0, true));                     // trap
+  // nudged 5% of the room width in off the corner: for the Ladies basin that
+  // reads as a shift left, for the Men's one a shift right
+  bs.position.set(sgn * (hw - 0.28 - w * 0.05), 0, hd - 0.62);
+  bs.rotation.y = -sgn * Math.PI / 2;
+  bs.scale.set(1.3, 1.1, 1.3);                       // a size up
+  g.add(bs);
+
+  const wc = makeToilet();
+  wc.position.set(0, 0, -hd + 0.55);                                         // centred on the same wall
+  wc.scale.set(1.3, 1.15, 1.3);                                              // a size up
+  g.add(wc);
+
+  return g;
+}
+
+/* framed antique relief panel */
+function makeWallArt(W, H) {
+  const g = new THREE.Group();
+  W = W || 2.1; H = H || 1.55;
+  g.add(box(MAT.brass, W + 0.12, H + 0.12, 0.07, 0, 0, 0, false));
+  g.add(box(MAT.darker, W + 0.02, H + 0.02, 0.05, 0, 0, 0.02, false));
+  g.add(plane(MAT.wallArt, W, H, 0, 0, 0.05));
+  g.add(box(MAT.brass, W + 0.2, 0.05, 0.11, 0, H / 2 + 0.09, 0.01, false));
+  g.add(box(MAT.brass, W + 0.2, 0.05, 0.11, 0, -H / 2 - 0.09, 0.01, false));
+  return g;
+}
+
+/* antique brass wall clock — the hands read the real time */
+function makeWallClock(R) {
+  const g = new THREE.Group();
+  R = R || 0.4;
+  const face = new THREE.Group();
+  face.rotation.x = Math.PI / 2;
+  face.add(cyl(MAT.brass, R, 0.08, 0, 0, 0, false));
+  face.add(cyl(MAT.cream, R - 0.045, 0.03, 0, 0.045, 0, false));
+  face.add(cyl(MAT.brass, R - 0.012, 0.02, 0, 0.062, 0, false));
+  face.add(cyl(MAT.cream, R - 0.055, 0.02, 0, 0.07, 0, false));
+  for (let i = 0; i < 12; i++) {
+    const a = (i / 12) * Math.PI * 2;
+    const big = i % 3 === 0;
+    const t = box(MAT.brass, big ? 0.035 : 0.018, 0.012, big ? 0.1 : 0.06,
+      Math.sin(a) * (R - 0.11), 0.078, Math.cos(a) * (R - 0.11), false);
+    t.rotation.y = -a;
+    face.add(t);
+  }
+  const hand = (len, wid, mat) => {
+    const p = new THREE.Group();
+    p.add(box(mat, wid, 0.014, len, 0, 0, len / 2 - 0.03, false));
+    p.position.y = 0.085;
+    face.add(p);
+    return p;
+  };
+  const hr = hand(R * 0.52, 0.032, MAT.blackSoft);
+  const mn = hand(R * 0.78, 0.022, MAT.blackSoft);
+  face.add(cyl(MAT.brass, 0.028, 0.03, 0, 0.1, 0, false));
+  g.add(face);
+  ANIMATED.push({
+    fn: () => {
+      const now = new Date();
+      const m = now.getMinutes() + now.getSeconds() / 60;
+      const h = (now.getHours() % 12) + m / 60;
+      mn.rotation.y = -(m / 60) * Math.PI * 2;
+      hr.rotation.y = -(h / 12) * Math.PI * 2;
+    }
+  });
+  return g;
+}
+
+/* a small stand suspended right over the table: one plant, one book */
+function makeOverheadStand(W) {
+  const g = new THREE.Group();
+  W = W || 0.8;
+  const top = 3.74, shelf = 1.98, D = 0.3;
+  [-W / 2 + 0.07, W / 2 - 0.07].forEach(x => {
+    g.add(cyl(MAT.blackSoft, 0.011, top - shelf, x, (top + shelf) / 2, 0, true));
+    g.add(box(MAT.blackSoft, 0.07, 0.04, 0.07, x, top, 0, false));
+  });
+  g.add(box(MAT.blackFrame, W, 0.04, D, 0, shelf, 0, false));
+  g.add(box(MAT.brass, W, 0.035, 0.025, 0, shelf + 0.03, D / 2, false));
+  g.add(box(MAT.blackFrame, W, 0.14, 0.025, 0, shelf + 0.09, -D / 2, false));
+  const px = -W * 0.26;
+  g.add(cyl(MAT.potWhite, 0.085, 0.14, px, shelf + 0.09, 0, true));
+  for (let k = 0; k < 5; k++) {
+    const a2 = (k / 5) * Math.PI * 2;
+    const lf = new THREE.Mesh(GEO.ico, k % 2 ? MAT.plant : MAT.plant2);
+    lf.scale.set(0.16, 0.1, 0.16);
+    lf.position.set(px + Math.cos(a2) * 0.08, shelf + 0.2 + (k % 2) * 0.05, Math.sin(a2) * 0.07);
+    lf.castShadow = !STATE.mobile;
+    g.add(lf);
+  }
+  const bk = new THREE.Group();
+  bk.add(box(MAT.pot, 0.045, 0.24, 0.17, 0, 0.12, 0, false));
+  bk.add(box(MAT.paper, 0.022, 0.22, 0.155, 0.014, 0.12, 0, false));
+  bk.add(box(MAT.brass, 0.048, 0.02, 0.03, 0, 0.19, 0.07, false));
+  bk.position.set(W * 0.24, shelf + 0.02, 0);
+  bk.rotation.z = -0.12;
+  g.add(bk);
+  return g;
+}
+
+/* large wall-mounted flatscreen */
+function makeBigTV(w, h) {
+  const g = new THREE.Group();
+  g.add(box(MAT.blackFrame, w, h, 0.06, 0, 0, 0, false));
+  g.add(box(MAT.darker, w - 0.05, h - 0.05, 0.02, 0, 0, 0.032, false));
+  g.add(plane(MAT.wallTv, w - 0.1, h - 0.1, 0, 0, 0.045));
+  g.add(box(MAT.blackSoft, w * 0.34, 0.16, 0.09, 0, -h / 2 - 0.02, -0.03, false));
+  g.add(box(MAT.chrome, 0.16, 0.03, 0.02, 0, -h / 2 + 0.06, 0.05, false));
+  g.add(box(MAT.light, 0.05, 0.02, 0.01, w * 0.4, -h / 2 + 0.05, 0.05, false));
+  return g;
+}
+
+/* light switch plate */
+function makeSwitches(gangs) {
+  const g = new THREE.Group();
+  gangs = gangs || 6;
+  const W = 0.09 + gangs * 0.085, H = 0.17;
+  g.add(box(MAT.gloss, W, H, 0.035, 0, 0, 0, false));
+  g.add(box(MAT.glossEdge, W - 0.03, H - 0.03, 0.045, 0, 0, 0.006, false));
+  for (let i = 0; i < gangs; i++) {
+    const x = -W / 2 + 0.045 + i * 0.085;
+    g.add(box(MAT.glossEdge, 0.062, 0.1, 0.02, x, 0, 0.028, false));
+    g.add(box(MAT.blackSoft, 0.05, 0.012, 0.012, x, -0.028, 0.038, false));
+  }
   return g;
 }
 
@@ -2717,12 +3204,33 @@ function makeAC() {
   return g;
 }
 
+/* the logo fixed directly onto an existing wall — letters only.
+   No backing board, no fixture above or below it. */
+function makeLogoPanel(W) {
+  const g = new THREE.Group();
+  W = W || 4.4;
+  const H = W * 0.375;
+  const m = plane(MAT.logieMark, W, H, 0, 0, 0.03);
+  m.renderOrder = 1;
+  g.add(m);
+  // little track spot washing it from above
+  const armY = H / 2 + 0.5;
+  g.add(box(MAT.blackSoft, 0.05, 0.05, 0.34, W * 0.3, armY, 0.18, false));      // arm off the wall
+  const sp = group(W * 0.3, armY - 0.06, 0.33);
+  sp.add(cyl(MAT.blackSoft, 0.055, 0.22, 0, 0, 0, true));
+  sp.add(cyl(MAT.light, 0.05, 0.03, 0, -0.12, 0, true));
+  sp.rotation.x = 0.62;
+  g.add(sp);
+  return g;
+}
+
 /* the charcoal feature wall with the backlit logo */
 function makeLogoWall(w) {
   const g = new THREE.Group();
   const H = 3.5;
   g.add(box(MAT.wallFeature, w, H, 0.26, 0, H / 2, 0));
-  g.add(plane(MAT.logieLogo, w * 0.82, w * 0.82 * 0.375, 0, H * 0.56, 0.14));
+  const lw = Math.min(w * 0.46, 3.5);
+  g.add(plane(MAT.logieLogo, lw, lw * 0.375, 0, H * 0.58, 0.14));
   g.add(box(MAT.blackSoft, w, 0.1, 0.34, 0, H, 0.05, false));
   // little track spot
   const sp = group(w * 0.1, H - 0.28, 0.42);
@@ -2755,6 +3263,304 @@ function makeDownlights(pts) {
   inst.instanceMatrix.needsUpdate = true;
   g.add(inst);
   return g;
+}
+
+/* ==========================================================================
+   6e · DAY AND NIGHT
+   One body hangs in the sky above the building, in the same spot in every
+   room. Click it and it turns from sun to moon, and the building follows:
+   sky colour, the view through the glass, ambient light, and every fitting
+   registered as a lamp.
+   ========================================================================== */
+
+/* any emissive fitting registers here so it can be switched */
+const LAMPS = [];
+function lamp(mat) { LAMPS.push(mat); return mat; }
+
+/* things that keep ticking whatever room you are in */
+const GLOBAL_ANIM = [];
+
+let DAYLIGHT = true;
+
+const MODE = {
+  day:   { bg: 0xBCD6EE, hemi: 0.66, key: 1.2,  fill: 0.36, point: 0.12,
+           fog: [64, 150], lampsOn: false },
+  night: { bg: 0x05070E, hemi: 0.20, key: 0.22, fill: 0.07, point: 1.3,
+           fog: [34, 92],  lampsOn: true }
+};
+
+/* ---- textures ------------------------------------------------------------ */
+function buildSkyTextures() {
+  // soft radial falloff, used for every glow
+  TEX.glow = makeTex(128, 128, (x, w, h) => {
+    const g = x.createRadialGradient(w / 2, h / 2, 2, w / 2, h / 2, w / 2);
+    g.addColorStop(0, 'rgba(255,255,255,1)');
+    g.addColorStop(0.25, 'rgba(255,255,255,0.55)');
+    g.addColorStop(0.55, 'rgba(255,255,255,0.16)');
+    g.addColorStop(1, 'rgba(255,255,255,0)');
+    x.fillStyle = g; x.fillRect(0, 0, w, h);
+  });
+
+  // a clean moon: pale, with soft maria instead of lumpy craters
+  TEX.moonFace = makeTex(256, 256, (x, w, h) => {
+    x.fillStyle = '#E4E7EC'; x.fillRect(0, 0, w, h);
+    for (let i = 0; i < 9; i++) {
+      const cx = Math.random() * w, cy = Math.random() * h;
+      const r = 16 + Math.random() * 42;
+      const g = x.createRadialGradient(cx, cy, 0, cx, cy, r);
+      g.addColorStop(0, 'rgba(176,184,198,0.5)');
+      g.addColorStop(1, 'rgba(176,184,198,0)');
+      x.fillStyle = g; x.beginPath(); x.arc(cx, cy, r, 0, 6.3); x.fill();
+    }
+    for (let i = 0; i < 900; i++) {
+      x.fillStyle = `rgba(200,206,216,${Math.random() * 0.16})`;
+      x.fillRect(Math.random() * w, Math.random() * h, 2, 2);
+    }
+  });
+
+  // daylight through the glass
+  TEX.viewDay = makeTex(128, 128, (x, w, h) => {
+    const g = x.createLinearGradient(0, 0, 0, h);
+    g.addColorStop(0, '#9FC2E4'); g.addColorStop(0.55, '#CFE3F5'); g.addColorStop(1, '#E9F2FA');
+    x.fillStyle = g; x.fillRect(0, 0, w, h);
+  });
+
+  const nightSky = (x, w, h, ground) => {
+    const g = x.createLinearGradient(0, 0, 0, h);
+    g.addColorStop(0, '#05080F'); g.addColorStop(0.6, '#0A1020'); g.addColorStop(1, ground);
+    x.fillStyle = g; x.fillRect(0, 0, w, h);
+    for (let i = 0; i < 320; i++) {
+      x.fillStyle = `rgba(228,238,255,${0.2 + Math.random() * 0.7})`;
+      x.beginPath();
+      x.arc(Math.random() * w, Math.random() * h * 0.8, Math.random() < 0.14 ? 1.5 : 0.8, 0, 6.3);
+      x.fill();
+    }
+    for (let i = 0; i < 6; i++) {
+      const bx = Math.random() * w, by = Math.random() * h * 0.62;
+      const gr = x.createRadialGradient(bx, by, 0, bx, by, 10);
+      gr.addColorStop(0, 'rgba(235,244,255,.95)'); gr.addColorStop(1, 'rgba(235,244,255,0)');
+      x.fillStyle = gr; x.beginPath(); x.arc(bx, by, 10, 0, 6.3); x.fill();
+    }
+  };
+  TEX.viewNight = makeTex(256, 256, (x, w, h) => nightSky(x, w, h, '#0B1120'));
+  TEX.outsideNight = makeTex(256, 256, (x, w, h) => {
+    nightSky(x, w, h, '#0A1710');
+    for (let i = 0; i < 38; i++) {
+      const cx = Math.random() * w, cy = h * 0.74 + Math.random() * h * 0.3;
+      x.fillStyle = `rgba(12,${26 + Math.random() * 20},18,${0.6 + Math.random() * 0.35})`;
+      x.beginPath(); x.arc(cx, cy, 14 + Math.random() * 38, 0, 6.3); x.fill();
+    }
+    x.fillStyle = 'rgba(6,14,10,.9)'; x.fillRect(0, h * 0.93, w, h * 0.07);
+  });
+}
+
+/* the reception backdrop reads as a contact desk */
+function contactSignTexture() {
+  return makeTex(1024, 256, (x, w, h) => {
+    x.fillStyle = '#20242C'; x.fillRect(0, 0, w, h);
+    x.fillStyle = '#F5A524'; x.fillRect(0, 0, 14, h);
+    x.fillStyle = '#F2F4F8'; x.font = '700 78px ui-sans-serif,sans-serif';
+    x.fillText('CONTACT ME', 60, 120);
+    x.fillStyle = '#8A94A6'; x.font = '30px ui-monospace,monospace';
+    x.fillText('reception  ·  open to work  ·  say hello', 62, 176);
+  });
+}
+
+/* ---- the text that floats under each arrow ------------------------------- */
+const MARKER_LABELS = [];
+
+function roundRectPath(x, rx, ry, w, h, r) {
+  x.beginPath();
+  x.moveTo(rx + r, ry);
+  x.arcTo(rx + w, ry, rx + w, ry + h, r);
+  x.arcTo(rx + w, ry + h, rx, ry + h, r);
+  x.arcTo(rx, ry + h, rx, ry, r);
+  x.arcTo(rx, ry, rx + w, ry, r);
+  x.closePath();
+}
+
+function labelTexture(text, dark) {
+  return makeTex(512, 140, (x, w, h) => {
+    x.clearRect(0, 0, w, h);
+    roundRectPath(x, 12, 20, w - 24, h - 44, 26);
+    x.fillStyle = dark ? 'rgba(10,13,20,.90)' : 'rgba(255,255,255,.94)';
+    x.fill();
+    x.strokeStyle = '#F5A524'; x.lineWidth = 5; x.stroke();
+    x.fillStyle = dark ? '#F2F4F8' : '#1A1E26';
+    x.font = '700 52px ui-sans-serif,Arial,sans-serif';
+    x.textAlign = 'center'; x.textBaseline = 'middle';
+    x.fillText(String(text).toUpperCase(), w / 2, h / 2 - 2);
+  });
+}
+
+function makeMarkerLabel(text) {
+  const day = labelTexture(text, false), night = labelTexture(text, true);
+  const mat = new THREE.MeshBasicMaterial({
+    map: DAYLIGHT ? day : night, transparent: true, toneMapped: false, depthWrite: false
+  });
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(2.05, 0.56), mat);
+  m.renderOrder = 4;
+  MARKER_LABELS.push({ mat, day, night });
+  return m;
+}
+
+/* a marker that names a whole area rather than one object — no click, it is
+   just a signpost. Sits above the individual markers underneath it. */
+function makeSignpost(text, baseY) {
+  const g = new THREE.Group();
+  const mat = new THREE.MeshBasicMaterial({
+    color: 0xF5A524, transparent: true, opacity: 0.85, depthWrite: false, toneMapped: false
+  });
+  const spin = new THREE.Group();
+  const shaft = new THREE.Mesh(GEO.cyl, mat);
+  shaft.scale.set(0.2, 0.7, 0.2); shaft.position.y = 0.72;
+  const head = new THREE.Mesh(GEO.cone, mat);
+  head.scale.set(0.78, 0.6, 0.78); head.rotation.x = Math.PI; head.position.y = 0.2;
+  const cap = new THREE.Mesh(GEO.sphere, mat);
+  cap.scale.setScalar(0.22); cap.position.y = 1.07;
+  spin.add(shaft); spin.add(head); spin.add(cap);
+  g.add(spin);
+
+  const lab = makeMarkerLabel(text);
+  lab.position.y = 1.6;
+  lab.scale.setScalar(1.25);            // a touch bigger than the ones below it
+  g.add(lab);
+
+  const phase = Math.random() * 6.3;
+  ANIMATED.push({ fn: (t) => {
+    g.position.y = baseY + Math.sin(t * 1.6 + phase) * 0.24;
+    spin.rotation.y = t * 0.8;
+    lab.lookAt(camera.position);
+  } });
+  return g;
+}
+
+/* ---- one body, two faces ------------------------------------------------- */
+function makeSkyBody() {
+  const g = new THREE.Group();
+  const R = 3.0;
+
+  const billboard = (size, color, opacity) => {
+    const m = new THREE.Mesh(new THREE.PlaneGeometry(size, size),
+      new THREE.MeshBasicMaterial({
+        map: TEX.glow, color, transparent: true, opacity,
+        blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false
+      }));
+    GLOBAL_ANIM.push({ fn: () => m.lookAt(camera.position) });
+    return m;
+  };
+
+  const sun = new THREE.Group();
+  sun.add(new THREE.Mesh(new THREE.SphereGeometry(R, 36, 26),
+    new THREE.MeshBasicMaterial({ color: 0xFFEFC2, toneMapped: false })));
+  sun.add(billboard(R * 7.5, 0xFFC46B, 0.55));
+  sun.add(billboard(R * 3.4, 0xFFF0C8, 0.45));
+  g.add(sun);
+
+  const moon = new THREE.Group();
+  moon.add(new THREE.Mesh(new THREE.SphereGeometry(R * 0.78, 36, 26),
+    new THREE.MeshBasicMaterial({ map: TEX.moonFace, toneMapped: false })));
+  moon.add(billboard(R * 4.6, 0xAFC6EA, 0.32));
+  moon.visible = false;
+  g.add(moon);
+
+  g.userData.setMode = (day) => { sun.visible = day; moon.visible = !day; };
+  return g;
+}
+
+/* ---- night sky ----------------------------------------------------------- */
+function makeNightStars() {
+  const g = new THREE.Group();
+  const layer = (n, radius, size, op, col) => {
+    const pos = new Float32Array(n * 3);
+    for (let i = 0; i < n; i++) {
+      const a = Math.random() * Math.PI * 2;
+      const p = Math.acos(Math.random() * 0.98);          // a dome, not a full ball
+      const r = radius * (0.82 + Math.random() * 0.18);
+      pos[i * 3] = Math.sin(p) * Math.cos(a) * r;
+      pos[i * 3 + 1] = Math.cos(p) * r * 0.9 + 10;
+      pos[i * 3 + 2] = Math.sin(p) * Math.sin(a) * r;
+    }
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    const mat = new THREE.PointsMaterial({
+      color: col, size, sizeAttenuation: true, map: TEX.glow,
+      transparent: true, opacity: 0, depthWrite: false, blending: THREE.AdditiveBlending
+    });
+    const pts = new THREE.Points(geo, mat);
+    pts.userData = { mat, base: op };
+    g.add(pts);
+    return pts;
+  };
+  layer(1100, 150, 1.1, 0.55, 0xCBD9F5);
+  const mid = layer(320, 130, 2.0, 0.8, 0xEAF1FF);
+  const near = layer(60, 115, 3.4, 1.0, 0xFFFFFF);
+  GLOBAL_ANIM.push({ fn: (t) => {
+    if (DAYLIGHT) return;
+    mid.userData.mat.opacity = mid.userData.base * (0.78 + Math.sin(t * 0.8) * 0.12);
+    near.userData.mat.opacity = near.userData.base * (0.75 + Math.sin(t * 1.3 + 1) * 0.18);
+  } });
+  g.userData.setLit = (on) => {
+    g.children.forEach(p => { p.userData.mat.opacity = on ? p.userData.base : 0; });
+  };
+  return g;
+}
+
+const SKY = { body: null, stars: null, rec: null };
+
+function setDaylight(on) {
+  DAYLIGHT = !!on;
+  const s = DAYLIGHT ? MODE.day : MODE.night;
+
+  scene.background = new THREE.Color(s.bg);
+  if (scene.fog) { scene.fog.color.setHex(s.bg); scene.fog.near = s.fog[0]; scene.fog.far = s.fog[1]; }
+  if (LIGHTS.hemi) LIGHTS.hemi.intensity = s.hemi;
+  if (LIGHTS.key) LIGHTS.key.intensity = s.key;
+  if (LIGHTS.fill) LIGHTS.fill.intensity = s.fill;
+  (LIGHTS.points || []).forEach(p => { p.intensity = p.userData.base * (s.point / 0.12); });
+
+  LAMPS.forEach(m => { if (m.color) m.color.setHex(s.lampsOn ? 0xFFF6E4 : 0x9AA0A8); });
+  MARKER_LABELS.forEach(l => { l.mat.map = DAYLIGHT ? l.day : l.night; l.mat.needsUpdate = true; });
+
+  if (MAT.window && TEX.viewDay) {
+    MAT.window.map = DAYLIGHT ? TEX.viewDay : TEX.viewNight;
+    MAT.window.needsUpdate = true;
+  }
+  if (MAT.outside && TEX.outsideNight) {
+    MAT.outside.map = DAYLIGHT ? TEX.outside : TEX.outsideNight;
+    MAT.outside.needsUpdate = true;
+  }
+
+  if (SKY.body) SKY.body.userData.setMode(DAYLIGHT);
+  if (SKY.stars) SKY.stars.userData.setLit(!DAYLIGHT);
+  if (SKY.rec) {
+    SKY.rec.title = DAYLIGHT ? 'Sun' : 'Moon';
+    SKY.rec.sub = DAYLIGHT ? 'Click for night' : 'Click for daytime';
+  }
+
+  const b = el('btnSky');
+  if (b) {
+    b.classList.toggle('active', !DAYLIGHT);
+    b.title = DAYLIGHT ? 'Daytime — switch to night' : 'Night — switch to daytime';
+  }
+}
+
+/* the sky body lives outside any one room, so every scene shares it */
+function attachSky(sc) {
+  if (!SKY.body || !sc) return;
+  if (SKY.rec && sc.interactives.indexOf(SKY.rec) >= 0) return;   // already on this scene
+  if (!SKY.rec) {
+    SKY.rec = registerInteractive(SKY.body, {
+      type: 'sky', id: 'sky', title: 'Sun', sub: 'Click for night',
+      noRing: true, hotspot: { y: 4.4 },
+      focus: () => focusPose(SKY.body.position.x, SKY.body.position.y - 2,
+        SKY.body.position.z, 18, CAM.theta, Math.min(CAM.phi, 0.72)),
+      data: null
+    }, sc);
+  } else {
+    sc.interactives.push(SKY.rec);
+    SKY.body.traverse(m => { if (m.isMesh && m.userData.ix === SKY.rec) sc.pickable.push(m); });
+  }
 }
 
 /* ==========================================================================
@@ -2811,7 +3617,15 @@ function makeNPC(opts) {
 
   body.add(M(NPCGEO.hips, pants, 1, 1, 1, 0, hipY + 0.06, 0));
   body.add(M(NPCGEO.torso, shirt, 1, 1, 1, 0, hipY + 0.44, 0));
-  body.add(M(GEO.box, npcMat(0xE9E6DF, 0.9), 0.1, 0.3, 0.03, 0, hipY + 0.5, 0.2));   // collar strip
+  if (o.suit) {
+    const jacket = npcMat(o.shirt || 0x2B3242, 0.85);
+    body.add(M(GEO.box, jacket, 0.17, 0.56, 0.06, -0.12, hipY + 0.44, 0.2));       // lapel
+    body.add(M(GEO.box, jacket, 0.17, 0.56, 0.06, 0.12, hipY + 0.44, 0.2));
+    body.add(M(GEO.box, npcMat(0xF2F2F0, 0.85), 0.13, 0.44, 0.03, 0, hipY + 0.46, 0.205)); // shirt
+    body.add(M(GEO.box, npcMat(o.tie || 0xB03A3A, 0.7), 0.05, 0.32, 0.02, 0, hipY + 0.42, 0.222)); // tie
+  } else {
+    body.add(M(GEO.box, npcMat(0xE9E6DF, 0.9), 0.1, 0.3, 0.03, 0, hipY + 0.5, 0.2));   // collar strip
+  }
   body.add(M(GEO.box, npcMat(o.badge || 0xF5A524, 0.6), 0.075, 0.11, 0.02, 0.07, hipY + 0.3, 0.21)); // badge
 
   // arms
@@ -2835,7 +3649,22 @@ function makeNPC(opts) {
   neck.add(M(NPCGEO.limb, skin, 0.8, 0.1, 0.8, 0, 0.03, 0));
   const head = group(0, 0.18, 0);
   head.add(M(NPCGEO.head, skin, 1, 1.1, 0.96, 0, 0, 0));
-  head.add(M(NPCGEO.hair, hairM, 1, 1.02, 1, 0, 0.005, -0.008));
+  if (o.curly) {
+    const CURL = new THREE.SphereGeometry(0.055, 7, 5);
+    for (let i = 0; i < 24; i++) {
+      const a = Math.random() * Math.PI * 2;
+      const p = 0.25 + Math.random() * 0.95;
+      const rr = 0.148 + Math.random() * 0.028;
+      const cx = Math.sin(p) * Math.cos(a) * rr;
+      const cz = Math.sin(p) * Math.sin(a) * rr;
+      const cy = Math.cos(p) * rr + 0.026;
+      if (cz > 0.085 && cy < 0.025) continue;                 // keep the face clear
+      head.add(M(CURL, hairM, 0.85 + Math.random() * 0.5, 0.85 + Math.random() * 0.5,
+        0.85 + Math.random() * 0.5, cx, cy, cz));
+    }
+  } else {
+    head.add(M(NPCGEO.hair, hairM, 1, 1.02, 1, 0, 0.005, -0.008));
+  }
   head.add(M(GEO.sphere, npcMat(0x1A1D22, 0.4), 0.038, 0.038, 0.02, -0.055, 0.01, 0.135));
   head.add(M(GEO.sphere, npcMat(0x1A1D22, 0.4), 0.038, 0.038, 0.02, 0.055, 0.01, 0.135));
   neck.add(head);
@@ -2890,14 +3719,39 @@ function registerInteractive(obj, cfg, sc) {
   const h = cfg.hotspot || {};
   const hs = group(h.x || 0, h.y || 2, h.z || 0);
   const hMat = MAT.hotspot.clone();
-  const dot = new THREE.Mesh(GEO.disc, hMat);
-  dot.scale.setScalar(0.14);
-  const rim = new THREE.Mesh(GEO.torus, hMat);
-  rim.scale.setScalar(0.34);
-  hs.add(dot); hs.add(rim);
+  let dot = null, rim = null;
+  if (cfg.marker === 'arrow') {
+    // a big arrow hanging over the thing, so it reads as "come here"
+    hMat.color.setHex(0xF5A524);
+    const shaft = new THREE.Mesh(GEO.cyl, hMat);
+    shaft.scale.set(0.2, 0.7, 0.2); shaft.position.y = 0.72;
+    const head = new THREE.Mesh(GEO.cone, hMat);
+    head.scale.set(0.78, 0.6, 0.78); head.rotation.x = Math.PI; head.position.y = 0.2;
+    const cap = new THREE.Mesh(GEO.sphere, hMat);
+    cap.scale.setScalar(0.22); cap.position.y = 1.07;
+    hs.add(shaft); hs.add(head); hs.add(cap);
+    rec.arrow = true;
+    rec.hotBaseY = h.y || 2;
+    const lab = makeMarkerLabel(cfg.label || cfg.title);
+    lab.position.set(h.x || 0, (h.y || 2) + 1.55, h.z || 0);
+    obj.add(lab);
+    rec.label = lab;
+  } else {
+    dot = new THREE.Mesh(GEO.disc, hMat);
+    dot.scale.setScalar(0.14);
+    rim = new THREE.Mesh(GEO.torus, hMat);
+    rim.scale.setScalar(0.34);
+    hs.add(dot); hs.add(rim);
+  }
   hs.renderOrder = 3;
   obj.add(hs);
   rec.hotspot = hs; rec.hotMat = hMat;
+
+  // keep the approach point inside the room
+  if (rec.prox && sc.bounds) {
+    rec.prox.x = Math.max(-sc.bounds.x, Math.min(sc.bounds.x, rec.prox.x));
+    rec.prox.z = Math.max(-sc.bounds.z, Math.min(sc.bounds.z, rec.prox.z));
+  }
 
   // pickable meshes
   obj.traverse(m => {
@@ -2951,6 +3805,7 @@ function buildScene(id) {
   if (id === 'hub') buildHub(sc); else buildOffice(sc, LAYOUTS[id]);
   TH = THEMES.default;
   sc.animated = ANIMATED.splice(before);
+  attachSky(sc);
   return sc;
 }
 let ACTIVE_BUILD = null;
@@ -2971,8 +3826,6 @@ function buildHub(sc) {
   sc.root.add(makeRoom(R, sc));
   sc.spawn.set(L.spawn[0], 0, L.spawn[1]);
 
-  // runner leading from the entrance to the doors
-  addRug(sc.root, MAT.carpet, 4.6, 20, 0, -1);
   addRug(sc.root, MAT.carpetW, 9, 7.5, 9, 5.5);
   addRug(sc.root, MAT.carpet, 8, 6.5, -9.2, 5);
 
@@ -2988,7 +3841,8 @@ function buildHub(sc) {
     dr.rec = registerInteractive(dr.group, {
       type: 'door', id: 'door-' + d.id, title: d.company.replace(' Pvt. Ltd.', '').replace(' Private Limited', ''),
       sub: d.tierLabel + ' · ' + d.when,
-      ring: { r: 1.9, z: 1.2 }, hotspot: { y: 4.35, z: 0.3 },
+      ring: { r: 1.9, z: 1.2 }, hotspot: { y: 4.1, z: 0.3 }, marker: 'arrow',
+      label: d.company.split(' ')[0],
       focus: focusPose(xs[i], 1.7, -R.d / 2 + 2.6, 8.4, 0.0, 1.06),
       prox: new THREE.Vector3(xs[i], 0, -R.d / 2 + 1.9),
       proxLabel: 'Open the ' + d.tierLabel + ' door',
@@ -3010,18 +3864,39 @@ function buildHub(sc) {
       });
   });
 
+  // one signpost over the pair of doors, with each door's own marker below it
+  const expSign = makeSignpost('Experience', 6.4);
+  expSign.position.set(0, 6.4, -R.d / 2 + 1.4);
+  sc.root.add(expSign);
+
   // reception -> about me
-  const rec = makeReception();
+  const rec = makeReception(MAT.contactSign, true);
   rec.position.set(9, 0, 5.5);
   sc.root.add(rec);
   blocker(sc, 9, 5.5, 1.9, 1.9);
   blocker(sc, 9, 3.3, 3.2, 0.3);
   registerInteractive(rec, {
+    type: 'contact', id: 'contact', title: 'Contact me',
+    sub: 'Reception · open to work',
+    ring: { r: 2.5, z: 0.2 }, hotspot: { y: 2.35, z: 0.5 }, marker: 'arrow', label: 'Contact me',
+    focus: focusPose(9, 1.3, 5.3, 8, 0.22, 1.0),
+    prox: new THREE.Vector3(9, 0, 8.3), proxLabel: 'Get in touch',
+    data: DATA.contact
+  }, sc);
+
+  // 6. me, standing on the floor — click for About
+  const self = makeNPC({ shirt: 0x2B3242, skin: 0, hair: 0, curly: true, suit: true, tie: 0xB03A3A });
+  self.position.set(-3.6, 0, 3.4);
+  self.rotation.y = 0.55;
+  sc.root.add(self);
+  blocker(sc, -3.6, 3.4, 0.45, 0.45);
+  registerInteractive(self, {
     type: 'about', id: 'about', title: DATA.owner.name,
     sub: DATA.owner.role + ' · ' + DATA.owner.years,
-    ring: { r: 2.5, z: 0.2 }, hotspot: { y: 2.1, z: 0.5 },
-    focus: focusPose(9, 1.3, 5.3, 8, 0.22, 1.0),
-    prox: new THREE.Vector3(9, 0, 8.3), proxLabel: 'Read about me',
+    ring: { r: 0.75 }, hotspot: { y: 2.25 }, marker: 'arrow', label: 'About me',
+    focus: focusPose(-3.6, 1.15, 3.4, 4.4, 0.55 + Math.PI, 1.16),
+    prox: new THREE.Vector3(-3.6 + Math.sin(0.55) * 1.6, 0, 3.4 + Math.cos(0.55) * 1.6),
+    proxLabel: 'Read about me',
     data: DATA.owner
   }, sc);
 
@@ -3033,6 +3908,17 @@ function buildHub(sc) {
   [[-0.72, -0.36], [0.72, -0.36], [-0.72, 0.36], [0.72, 0.36]].forEach(([x, z]) =>
     ct.add(cyl(MAT.metal, 0.035, 0.44, x, 0.22, z, true)));
   ct.position.set(-9.2, 0, 5); sc.root.add(ct);
+  const lap = makeLaptop();
+  lap.position.set(-9.2, 0.49, 5);
+  lap.rotation.y = 0.85;
+  sc.root.add(lap);
+  registerInteractive(lap, {
+    type: 'desktop', id: 'desktop', title: 'Skills', sub: 'Open the laptop',
+    ring: { r: 0.95, y: -0.47 }, hotspot: { y: 1.15 }, marker: 'arrow', label: 'Skills',
+    focus: focusPose(-9.2, 0.85, 5, 3.8, 0.85, 1.12),
+    prox: new THREE.Vector3(-9.2, 0, 6.8), proxLabel: 'Open the laptop',
+    data: DATA.skills
+  }, sc);
   blocker(sc, -11.4, 5, 0.6, 1.5); blocker(sc, -7, 5, 0.6, 1.2); blocker(sc, -9.2, 5, 0.9, 0.6);
 
 }
@@ -3042,7 +3928,17 @@ function buildOffice(sc, L) {
   const door = DOORS.find(d => d.id === sc.id);
   sc.label = L.name; sc.sub = L.sub;
   sc.door = door;
-  const R = Object.assign({}, L.room, { frontGap: 3.4, frontGapX: L.exit ? L.exit[0] : 0 });
+  // where a cabin wall lands on a glazed elevation, force a mullion there so
+  // the vertical lines read continuous
+  const rhw0 = L.room.w / 2, rhd0 = L.room.d / 2, mTol = 0.35;
+  const mullionAt = { back: [], right: [], left: [] };
+  (L.cabins || []).forEach(C => {
+    const chw = C.w / 2, chd = C.d / 2;
+    if (Math.abs((C.z - chd) + rhd0) < mTol) mullionAt.back.push(C.x - chw, C.x + chw);
+    if (Math.abs((C.x + chw) - rhw0) < mTol) mullionAt.right.push(C.z - chd, C.z + chd);
+    if (Math.abs((C.x - chw) + rhw0) < mTol) mullionAt.left.push(-(C.z - chd), -(C.z + chd));
+  });
+  const R = Object.assign({}, L.room, { frontGap: 4.0, frontGapX: L.exit ? L.exit[0] : 0, mullionAt });
   sc.root.add(makeRoom(R, sc));
   sc.spawn.set(L.spawn[0], 0, L.spawn[1]);
   const hd = L.room.d / 2, hw = L.room.w / 2;
@@ -3095,15 +3991,25 @@ function buildOffice(sc, L) {
   });
 
   // ---- joined bench tables: one interactive per occupied seat
-  const SEAT = [[-1.4, 1], [1.4, 1], [-1.4, -1], [1.4, -1]];
+  const PER_SIDE = 4;
+  const seatOffsets = (W) => {
+    const pitch = (W - 1.3) / PER_SIDE;
+    const xs = Array.from({ length: PER_SIDE }, (_, i) => -((PER_SIDE - 1) * pitch) / 2 + i * pitch);
+    const out = [];
+    xs.forEach(x => out.push([x, 1]));
+    xs.forEach(x => out.push([x, -1]));
+    return out;
+  };
   (L.tables || []).forEach((T, ti) => {
     const tw = T.w || 5.8, td = T.d || 2.3;
     const g = group(T.x, 0, T.z);
-    g.add(makeBenchCluster(tw, td));
+    g.add(makeBenchCluster(tw, td, { endStore: T.endStore }));
     sc.root.add(g);
     blocker(sc, T.x, T.z, tw / 2, td / 2 + 0.15);
 
+    const SEAT = seatOffsets(tw);
     (T.seats || []).forEach((seat, i) => {
+      if (!SEAT[i]) return;
       const [sx, side] = SEAT[i];
       const proj = seat.p ? DATA.projects.find(p => p.id === seat.p) : null;
       const scr = proj ? proj.screen : 'code';
@@ -3121,7 +4027,7 @@ function buildOffice(sc, L) {
       ch.rotation.y = side > 0 ? 0.1 : Math.PI + 0.1;
       seatG.add(ch);
       g.add(seatG);
-      blocker(sc, T.x + sx, T.z + side * 1.55, 0.45, 0.45);
+      blocker(sc, T.x + sx, T.z + side * 1.55, 0.38, 0.38);
 
       const wx = T.x + sx, wz = T.z + side * 1.55;
       if (seat.npc) placeNPC(sc, seat.npc, wx + 0.06, wz, side > 0 ? Math.PI : 0, true);
@@ -3131,7 +4037,7 @@ function buildOffice(sc, L) {
         ring: { r: 1.15, z: side * 1.0 },
         hotspot: { y: 1.95, z: side * 0.5 },
         focus: focusPose(wx, 1.05, T.z + side * 0.7, 5.2, side > 0 ? 0.34 : Math.PI + 0.34, 1.02),
-        prox: new THREE.Vector3(wx, 0, T.z + side * 2.5),
+        prox: new THREE.Vector3(wx, 0, T.z + side * 2.6),
         proxLabel: 'Open ' + proj.name,
         data: proj
       }, sc);
@@ -3140,7 +4046,29 @@ function buildOffice(sc, L) {
 
   // ---- glass cabins (meeting room, director's cabin)
   (L.cabins || []).forEach(C => {
-    const cab = makeGlassCabin(C.w, C.d, { style: C.style, sides: C.sides, door: C.door, label: C.label, ac: C.ac, tv: C.tv });
+    const rhw = L.room.w / 2, rhd = L.room.d / 2, tol = 0.25;
+    // a pane needs no end post where a building wall OR a neighbouring room
+    // already provides the line
+    const nbrs = (L.bathrooms || []).concat(L.cabins || []).filter(n => n !== C);
+    const overlaps = (a1, a2, b1, b2) => Math.min(a2, b2) - Math.max(a1, b1) > 0.3;
+    const meets = (side) => nbrs.some(n => {
+      const nhw = n.w / 2, nhd = n.d / 2, chw = C.w / 2, chd = C.d / 2;
+      if (side === 'e') return Math.abs((n.x - nhw) - (C.x + chw)) < tol &&
+        overlaps(n.z - nhd, n.z + nhd, C.z - chd, C.z + chd);
+      if (side === 'w') return Math.abs((n.x + nhw) - (C.x - chw)) < tol &&
+        overlaps(n.z - nhd, n.z + nhd, C.z - chd, C.z + chd);
+      if (side === 's') return Math.abs((n.z - nhd) - (C.z + chd)) < tol &&
+        overlaps(n.x - nhw, n.x + nhw, C.x - chw, C.x + chw);
+      return Math.abs((n.z + nhd) - (C.z - chd)) < tol &&
+        overlaps(n.x - nhw, n.x + nhw, C.x - chw, C.x + chw);
+    });
+    const atWall = {
+      w: Math.abs((C.x - C.w / 2) + rhw) < tol || meets('w'),
+      e: Math.abs((C.x + C.w / 2) - rhw) < tol || meets('e'),
+      n: Math.abs((C.z - C.d / 2) + rhd) < tol || meets('n'),
+      s: Math.abs((C.z + C.d / 2) - rhd) < tol || meets('s')
+    };
+    const cab = makeGlassCabin(C.w, C.d, { style: C.style, sides: C.sides, door: C.door, label: C.label, ac: C.ac, tv: C.tv, board: C.board, atWall });
     cab.position.set(C.x, 0, C.z);
     sc.root.add(cab);
     const hcw = C.w / 2, hcd = C.d / 2, GAP = 1.5;
@@ -3158,11 +4086,16 @@ function buildOffice(sc, L) {
         blocker(sc, bx + (horiz ? off : 0), bz + (horiz ? 0 : off), horiz ? seg : 0.18, horiz ? 0.18 : seg);
       }
     });
-    blocker(sc, C.x, C.z + (C.style === 'director' ? -hcd + 2.3 : 0), 1.6, 0.9);
+    if (C.style === 'director') {
+      const dx = -hcw + Math.min(2.9, C.w * 0.42);
+      blocker(sc, C.x + dx, C.z, 0.9, 1.6);
+    } else if (C.style !== 'briefing') {
+      blocker(sc, C.x, C.z, 1.6, 0.9);
+    }
     if (C.id !== 'meeting') return;
     const DIR = { n: [0, -1], s: [0, 1], e: [1, 0], w: [-1, 0] }[C.door] || [0, 1];
-    const px = C.x + DIR[0] * (hcw + 1.5);
-    const pz = C.z + DIR[1] * (hcd + 1.5);
+    const px = C.x + DIR[0] * (hcw + 1.2);
+    const pz = C.z + DIR[1] * (hcd + 1.2);
     registerInteractive(cab, {
       type: 'experience', id: 'meeting', title: 'Meeting room', sub: 'Experience & how I work in a team',
       ring: { r: Math.min(hcw, hcd) * 0.9 }, hotspot: { y: 3.5 },
@@ -3174,7 +4107,7 @@ function buildOffice(sc, L) {
 
   // ---- the entrance cupboard: ethernet bay + two bag bays
   (L.caboodh || []).forEach(lk => {
-    const u = makeCaboodh(lk.w || 2.6, lk.h || 2.7, 3);
+    const u = makeCaboodh(lk.w || 3.6, lk.h || 2.45);
     u.position.set(lk.x, 0, lk.z); u.rotation.y = lk.ry || 0;
     sc.root.add(u);
     const along = Math.abs(Math.cos(lk.ry || 0)) > 0.5;
@@ -3211,6 +4144,7 @@ function buildOffice(sc, L) {
     const wb = makeWhiteboard();
     wb.position.set(L.whiteboard.x, 0, L.whiteboard.z);
     wb.rotation.y = L.whiteboard.ry;
+    if (L.whiteboard.s) wb.scale.setScalar(L.whiteboard.s);
     sc.root.add(wb);
     const f = facing(L.whiteboard, 1.6);
     registerInteractive(wb, {
@@ -3326,6 +4260,14 @@ function buildOffice(sc, L) {
     blocker(sc, L.logo.x, L.logo.z, lAlong ? lHalf : 0.35, lAlong ? 0.35 : lHalf);
   }
 
+  // ---- logo panel fixed to an existing wall
+  if (L.logoPanel) {
+    const lp = makeLogoPanel(L.logoPanel.w || 3.9);
+    lp.position.set(L.logoPanel.x, L.logoPanel.y || 1.95, L.logoPanel.z);
+    lp.rotation.y = L.logoPanel.ry || 0;
+    sc.root.add(lp);
+  }
+
   // ---- black tube shelving
   (L.shelves || []).forEach(sh => {
     const u = makeShelfUnit(sh.len || 5, sh.bays || 3, sh.levels || 4);
@@ -3338,21 +4280,52 @@ function buildOffice(sc, L) {
 
   // ---- washrooms
   (L.bathrooms || []).forEach(b => {
-    const r = makeBathroom(b.w, b.d, b.label);
+    // 'left' / 'right' are as you see them standing at the door looking in.
+    // A room's local +x always maps onto that viewer's right, whatever its
+    // rotation, so no flip is needed here.
+    const basinSign = b.basin === 'right' ? 1 : -1;
+    const r = makeBathroom(b.w, b.d, b.label, { basinSign, omit: b.omit });
     r.position.set(b.x, 0, b.z);
     r.rotation.y = b.ry || 0;
     sc.root.add(r);
     blocker(sc, b.x, b.z, b.w / 2, b.d / 2);
   });
 
-  // ---- ceiling fans (light fittings removed on request)
+  // ---- suspended light rigs (fan lives inside each frame)
+  (L.rigs || []).forEach(([x, z, rw, rd]) => {
+    const r = makeCeilingRig(rw, rd); r.position.set(x, 0, z); sc.root.add(r);
+  });
   (L.fans || []).forEach(([x, z]) => {
     const f = makeCeilingFan(); f.position.set(x, 0, z); sc.root.add(f);
   });
 
+  // ---- wall decoration
+  (L.wallDecor || []).forEach(w => {
+    const u = w.kind === 'clock' ? makeWallClock(w.r) : makeWallArt(w.w, w.h);
+    u.position.set(w.x, w.y || 1.95, w.z);
+    u.rotation.y = w.ry || 0;
+    sc.root.add(u);
+  });
+
+  // ---- small stands suspended over a table
+  (L.overhead || []).forEach(od => {
+    const u = makeOverheadStand(od.w);
+    u.position.set(od.x, 0, od.z);
+    u.rotation.y = od.ry || 0;
+    sc.root.add(u);
+  });
+
+  // ---- light switches
+  (L.switches || []).forEach(sw => {
+    const u = makeSwitches(sw.gangs || 6);
+    u.position.set(sw.x, sw.y || 1.25, sw.z);
+    u.rotation.y = sw.ry || 0;
+    sc.root.add(u);
+  });
+
   // ---- wall screen
   if (L.tv) {
-    const tv = makeWallTV(L.tv.w || 2.4, L.tv.h || 1.4);
+    const tv = (L.tv.big ? makeBigTV : makeWallTV)(L.tv.w || 2.4, L.tv.h || 1.4);
     tv.position.set(L.tv.x, L.tv.y || 1.7, L.tv.z);
     tv.rotation.y = L.tv.ry || 0;
     sc.root.add(tv);
@@ -3397,8 +4370,8 @@ function placeNPC(sc, id, x, z, ry, seated) {
     ring: { r: 0.62, z: seated ? 0.15 : 0 },
     hotspot: { y: seated ? 1.62 : 2.0 },
     focus: focusPose(x, 1.15, z, 3.9, ry + Math.PI, 1.16),
-    prox: new THREE.Vector3(x - Math.sin(ry) * (seated ? 1.5 : -1.4), 0,
-                            z - Math.cos(ry) * (seated ? 1.5 : -1.4)),
+    prox: new THREE.Vector3(x - Math.sin(ry) * (seated ? 1.0 : -1.4), 0,
+                            z - Math.cos(ry) * (seated ? 1.0 : -1.4)),
     proxLabel: 'Talk to ' + e.name.split(' ')[0],
     data: e
   }, sc);
@@ -3450,7 +4423,9 @@ function leaveOffice() {
   const from = ACTIVE.id;
   const i = DOORS.findIndex(d => d.id === from);
   const x = i >= 0 ? doorXs()[i] : 0;
-  gotoScene('hub', { at: new THREE.Vector3(x, 0, -LAYOUTS.hub.room.d / 2 + 3.6), face: 0 });
+  // step out well clear of the doorway — landing inside the door's own reach
+  // meant the prompt was already up and E sent you straight back in
+  gotoScene('hub', { at: new THREE.Vector3(x, 0, -LAYOUTS.hub.room.d / 2 + 7), face: 0 });
   const dr = SCENES.hub.doors[i];
   if (dr) { dr.want = 1; setTimeout(() => { dr.want = 0; }, 2600); }
 }
@@ -3686,8 +4661,9 @@ function bindInput() {
    ========================================================================== */
 const KIND = {
   project: 'Workstation', person: 'Colleague', skills: 'Whiteboard',
-  experience: 'Meeting room', about: 'Reception', education: 'Shelf',
+  experience: 'Meeting room', about: 'About me', education: 'Shelf',
   contact: 'Contact', coffee: 'Break area', side: 'Side project',
+  desktop: 'Laptop', sky: 'Mode',
   door: 'Chapter', exit: 'Exit', vacancy: 'Empty desk'
 };
 
@@ -3759,6 +4735,7 @@ function updateDoorHud() {
 
 function activateNearest() {
   if (!NEAR || SWITCHING) return;
+  if (NEAR.type === 'sky') { setDaylight(!DAYLIGHT); return; }
   if (NEAR.type === 'door' && !NEAR.inside) enterDoor(NEAR.data.id);
   else if (NEAR.type === 'exit') leaveOffice();
   else openPanel(NEAR);
@@ -3768,6 +4745,7 @@ function handleClick() {
   const rec = pick();
   if (!rec) { if (STATE.selected) closePanel(); return; }
   if (rec.type === 'exit') { leaveOffice(); return; }
+  if (rec.type === 'sky') { setDaylight(!DAYLIGHT); return; }        // one body, so just flip
   openPanel(rec);
 }
 
@@ -3903,10 +4881,27 @@ function renderCoffee() {
   ].join('');
 }
 
+/* the laptop on the lounge table opens like a desktop */
+function renderDesktop(s) {
+  return [
+    sec('', `<p class="note" style="border-color:var(--amber)">skills — ${s.groups.length} folders · ${esc(DATA.owner.years)} of experience</p>`),
+    s.groups.map(gp => `<details class="egrp" open>
+        <summary>${esc(gp.label)}
+          <span style="margin-left:auto;font-family:var(--mono);font-size:10px;color:${gp.hot ? 'var(--amber)' : 'var(--dim)'}">${esc(gp.years || '')}</span>
+        </summary>
+        <div class="inner">${gp.items.map(it => `<div style="display:flex;align-items:center;gap:9px;padding:5px 0;font-size:12.5px;color:#C9D1DE">
+            <span style="width:14px;height:11px;border-radius:2px;background:${gp.hot ? 'var(--amber)' : '#4A5568'};flex:none"></span>${esc(it)}
+          </div>`).join('')}</div>
+      </details>`).join(''),
+    sec('How I work', list(s.workflow, true)),
+    sec('', `<p class="note">${esc(s.architecture)}</p>`)
+  ].join('');
+}
+
 const RENDER = {
   project: renderProject, person: renderPerson, skills: renderSkills,
   experience: renderExperience, about: renderAbout, education: renderEducation,
-  contact: renderContact, coffee: renderCoffee, side: renderSide,
+  contact: renderContact, coffee: renderCoffee, side: renderSide, desktop: renderDesktop,
   door: renderDoor, vacancy: renderVacancy
 };
 
@@ -3978,8 +4973,15 @@ function showClassic(on) {
    ========================================================================== */
 let frames = 0, fpsAcc = 0, checked = false;
 
+let animErr = 0;
 function animate() {
   requestAnimationFrame(animate);
+  try { frame(); } catch (e) {
+    if (!animErr++) { console.error(e); reportError(e); }
+  }
+}
+
+function frame() {
   const dt = Math.min(CLOCK.getDelta(), 0.05);
   const t = CLOCK.elapsedTime;
   STATE.idle += dt;
@@ -4003,12 +5005,27 @@ function animate() {
       else r.ringMat.color.setHex(sel ? 0xF5A524 : 0x7FB2FF);
       r.ring.scale.setScalar(r.ringR * (1 + Math.sin(t * 3.4) * 0.03 * r.hl));
       r.obj.scale.setScalar(1 + r.hl * 0.01);
-      r.hotMat.opacity = (STATE.selected ? 0.1 : 0.5) + r.hl * 0.45;
-      r.hotspot.scale.setScalar((0.85 + Math.sin(t * 2.2 + i) * 0.07) * (1 + r.hl * 0.35));
-      r.hotspot.lookAt(camera.position);
+      r.hotMat.opacity = (STATE.selected ? 0.12 : 0.72) + r.hl * 0.28;
+      if (r.arrow) {
+        // arrows bob and turn; billboarding them would tip them over
+        r.hotspot.position.y = r.hotBaseY + Math.sin(t * 1.9 + i) * 0.22;
+        r.hotspot.rotation.y = t * 0.9;
+        r.hotspot.scale.setScalar(1 + r.hl * 0.14);
+        if (r.label) {
+          r.label.position.y = r.hotBaseY + 1.55 + Math.sin(t * 1.9 + i) * 0.22;
+          r.label.lookAt(camera.position);
+          r.label.material.opacity = STATE.selected ? 0.25 : 1;
+        }
+      } else {
+        r.hotspot.scale.setScalar((0.85 + Math.sin(t * 2.2 + i) * 0.07) * (1 + r.hl * 0.35));
+        r.hotspot.lookAt(camera.position);
+      }
     }
     const an = ACTIVE.animated;
     for (let i = 0; i < an.length; i++) an[i].fn(t, dt);
+  }
+  for (let i = 0; i < GLOBAL_ANIM.length; i++) GLOBAL_ANIM[i].fn(t, dt);
+  if (ACTIVE) {
   }
 
   renderer.render(scene, camera);
@@ -4042,7 +5059,25 @@ function step(pct, label) {
 /* ==========================================================================
    14 · BOOT
    ========================================================================== */
+function reportError(e) {
+  const b = el('bootErr');
+  if (!b) return;
+  b.textContent = 'Something broke: ' + (e && e.message ? e.message : e);
+  b.style.display = 'block';
+}
+
+addEventListener('error', (ev) => reportError(ev.error || ev.message));
+
 function boot() {
+  try { bootInner(); } catch (e) {
+    console.error(e); reportError(e);
+    el('loader').classList.add('gone');
+    el('intro').classList.add('gone');
+    showClassic(true);
+  }
+}
+
+function bootInner() {
   buildClassic();
 
   if (!STATE.webgl) {
@@ -4078,6 +5113,13 @@ function boot() {
         CAM.radius = CAM.goalRadius = 46;
         CAM.phi = CAM.goalPhi = 0.72;
         CAM.theta = CAM.goalTheta = 0.35;
+        SKY.body = makeSkyBody();
+        SKY.body.position.set(17, 19, -11);
+        scene.add(SKY.body);
+        SKY.stars = makeNightStars();
+        scene.add(SKY.stars);
+        attachSky(hub);
+        setDaylight(true);
         camApply();
         renderer.compile(scene, camera);
         step(100, 'Ready');
@@ -4100,6 +5142,7 @@ function boot() {
   el('btnClassic').onclick = () => showClassic(true);
   el('btnBack3D').onclick = () => showClassic(false);
   el('btnHelp').onclick = () => el('legend').classList.toggle('hide');
+  el('btnSky').onclick = () => setDaylight(!DAYLIGHT);
   el('btnMode').onclick = () => setCamMode(CAM.mode === 'follow' ? 'free' : 'follow');
   el('exitBtn').onclick = () => leaveOffice();
   el('close').onclick = () => closePanel();
