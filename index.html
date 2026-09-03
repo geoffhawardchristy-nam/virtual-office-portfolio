@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Virtual Office — GeoffHaward Christy</title>
+<meta name="description" content="An explorable virtual office. Every desk, screen and colleague is a piece of my work history." />
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/hub.css">
+<link rel="stylesheet" href="css/editor.css">
+<link rel="stylesheet" href="css/landing.css">
+<link rel="stylesheet" href="css/boot-error.css">
+</head>
+<body>
+<div id="preflight" style="position:fixed;left:14px;top:12px;z-index:200;color:#8A94A6;
+  font:12px ui-monospace,Menlo,monospace">loading…</div>
+<canvas id="scene"></canvas>
+
+<!-- ================= TOP BAR ================= -->
+<div id="hud">
+  <div id="brand" class="glass">
+    <div id="mark">GC</div>
+    <div>
+      <div class="n">GeoffHaward Christy</div>
+      <div class="r">Frontend Developer · Gujarat, IN</div>
+    </div>
+  </div>
+
+  <nav id="nav" class="glass">
+    <button data-scene="hub" class="on">Lobby</button>
+    <span class="sep"></span>
+    <button data-scene="evision" class="tier silver"><span class="dot"></span>Silver</button>
+    <button data-scene="logieagle" class="tier gold"><span class="dot"></span>Gold</button>
+    <!-- parked for now — uncomment with the DOORS / LAYOUTS blocks
+    <button data-scene="independent" class="tier platinum"><span class="dot"></span>Platinum</button>
+    <button data-scene="vacant" class="tier diamond"><span class="dot"></span>Diamond</button>
+    -->
+  </nav>
+
+  <div id="tools">
+    <button class="icobtn" id="btnSky" title="Daytime — switch to night" aria-label="Toggle day and night">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.4 1.4M17.6 17.6L19 19M19 5l-1.4 1.4M6.4 17.6L5 19"/></svg>
+    </button>
+    <button class="icobtn active" id="btnMode" title="Camera: follow / free" aria-label="Toggle camera mode">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.2"/><path d="M5.5 20a6.5 6.5 0 0 1 13 0"/></svg>
+    </button>
+    <button class="icobtn" id="btnHelp" title="Show controls" aria-label="Show controls">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.2a2.5 2.5 0 1 1 3.3 2.4c-.6.2-.9.8-.9 1.4v.4"/><path d="M12 17h.01"/></svg>
+    </button>
+    <button class="icobtn" id="btnEdit" title="Edit all content" aria-label="Edit content">
+      <svg viewBox="0 0 24 24"><path d="M4 20h4L19 9a2.1 2.1 0 0 0-3-3L5 17v3z"/><path d="M14.5 6.5l3 3"/></svg>
+    </button>
+    <button class="icobtn" id="btnClassic" title="Switch to text view" aria-label="Switch to text view">
+      <svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- ================= BACK TO LOBBY ================= -->
+<button id="exitBtn">
+  <svg viewBox="0 0 24 24"><path d="M19 12H6M12 5l-7 7 7 7"/></svg>
+  Back to lobby
+</button>
+
+<!-- ================= DOOR HEADS-UP ================= -->
+<div id="doorhud">
+  <div class="tier"></div>
+  <div class="co"></div>
+  <div class="dt"></div>
+</div>
+
+<!-- ================= WHERE AM I ================= -->
+<div id="roomlbl" class="glass">
+  <span class="eyebrow">You are in</span>
+  <div class="rn">Reception lobby</div>
+  <div class="rs">Four doors. Each one is a chapter.</div>
+</div>
+
+<!-- ================= CONTROL LEGEND ================= -->
+<div id="legend" class="glass">
+  <h4>Controls</h4>
+  <div class="row"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> Walk</div>
+  <div class="row"><kbd>Drag</kbd> Turn the camera</div>
+  <div class="row"><kbd>Scroll</kbd> Zoom</div>
+  <div class="row"><kbd>E</kbd> Open what you're near</div>
+  <div class="row"><kbd>Click</kbd> Inspect anything</div>
+  <div class="row"><kbd>Esc</kbd> Close / step back</div>
+</div>
+
+<!-- ================= PROXIMITY PROMPT ================= -->
+<div id="prompt"><kbd>E</kbd><span class="txt"></span></div>
+
+<!-- ================= COORD READOUT (dev aid — delete this div and the
+     coordReadout() call in the render loop to remove) ================= -->
+<div id="coords" style="position:fixed;left:14px;bottom:14px;z-index:200;
+  font:12px/1.5 ui-monospace,Menlo,Consolas,monospace;color:#EDF0F5;
+  background:rgba(8,10,14,.72);border:1px solid rgba(255,255,255,.14);
+  border-radius:8px;padding:7px 10px;pointer-events:none"></div>
+
+<!-- ================= HOVER TOOLTIP ================= -->
+<div id="tip"><div class="s"></div><div class="t"></div></div>
+
+<!-- ================= INFO PANEL ================= -->
+<aside id="panel" class="glass" role="dialog" aria-modal="false" aria-labelledby="panelTitle">
+  <header>
+    <span class="kind" id="panelKind">Project</span>
+    <h2 id="panelTitle">Title</h2>
+    <p class="sub" id="panelSub"></p>
+    <button id="close" aria-label="Close panel">
+      <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+  </header>
+  <div id="body"></div>
+</aside>
+
+<!-- ================= INTRO ================= -->
+<div id="intro">
+  <div id="introCard">
+    <span class="eyebrow">Frontend Developer · Gandhinagar, India</span>
+    <h1>Hello, I'm GeoffHaward Christy</h1>
+    <p class="tagline">Want to explore my 3D virtual portfolio?</p>
+    <p class="lede">Three and a half years of frontend work — HR platforms, dashboards, a React Native app, a Chrome extension. Instead of scrolling a page, you walk through it: a lobby, two doors, and the actual offices where the work happened.</p>
+    <div class="keys">
+      <div class="row"><kbd>WASD</kbd> Walk</div>
+      <div class="row"><kbd>Drag</kbd> Look</div>
+      <div class="row"><kbd>Click</kbd> Inspect</div>
+      <div class="row"><kbd>E</kbd> Open</div>
+    </div>
+    <div class="cta">
+      <button class="btn primary" id="btnExplore">
+        <svg viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg>
+        Explore
+      </button>
+      <button class="btn" id="btnSkip">Read the text version</button>
+    </div>
+    <p class="fineprint">Best on a desktop · takes a moment to load</p>
+  </div>
+</div>
+
+<div id="bootErr"></div>
+
+<!-- ================= LOADER ================= -->
+<div id="loader"><div class="in">
+  <div id="bar"><i></i></div>
+  <div class="lbl" id="loadLbl">Unlocking the building</div>
+</div></div>
+
+<!-- ================= FADE ================= -->
+<div id="fade"></div>
+
+<!-- ================= CONTENT EDITOR ================= -->
+<aside id="editor">
+  <div class="ehead">
+    <span class="eyebrow">Your content</span>
+    <h2>Edit everything</h2>
+    <p>Every word in this portfolio is below. Type over it and the office updates as you go. Export when you're done so you never lose it.</p>
+    <button id="eclose" aria-label="Close editor">
+      <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+  </div>
+  <div class="ebody" id="ebody"></div>
+  <div class="efoot">
+    <button class="btn primary" id="btnExport">
+      <svg viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M4 20h16"/></svg>
+      Export JSON
+    </button>
+    <button class="btn" id="btnImport">Import</button>
+    <button class="btn" id="btnReset">Reset</button>
+    <input type="file" id="fileIn" accept="application/json" style="display:none">
+  </div>
+</aside>
+<div id="etoast"></div>
+
+<!-- ================= CLASSIC / LOW-POWER FALLBACK ================= -->
+<div id="classic"><div class="wrap">
+  <div class="top">
+    <div>
+      <h1>GeoffHaward Christy</h1>
+      <div class="role">Frontend Developer · React, Angular, React Native, Next.js · Gandhinagar, Gujarat</div>
+    </div>
+    <button class="btn" id="btnBack3D">Back to 3D</button>
+  </div>
+  <div id="classicBody"></div>
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<!-- Fallback CDNs. Each runs only if the one before it left THREE undefined.
+     document.write during parsing loads them synchronously, so the main
+     script below still finds THREE ready. -->
+<script>
+if (typeof THREE === 'undefined')
+  document.write('<scr' + 'ipt src="https://unpkg.com/three@0.128.0/build/three.min.js"><\/scr' + 'ipt>');
+</script>
+<script>
+if (typeof THREE === 'undefined')
+  document.write('<scr' + 'ipt src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"><\/scr' + 'ipt>');
+</script>
+
+<!-- Early trap. Registered before the main script parses, so a failure in
+     there still surfaces instead of leaving a blank page. -->
+<script>
+window.__vo_fail = function (msg) {
+  var b = document.getElementById('bootErr');
+  if (b) { b.textContent = 'Something broke: ' + msg; b.style.display = 'block'; }
+  var p = document.getElementById('preflight');
+  if (p) { p.textContent = msg; p.style.color = '#FF9B9B'; }
+  var l = document.getElementById('loader');
+  if (l) l.classList.add('gone');
+};
+window.addEventListener('error', function (ev) {
+  window.__vo_fail((ev.error && ev.error.message) || ev.message || 'unknown error');
+});
+if (typeof THREE === 'undefined') {
+  window.__vo_fail('three.js did not load from any CDN — showing the text version');
+  // Catch-all stand-in. The main script builds several THREE objects at top
+  // level (CAM, SCRATCH, ...); without this the first one throws and takes the
+  // whole script with it, classic fallback included. Every property returns
+  // another harmless proxy — except WebGLRenderer, which throws on purpose so
+  // STATE.webgl goes false and boot() drops straight to the text version.
+  var mk = function () {
+    return new Proxy(function () {}, {
+      get: function (t, k) {
+        if (k === 'WebGLRenderer') return function () { throw new Error('no webgl'); };
+        if (k === Symbol.toPrimitive || k === 'valueOf') return function () { return 0; };
+        if (k === Symbol.iterator) return function* () {};
+        if (k === 'then' || k === Symbol.toStringTag) return undefined;
+        return mk();
+      },
+      set: function () { return true; },
+      apply: function () { return mk(); },
+      construct: function () { return mk(); }
+    });
+  };
+  window.THREE = mk();
+}
+</script>
+
+<script src="js/01-data.js"></script>
+<script src="js/02-layouts.js"></script>
+<script src="js/03-engine.js"></script>
+<script src="js/04-materials.js"></script>
+<script src="js/05-build-room.js"></script>
+<script src="js/06-props-core.js"></script>
+<script src="js/07-props-logieagle.js"></script>
+<script src="js/08-daynight.js"></script>
+<script src="js/09-props-evision.js"></script>
+<script src="js/10-npcs.js"></script>
+<script src="js/11-scene.js"></script>
+<script src="js/12-controls.js"></script>
+<script src="js/13-panels.js"></script>
+<script src="js/14-main.js"></script>
+</body>
+</html>

@@ -1,0 +1,74 @@
+/* ============================ INTRO ============================ */
+#intro{
+  position:fixed;inset:0;z-index:60;display:grid;place-items:center;padding:24px;
+  background:radial-gradient(120% 90% at 50% 40%,rgba(10,12,17,.55),rgba(6,7,10,.94));
+  backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);
+  transition:opacity .7s var(--ease),backdrop-filter .7s;
+}
+#intro.gone{opacity:0;pointer-events:none;backdrop-filter:blur(0)}
+#introCard{max-width:530px;width:100%;padding:34px 34px 28px;text-align:left}
+#introCard .eyebrow{margin-bottom:16px;display:block}
+#introCard h1{
+  margin:0;font-size:clamp(29px,5.4vw,42px);line-height:1.08;letter-spacing:-.035em;font-weight:680;
+}
+#introCard h1 em{font-style:normal;color:var(--amber)}
+#introCard .lede{margin:15px 0 0;font-size:14.5px;line-height:1.66;color:var(--muted);max-width:44ch}
+#introCard .keys{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:9px 18px;margin:26px 0 26px;
+  padding:17px 0;border-top:1px solid var(--hair-2);border-bottom:1px solid var(--hair-2);
+}
+#introCard .keys .row{display:flex;align-items:center;gap:9px;font-size:12px;color:var(--muted)}
+#introCard .cta{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+#introCard .hint{font-size:11.5px;color:var(--dim);font-family:var(--mono);letter-spacing:.03em}
+
+/* ============================ LOADER ============================ */
+#loader{position:fixed;inset:0;z-index:80;background:var(--ink);display:grid;place-items:center;
+  transition:opacity .5s;font-family:var(--mono)}
+#loader.gone{opacity:0;pointer-events:none}
+#loader .in{text-align:center}
+#bar{width:180px;height:2px;background:rgba(255,255,255,.1);border-radius:2px;overflow:hidden;margin:0 auto}
+#bar i{display:block;height:100%;width:0;background:var(--amber);transition:width .35s var(--ease)}
+#loader .lbl{margin-top:14px;font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--dim)}
+
+/* ============================ CLASSIC (FALLBACK) VIEW ============================ */
+#classic{
+  position:fixed;inset:0;z-index:70;background:var(--ink);overflow-y:auto;display:none;
+}
+#classic.on{display:block}
+#classic .wrap{max-width:760px;margin:0 auto;padding:32px 22px 90px}
+#classic .top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:34px}
+#classic h1{margin:0;font-size:clamp(26px,6vw,36px);letter-spacing:-.035em;line-height:1.1;font-weight:680}
+#classic .role{color:var(--muted);font-size:14px;margin-top:8px;line-height:1.55}
+#classic section{margin-bottom:34px}
+#classic section > h2{
+  font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--dim);
+  font-weight:500;margin:0 0 14px;padding-bottom:10px;border-bottom:1px solid var(--hair-2);
+}
+#classic .entry{padding:15px 0;border-bottom:1px solid var(--hair-2)}
+#classic .entry:last-child{border-bottom:0}
+#classic .entry h3{margin:0 0 4px;font-size:15px;letter-spacing:-.015em;font-weight:640}
+#classic .entry .m{font-family:var(--mono);font-size:10.5px;color:var(--dim);letter-spacing:.06em;margin-bottom:8px}
+#classic .entry p{margin:0 0 10px;font-size:13.5px;line-height:1.6;color:#C9D1DE}
+
+/* ============================ RESPONSIVE ============================ */
+@media (max-width:900px){
+  #nav{display:none}
+  #legend{display:none}
+  #brand .r{display:none}
+  #panel{
+    top:auto;bottom:0;right:0;left:0;width:100%;max-height:72vh;
+    border-radius:20px 20px 0 0;transform:translateY(30px);
+  }
+  #panel.open{transform:none}
+  #panel::before{
+    content:"";position:absolute;top:8px;left:50%;transform:translateX(-50%);
+    width:38px;height:4px;border-radius:99px;background:rgba(255,255,255,.22);
+  }
+  #panel header{padding-top:24px}
+  .split{grid-template-columns:1fr}
+  #introCard{padding:26px 22px 22px}
+  #introCard .keys{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){
+  *{transition-duration:.01ms !important;animation-duration:.01ms !important}
+}

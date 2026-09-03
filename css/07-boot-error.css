@@ -1,0 +1,5 @@
+#bootErr{
+  display:none;position:fixed;left:16px;right:16px;bottom:16px;z-index:90;
+  padding:12px 16px;border-radius:12px;font-family:var(--mono);font-size:12px;
+  background:#3A1414;border:1px solid #7A2A2A;color:#FFD9D9;
+}
