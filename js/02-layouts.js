@@ -8,7 +8,7 @@ const LAYOUTS = {
     room: { w: 30, d: 24, tone: 'cool', windows: { left: true, right: true },
       // only over the places worth lighting, not a full grid
       lights: 'none' },
-    spawn: [0, 8.5], exit: null
+    spawn: [0, 3], exit: null
   },
 
   evision: {
@@ -40,7 +40,7 @@ const LAYOUTS = {
     tables: [
       { x: -12.25, z: -3.15, w: 7.5, d: 2.2, perSide: 4, pinboard: true,
         seatOff: 1.25, proxOff: 2.3, seats: [
-        { p: 'ws04', npc: 'npc04', dual: true }, { p: 'ws05' }, {}, {},
+        { p: 'ws04', dual: true }, { p: 'ws05' }, {}, {},
         {}, {}, {}, {} ] },
       { x: -12.25, z: 1.45, w: 7.5, d: 2.2, perSide: 4, pinboard: true,
         seatOff: 1.25, proxOff: 2.3, seats: [
@@ -196,11 +196,11 @@ const LAYOUTS = {
     /* still 4 seats a side. Table 2 (right) and table 3 (left) share z = 0. */
     tables: [
       { x: 6.75, z: -5, w: 7, d: 2.3, seats: [                        // table 1, right, far
-        { p: 'ws01', npc: 'npc02', dual: true }, { p: 'ws02' }, {}, {}, {}, {}, {}, {} ] },
+        { p: 'ws01', dual: true }, { p: 'ws02' }, {}, {}, {}, {}, {}, {} ] },
       { x: 6.75, z: 0, w: 7, d: 2.3, seats: [                         // table 2, right, near
-        { p: 'ws03', npc: 'npc01' }, { p: 'ws06' }, {}, {}, {}, {}, {}, {} ] },
+        { p: 'ws03' }, { p: 'ws06' }, {}, {}, {}, {}, {}, {} ] },
       { x: -6.75, z: 0, w: 7, d: 2.3, endStore: 'right', seats: [      // table 3, left wall
-        { npc: 'npc03' }, {}, {}, {}, {}, {}, {}, {} ] }
+        {}, {}, {}, {}, {}, {}, {}, {} ] }
     ],
 
     cabins: [

@@ -41,9 +41,8 @@ function renderProject(p) {
     has(p.responsibilities) ? sec('What I did', list(p.responsibilities)) : '',
     has(p.features) ? sec('Key features', list(p.features, true)) : '',
     has(p.apis) ? sec('APIs & integrations', tags(p.apis)) : '',
-    p.challenge ? sec('Challenge → solution', `<div class="split">
-        <div class="card"><h4>The problem</h4><p>${esc(p.challenge)}</p></div>
-        <div class="card"><h4>What I changed</h4><p>${esc(p.solution)}</p></div></div>`) : '',
+    p.challenge ? sec('The problem', `<p>${esc(p.challenge)}</p>`) : '',
+    p.solution ? sec('What I changed', `<p>${esc(p.solution)}</p>`) : '',
     p.impact ? sec('Result', `<p>${esc(p.impact)}</p>`) : '',
     p.id ? sec('', `<div class="act"><button class="btn" data-editid="${esc(p.id)}">Edit this desk</button></div>`) : ''
   ].join('');
