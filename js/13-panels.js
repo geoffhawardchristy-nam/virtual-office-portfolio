@@ -134,7 +134,7 @@ function renderCoffee() {
 /* the laptop on the lounge table opens like a desktop */
 function renderDesktop(s) {
   return [
-    sec('', `<p class="note" style="border-color:var(--amber)">skills — ${s.groups.length} folders · ${esc(DATA.owner.years)} of experience</p>`),
+    //sec('', `<p class="note" style="border-color:var(--amber)">skills — ${s.groups.length} folders · ${esc(DATA.owner.years)} of experience</p>`),
     s.groups.map(gp => `<details class="egrp" open>
         <summary>${esc(gp.label)}
           <span style="margin-left:auto;font-family:var(--mono);font-size:10px;color:${gp.hot ? 'var(--amber)' : 'var(--dim)'}">${esc(gp.years || '')}</span>
@@ -143,7 +143,7 @@ function renderDesktop(s) {
             <span style="width:14px;height:11px;border-radius:2px;background:${gp.hot ? 'var(--amber)' : '#4A5568'};flex:none"></span>${esc(it)}
           </div>`).join('')}</div>
       </details>`).join(''),
-    sec('How I work', list(s.workflow, true)),
+    //sec('How I work', list(s.workflow, true)),
     sec('', `<p class="note">${esc(s.architecture)}</p>`)
   ].join('');
 }
