@@ -2119,11 +2119,11 @@ const DATA = {
   /* ---------- WHITEBOARD -> skills */
   skills: {
     groups: [
-      { label: "Core frontend",   hot: true,  years: "3 yrs 5 mos", items: ["React", "Angular", "Next.js", "React Native", "JavaScript (ES6+)", "TypeScript"] },
-      { label: "State & data",    hot: false, years: "3 yrs", items: ["Redux", "Redux Toolkit", "RxJS", "REST API integration", "Reactive Forms"] },
-      { label: "Styling",         hot: false, years: "3 yrs 5 mos", items: ["Tailwind CSS", "SCSS", "CSS Grid / Flexbox", "Responsive design"] },
-      { label: "Backend I touch", hot: false, years: "2 yrs", items: ["Java Spring Boot", "Node.js + Express", "PostgreSQL", "REST design"] },
-      { label: "Platform",        hot: false, years: "2 yrs", items: ["Shopify Liquid", "Chrome Extension APIs", "Firebase", "Git"] }
+      { label: "Frontend",        hot: true,  years: "3 yrs 5 mos", items: ["React", "Angular", "Next.js", "React Native", "JavaScript (ES6+)", "TypeScript"] },
+      { label: "State & data",    hot: true, years: "3 yrs", items: ["Redux", "Redux Toolkit", "RxJS", "REST API integration", "Reactive Forms"] },
+      { label: "Styling",         hot: true, years: "3 yrs 5 mos", items: ["Tailwind CSS", "SCSS", "CSS Grid / Flexbox", "Responsive design"] },
+      { label: "Backend",         hot: true, years: "2 yrs", items: ["Java Spring Boot", "Node.js + Express", "PostgreSQL", "REST design"] },
+      { label: "Platform",        hot: true, years: "2 yrs", items: ["Shopify Liquid", "Chrome Extension APIs", "Firebase", "Git"] }
     ],
     workflow: [
      
