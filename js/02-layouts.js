@@ -334,6 +334,7 @@ const LAYOUTS = {
           id: id,
           station: (L.name || key) + ' · desk ' + String(n).padStart(2, '0'),
           name: 'Untitled workstation',
+          clickable: true,
           company: '', role: '', duration: '', screen: 'code',
           tech: [],
           description: 'Write what you worked on at this desk.',
@@ -343,6 +344,9 @@ const LAYOUTS = {
       });
     });
   });
+  // every desk carries the flag, so a record written before this existed still
+  // gets one and the editor always has something to toggle
+  DATA.projects.forEach(p => { if (p.clickable === undefined) p.clickable = true; });
 })();
 
 const TIERS = {

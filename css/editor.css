@@ -27,6 +27,9 @@
 }
 .efield input:focus,.efield textarea:focus{border-color:var(--amber);background:rgba(255,255,255,.07)}
 .efield textarea{min-height:66px}
+.efield.echeck{display:flex;align-items:center;gap:9px}
+.efield.echeck > label{margin:0}
+.efield.echeck input{width:15px;height:15px;flex:none;accent-color:var(--amber);cursor:pointer}
 .efield .hint{font-size:10.5px;color:var(--dim);margin-top:4px;font-family:var(--mono)}
 
 details.egrp{border:1px solid var(--hair-2);border-radius:12px;margin:0 0 10px;overflow:hidden;

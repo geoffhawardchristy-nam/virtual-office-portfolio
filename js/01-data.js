@@ -45,6 +45,7 @@ const DATA = {
     {
       "id": "ws01",
       "station": "Workstation 01",
+      "clickable": false,
       "name": "",
       "company": "",
       "role": "",
@@ -62,6 +63,7 @@ const DATA = {
     {
       "id": "ws02",
       "station": "Workstation 02",
+      "clickable": false,
       "name": "",
       "company": "",
       "role": "",
@@ -79,6 +81,7 @@ const DATA = {
     {
       "id": "ws03",
       "station": "Workstation 03",
+      "clickable": false,
       "name": "",
       "company": "",
       "role": "",
@@ -96,6 +99,7 @@ const DATA = {
     {
       "id": "ws04",
       "station": "Workstation 04",
+      "clickable": true,
       "name": "Project Management System (PMS)",
       "company": "Evision IT Solution Pvt. Ltd.",
       "role": "Frontend Developer",
@@ -135,6 +139,7 @@ const DATA = {
     {
       "id": "ws05",
       "station": "Workstation 05",
+      "clickable": true,
       "name": "Shopify Storefront Build",
       "company": "Evision IT Solution Pvt. Ltd.",
       "role": "Frontend Developer",
@@ -171,6 +176,7 @@ const DATA = {
     {
       "id": "ws06",
       "station": "Workstation 06",
+      "clickable": false,
       "name": "",
       "company": "",
       "role": "",
@@ -188,6 +194,7 @@ const DATA = {
     {
       "id": "evision-d1-3",
       "station": "Evision floor · desk 03",
+      "clickable": true,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -205,6 +212,7 @@ const DATA = {
     {
       "id": "evision-d1-4",
       "station": "Evision floor · desk 04",
+      "clickable": true,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -222,6 +230,7 @@ const DATA = {
     {
       "id": "evision-d1-5",
       "station": "Evision floor · desk 05",
+      "clickable": true,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -239,6 +248,7 @@ const DATA = {
     {
       "id": "evision-d1-6",
       "station": "Evision floor · desk 06",
+      "clickable": true,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -256,6 +266,7 @@ const DATA = {
     {
       "id": "evision-d1-7",
       "station": "Evision floor · desk 07",
+      "clickable": true,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -273,6 +284,7 @@ const DATA = {
     {
       "id": "evision-d1-8",
       "station": "Evision floor · desk 08",
+      "clickable": true,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -290,6 +302,7 @@ const DATA = {
     {
       "id": "evision-d2-1",
       "station": "Evision floor · desk 09",
+      "clickable": true,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -307,6 +320,7 @@ const DATA = {
     {
       "id": "evision-d2-2",
       "station": "Evision floor · desk 10",
+      "clickable": true,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -324,6 +338,7 @@ const DATA = {
     {
       "id": "evision-d2-3",
       "station": "Evision floor · desk 11",
+      "clickable": true,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -341,6 +356,7 @@ const DATA = {
     {
       "id": "evision-d2-4",
       "station": "Evision floor · desk 12",
+      "clickable": true,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -358,6 +374,7 @@ const DATA = {
     {
       "id": "evision-d2-5",
       "station": "Evision floor · desk 13",
+      "clickable": false,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -375,6 +392,7 @@ const DATA = {
     {
       "id": "evision-d2-6",
       "station": "Evision floor · desk 14",
+      "clickable": true,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -392,6 +410,7 @@ const DATA = {
     {
       "id": "evision-d2-7",
       "station": "Evision floor · desk 15",
+      "clickable": true,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -409,6 +428,7 @@ const DATA = {
     {
       "id": "evision-d2-8",
       "station": "Evision floor · desk 16",
+      "clickable": true,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -426,6 +446,7 @@ const DATA = {
     {
       "id": "evision-d3-1",
       "station": "Evision floor · desk 17",
+      "clickable": true,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -443,6 +464,7 @@ const DATA = {
     {
       "id": "evision-d3-2",
       "station": "Evision floor · desk 18",
+      "clickable": true,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -460,6 +482,7 @@ const DATA = {
     {
       "id": "evision-d3-3",
       "station": "Evision floor · desk 19",
+      "clickable": true,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -477,6 +500,7 @@ const DATA = {
     {
       "id": "evision-d3-4",
       "station": "Evision floor · desk 20",
+      "clickable": true,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -494,6 +518,7 @@ const DATA = {
     {
       "id": "evision-d3-5",
       "station": "Evision floor · desk 21",
+      "clickable": true,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -511,6 +536,7 @@ const DATA = {
     {
       "id": "evision-d3-6",
       "station": "Evision floor · desk 22",
+      "clickable": true,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -528,6 +554,7 @@ const DATA = {
     {
       "id": "evision-d3-7",
       "station": "Evision floor · desk 23",
+      "clickable": true,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -545,6 +572,7 @@ const DATA = {
     {
       "id": "evision-d3-8",
       "station": "Evision floor · desk 24",
+      "clickable": true,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -562,6 +590,7 @@ const DATA = {
     {
       "id": "evision-d4-1",
       "station": "Evision floor · desk 25",
+      "clickable": true,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -579,6 +608,7 @@ const DATA = {
     {
       "id": "evision-d4-2",
       "station": "Evision floor · desk 26",
+      "clickable": true,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -596,6 +626,7 @@ const DATA = {
     {
       "id": "evision-d4-3",
       "station": "Evision floor · desk 27",
+      "clickable": true,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -613,6 +644,7 @@ const DATA = {
     {
       "id": "evision-d4-4",
       "station": "Evision floor · desk 28",
+      "clickable": true,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -630,6 +662,7 @@ const DATA = {
     {
       "id": "evision-d4-5",
       "station": "Evision floor · desk 29",
+      "clickable": true,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -647,6 +680,7 @@ const DATA = {
     {
       "id": "evision-d4-6",
       "station": "Evision floor · desk 30",
+      "clickable": true,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -664,6 +698,7 @@ const DATA = {
     {
       "id": "evision-d4-7",
       "station": "Evision floor · desk 31",
+      "clickable": true,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -681,6 +716,7 @@ const DATA = {
     {
       "id": "evision-d4-8",
       "station": "Evision floor · desk 32",
+      "clickable": true,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -698,6 +734,7 @@ const DATA = {
     {
       "id": "evision-d5-1",
       "station": "Evision floor · desk 33",
+      "clickable": true,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -715,6 +752,7 @@ const DATA = {
     {
       "id": "evision-d5-2",
       "station": "Evision floor · desk 34",
+      "clickable": true,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -732,6 +770,7 @@ const DATA = {
     {
       "id": "evision-d5-3",
       "station": "Evision floor · desk 35",
+      "clickable": true,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -749,6 +788,7 @@ const DATA = {
     {
       "id": "evision-d5-4",
       "station": "Evision floor · desk 36",
+      "clickable": true,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -766,6 +806,7 @@ const DATA = {
     {
       "id": "evision-d5-5",
       "station": "Evision floor · desk 37",
+      "clickable": true,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -783,6 +824,7 @@ const DATA = {
     {
       "id": "evision-d5-6",
       "station": "Evision floor · desk 38",
+      "clickable": true,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -800,6 +842,7 @@ const DATA = {
     {
       "id": "evision-d5-7",
       "station": "Evision floor · desk 39",
+      "clickable": true,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -817,6 +860,7 @@ const DATA = {
     {
       "id": "evision-d5-8",
       "station": "Evision floor · desk 40",
+      "clickable": true,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -834,6 +878,7 @@ const DATA = {
     {
       "id": "evision-d6-1",
       "station": "Evision floor · desk 41",
+      "clickable": true,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -851,6 +896,7 @@ const DATA = {
     {
       "id": "evision-d6-2",
       "station": "Evision floor · desk 42",
+      "clickable": true,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -868,6 +914,7 @@ const DATA = {
     {
       "id": "evision-d6-3",
       "station": "Evision floor · desk 43",
+      "clickable": true,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -885,6 +932,7 @@ const DATA = {
     {
       "id": "evision2-d1-1",
       "station": "Evision 207 · desk 01",
+      "clickable": true,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -902,6 +950,7 @@ const DATA = {
     {
       "id": "evision2-d1-2",
       "station": "Evision 207 · desk 02",
+      "clickable": true,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -919,6 +968,7 @@ const DATA = {
     {
       "id": "evision2-d1-3",
       "station": "Evision 207 · desk 03",
+      "clickable": true,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -936,6 +986,7 @@ const DATA = {
     {
       "id": "evision2-d1-4",
       "station": "Evision 207 · desk 04",
+      "clickable": true,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -953,6 +1004,7 @@ const DATA = {
     {
       "id": "evision2-d2-1",
       "station": "Evision 207 · desk 05",
+      "clickable": true,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -970,6 +1022,7 @@ const DATA = {
     {
       "id": "evision2-d2-2",
       "station": "Evision 207 · desk 06",
+      "clickable": true,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -987,6 +1040,7 @@ const DATA = {
     {
       "id": "evision2-d2-3",
       "station": "Evision 207 · desk 07",
+      "clickable": true,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -1004,6 +1058,7 @@ const DATA = {
     {
       "id": "evision2-d2-4",
       "station": "Evision 207 · desk 08",
+      "clickable": true,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -1021,6 +1076,7 @@ const DATA = {
     {
       "id": "evision2-d2-5",
       "station": "Evision 207 · desk 09",
+      "clickable": true,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -1038,6 +1094,7 @@ const DATA = {
     {
       "id": "evision2-d2-6",
       "station": "Evision 207 · desk 10",
+      "clickable": true,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -1055,6 +1112,7 @@ const DATA = {
     {
       "id": "evision2-d3-1",
       "station": "Evision 207 · desk 11",
+      "clickable": true,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -1072,6 +1130,7 @@ const DATA = {
     {
       "id": "evision2-d3-2",
       "station": "Evision 207 · desk 12",
+      "clickable": true,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -1089,6 +1148,7 @@ const DATA = {
     {
       "id": "evision2-d3-3",
       "station": "Evision 207 · desk 13",
+      "clickable": true,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -1106,6 +1166,7 @@ const DATA = {
     {
       "id": "evision2-d3-4",
       "station": "Evision 207 · desk 14",
+      "clickable": true,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -1123,6 +1184,7 @@ const DATA = {
     {
       "id": "evision2-d3-5",
       "station": "Evision 207 · desk 15",
+      "clickable": true,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -1140,6 +1202,7 @@ const DATA = {
     {
       "id": "evision2-d3-6",
       "station": "Evision 207 · desk 16",
+      "clickable": true,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -1157,6 +1220,7 @@ const DATA = {
     {
       "id": "evision2-d4-1",
       "station": "Evision 207 · desk 17",
+      "clickable": true,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -1174,6 +1238,7 @@ const DATA = {
     {
       "id": "evision2-d4-2",
       "station": "Evision 207 · desk 18",
+      "clickable": true,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -1191,6 +1256,7 @@ const DATA = {
     {
       "id": "evision2-d4-3",
       "station": "Evision 207 · desk 19",
+      "clickable": true,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -1208,6 +1274,7 @@ const DATA = {
     {
       "id": "evision2-d4-4",
       "station": "Evision 207 · desk 20",
+      "clickable": true,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -1225,6 +1292,7 @@ const DATA = {
     {
       "id": "evision2-d4-5",
       "station": "Evision 207 · desk 21",
+      "clickable": true,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -1242,6 +1310,7 @@ const DATA = {
     {
       "id": "evision2-d4-6",
       "station": "Evision 207 · desk 22",
+      "clickable": true,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -1259,6 +1328,7 @@ const DATA = {
     {
       "id": "evision2-d5-1",
       "station": "Evision 207 · desk 23",
+      "clickable": true,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -1276,6 +1346,7 @@ const DATA = {
     {
       "id": "evision2-d5-2",
       "station": "Evision 207 · desk 24",
+      "clickable": true,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -1293,6 +1364,7 @@ const DATA = {
     {
       "id": "evision2-d5-3",
       "station": "Evision 207 · desk 25",
+      "clickable": true,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -1310,6 +1382,7 @@ const DATA = {
     {
       "id": "evision2-d5-4",
       "station": "Evision 207 · desk 26",
+      "clickable": true,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -1327,6 +1400,7 @@ const DATA = {
     {
       "id": "evision2-d5-5",
       "station": "Evision 207 · desk 27",
+      "clickable": true,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -1344,6 +1418,7 @@ const DATA = {
     {
       "id": "evision2-d5-6",
       "station": "Evision 207 · desk 28",
+      "clickable": true,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -1361,6 +1436,7 @@ const DATA = {
     {
       "id": "logieagle-d1-3",
       "station": "Logieagle floor · desk 03",
+      "clickable": true,
       "name": "Gym Management & Workout Tracking Platform",
       "company": "",
       "role": "Frontend Developer - Functionality, RBAC & Optimization",
@@ -1409,6 +1485,7 @@ const DATA = {
     {
       "id": "logieagle-d1-4",
       "station": "Logieagle floor · desk 04",
+      "clickable": true,
       "name": "Backend - Java Spring Boot REST APIs",
       "company": "",
       "role": "Backend Developer - REST API Development",
@@ -1454,6 +1531,7 @@ const DATA = {
     {
       "id": "logieagle-d1-5",
       "station": "Logieagle floor · desk 05",
+      "clickable": false,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -1471,6 +1549,7 @@ const DATA = {
     {
       "id": "logieagle-d1-6",
       "station": "Logieagle floor · desk 06",
+      "clickable": false,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -1488,6 +1567,7 @@ const DATA = {
     {
       "id": "logieagle-d1-7",
       "station": "Logieagle floor · desk 07",
+      "clickable": false,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -1505,6 +1585,7 @@ const DATA = {
     {
       "id": "logieagle-d1-8",
       "station": "Logieagle floor · desk 08",
+      "clickable": false,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -1522,6 +1603,7 @@ const DATA = {
     {
       "id": "logieagle-d2-3",
       "station": "Logieagle floor · desk 11",
+      "clickable": true,
       "name": "Chrome Extension - Screen & Video Recorder",
       "company": "",
       "role": "Frontend Developer - Chrome Extension",
@@ -1578,6 +1660,7 @@ const DATA = {
     {
       "id": "logieagle-d2-4",
       "station": "Logieagle floor · desk 12",
+      "clickable": false,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -1595,6 +1678,7 @@ const DATA = {
     {
       "id": "logieagle-d2-5",
       "station": "Logieagle floor · desk 13",
+      "clickable": false,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -1612,6 +1696,7 @@ const DATA = {
     {
       "id": "logieagle-d2-6",
       "station": "Logieagle floor · desk 14",
+      "clickable": true,
       "name": "Maloo Group - Mobile App (iOS & Android)",
       "company": "",
       "role": "Frontend Developer -  End-to-End Mobile App Ownership",
@@ -1670,6 +1755,7 @@ const DATA = {
     {
       "id": "logieagle-d2-7",
       "station": "Logieagle floor · desk 15",
+      "clickable": true,
       "name": "Spotlight Analytics Dashboard - Frontend & UI",
       "company": "",
       "role": "Frontend Developer - UI Design & Functionality",
@@ -1716,6 +1802,7 @@ const DATA = {
     {
       "id": "logieagle-d2-8",
       "station": "Logieagle floor · desk 16",
+      "clickable": true,
       "name": "Spotlight - API Integration",
       "company": "",
       "role": "Frontend Developer - API Integration",
@@ -1770,6 +1857,7 @@ const DATA = {
     {
       "id": "logieagle-d3-1",
       "station": "Logieagle floor · desk 17",
+      "clickable": true,
       "name": "iOS Build & Release Station",
       "company": "",
       "role": "Frontend Developer (React Native) - iOS Build & Release",
@@ -1816,6 +1904,7 @@ const DATA = {
     {
       "id": "logieagle-d3-2",
       "station": "Logieagle floor · desk 18",
+      "clickable": true,
       "name": "QA Collaboration & Bug Fixing Desk",
       "company": "",
       "role": "Frontend Developer - Mobile Bug Fixing & QA Support",
@@ -1863,6 +1952,7 @@ const DATA = {
     {
       "id": "logieagle-d3-3",
       "station": "Logieagle floor · desk 19",
+      "clickable": true,
       "name": "Serverless Web App - Frontend",
       "company": "",
       "role": "Frontend Developer - UI & Client-side Functionality",
@@ -1902,6 +1992,7 @@ const DATA = {
     {
       "id": "logieagle-d3-4",
       "station": "Logieagle floor · desk 20",
+      "clickable": true,
       "name": "Chatbot UI - Responsive Design",
       "company": "",
       "role": "Frontend Developer - UI Design & Implementation",
@@ -1939,6 +2030,7 @@ const DATA = {
     {
       "id": "logieagle-d3-5",
       "station": "Logieagle floor · desk 21",
+      "clickable": false,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -1956,6 +2048,7 @@ const DATA = {
     {
       "id": "logieagle-d3-6",
       "station": "Logieagle floor · desk 22",
+      "clickable": false,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -1973,6 +2066,7 @@ const DATA = {
     {
       "id": "logieagle-d3-7",
       "station": "Logieagle floor · desk 23",
+      "clickable": false,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -1990,6 +2084,7 @@ const DATA = {
     {
       "id": "logieagle-d3-8",
       "station": "Logieagle floor · desk 24",
+      "clickable": false,
       "name": "Untitled workstation",
       "company": "",
       "role": "",

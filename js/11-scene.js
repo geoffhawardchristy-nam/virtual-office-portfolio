@@ -277,14 +277,18 @@ function buildOffice(sc, L) {
 
     const type = cfg.vacant ? 'vacancy' : (cfg.side ? 'side' : 'project');
     const data = cfg.vacant ? VACANCY : (cfg.side ? DATA.sideProject : proj);
-    registerInteractive(ws, {
-      type, id: cfg.p, title: data.name || data.title, sub: cfg.vacant ? 'Unoccupied' : (proj ? proj.station : 'Side project'),
-      ring: { r: 1.75, z: 0.1 }, hotspot: { y: 1.95, z: -0.34 },
-      focus: focusPose(cfg.x, 1.05, cfg.z - 0.2, 5.6, 0.34, 1.02),
-      prox: new THREE.Vector3(cfg.x, 0, cfg.z + 2.5),
-      proxLabel: cfg.vacant ? 'Look at the empty desk' : 'Open ' + (data.name || data.title),
-      data
-    }, sc);
+    // a desk switched off in the data still gets built — it just does not open.
+    // wrapped rather than returned, so the colleague below still gets placed
+    if (!(type === 'project' && (!data || data.clickable === false))) {
+      registerInteractive(ws, {
+        type, id: cfg.p, title: data.name || data.title, sub: cfg.vacant ? 'Unoccupied' : (proj ? proj.station : 'Side project'),
+        ring: { r: 1.75, z: 0.1 }, hotspot: { y: 1.95, z: -0.34 },
+        focus: focusPose(cfg.x, 1.05, cfg.z - 0.2, 5.6, 0.34, 1.02),
+        prox: new THREE.Vector3(cfg.x, 0, cfg.z + 2.5),
+        proxLabel: cfg.vacant ? 'Look at the empty desk' : 'Open ' + (data.name || data.title),
+        data
+      }, sc);
+    }
 
     if (cfg.npc) placeNPC(sc, cfg.npc, cfg.x + 0.08, cfg.z + 1.0, Math.PI, true);
   });
@@ -348,7 +352,7 @@ function buildOffice(sc, L) {
 
       const wx = seatW.x, wz = seatW.z;
       if (seat.npc) placeNPC(sc, seat.npc, wx, wz, (side > 0 ? Math.PI : 0) + ry, true);
-      if (!proj) return;
+      if (!proj || proj.clickable === false) return;
       registerInteractive(seatG, {
         type: 'project', id: proj.id, title: proj.name, sub: proj.station,
         ring: { r: 1.15, z: side * 1.0 },
@@ -797,7 +801,14 @@ function gotoScene(id, opts) {
     el('roomlbl').querySelector('.rn').textContent = sc.label;
     el('roomlbl').querySelector('.rs').textContent = sc.sub;
     el('exitBtn').classList.toggle('on', id !== 'hub');
-    document.querySelectorAll('#nav button').forEach(b => b.classList.toggle('on', b.dataset.scene === id));
+    document.querySelectorAll('#nav button').forEach(b => {
+      const on = b.dataset.scene === id;
+      b.classList.toggle('on', on);
+      // active pill is amber and the gold dot is that same amber, so it vanished
+      // on Logieagle. Inline while active; cleared, the tier rule takes over again
+      const dot = b.querySelector('.dot');
+      if (dot) dot.style.background = on ? '#201604' : '';
+    });
 
     setTimeout(() => { el('fade').classList.remove('on'); SWITCHING = false; }, 60);
   }, 430);

@@ -291,6 +291,14 @@ function fieldHTML(key, path, val) {
   return `<div class="efield"><label for="${id}">${esc(labelOf(key))}</label>${input}</div>`;
 }
 
+function boolHTML(key, path, val) {
+  const id = 'f_' + path.replace(/[^\w]/g, '_');
+  return `<div class="efield echeck">
+    <input type="checkbox" id="${id}" data-path="${path}"${val ? ' checked' : ''}>
+    <label for="${id}">${esc(labelOf(key))}</label>
+  </div>`;
+}
+
 function listHTML(key, path, arr) {
   const id = 'f_' + path.replace(/[^\w]/g, '_');
   return `<div class="efield">
@@ -303,7 +311,8 @@ function listHTML(key, path, arr) {
 function nodeHTML(key, path, val, depth) {
   if (EDIT_SKIP.has(key)) return '';
   if (typeof val === 'string') return fieldHTML(key, path, val);
-  if (typeof val === 'number' || typeof val === 'boolean') return '';
+  if (typeof val === 'boolean') return boolHTML(key, path, val);
+  if (typeof val === 'number') return '';
   if (Array.isArray(val)) {
     if (!val.length) return LIST_KEYS.has(key) ? listHTML(key, path, val) : '';
     if (typeof val[0] === 'string') return listHTML(key, path, val);
@@ -390,7 +399,8 @@ function wireEditor() {
   el('ebody').addEventListener('input', (e) => {
     const f = e.target.closest('[data-path]');
     if (!f) return;
-    const v = f.dataset.list ? f.value.split('\n').map(s => s.trim()).filter(Boolean) : f.value;
+    const v = f.type === 'checkbox' ? f.checked
+      : (f.dataset.list ? f.value.split('\n').map(s => s.trim()).filter(Boolean) : f.value);
     setPath(f.dataset.path, v);
     contentChanged();
   });
