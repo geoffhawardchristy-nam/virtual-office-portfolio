@@ -193,6 +193,7 @@ function bootInner() {
   el('btnMode').onclick = () => setCamMode(CAM.mode === 'follow' ? 'free' : 'follow');
   el('exitBtn').onclick = () => leaveOffice();
   el('close').onclick = () => closePanel();
+  buildNav();
   document.querySelectorAll('#nav button').forEach(b => {
     b.onclick = () => { if (b.dataset.scene !== (ACTIVE && ACTIVE.id)) gotoScene(b.dataset.scene); };
   });
@@ -218,6 +219,26 @@ function bootInner() {
 /* baked-into-3D text (door plaques, wall plaques, the reception logo)
    registers itself here so an edit can regenerate the texture */
 const SIGNAGE = [];
+/* one nav button per door, named after the floor rather than its tier.
+   The dot keeps the tier colour. Buttons come from DOORS, so parking a door
+   or adding one needs no change here. */
+function buildNav() {
+  const nav = el('nav');
+  if (!nav || nav.dataset.built) return;
+  nav.dataset.built = '1';
+  DOORS.forEach(d => {
+    const b = document.createElement('button');
+    b.dataset.scene = d.id;
+    b.className = 'tier ' + d.tier;
+    b.title = d.company;
+    const dot = document.createElement('span');
+    dot.className = 'dot';
+    b.appendChild(dot);
+    b.appendChild(document.createTextNode(d.nav || d.marker || d.company.split(' ')[0]));
+    nav.appendChild(b);
+  });
+}
+
 function signage(mat, make) { SIGNAGE.push({ mat, make }); return mat; }
 function refreshSignage() {
   SIGNAGE.forEach(s => {

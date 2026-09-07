@@ -2162,7 +2162,7 @@ const DOORS = [
   },
   {
     id: 'evision', tier: 'silver', tierLabel: 'Silver',
-    company: 'Evision IT Solution 203 & 204', marker: 'Evision 203 204',
+    company: 'Evision IT Solution 203 & 204', marker: 'Evision 203 204', nav: 'Evision 203-4',
     role: 'Frontend Developer',
     when: 'May 2022 – Mar 2024', span: '1 yr 11 mos',
     headline: 'Where I learned to ship',
