@@ -47,7 +47,7 @@ const DATA = {
     {
       "id": "ws01",
       "station": "Workstation 01",
-      "clickable": true,
+      "clickable": false,
       "name": "",
       "company": "",
       "role": "",
@@ -65,7 +65,7 @@ const DATA = {
     {
       "id": "ws02",
       "station": "Workstation 02",
-      "clickable": true,
+      "clickable": false,
       "name": "",
       "company": "",
       "role": "",
@@ -83,7 +83,7 @@ const DATA = {
     {
       "id": "ws03",
       "station": "Workstation 03",
-      "clickable": true,
+      "clickable": false,
       "name": "",
       "company": "",
       "role": "",
@@ -178,7 +178,7 @@ const DATA = {
     {
       "id": "ws06",
       "station": "Workstation 06",
-      "clickable": true,
+      "clickable": false,
       "name": "",
       "company": "",
       "role": "",
@@ -2189,10 +2189,10 @@ const DATA = {
     clickable: true,
     groups: [
       { label: "Frontend",        hot: true,  years: "3 yrs 5 mos", items: ["React", "Angular", "Next.js", "React Native", "JavaScript (ES6+)", "TypeScript"] },
-      { label: "State & data",    hot: true, years: "3 yrs", items: ["Redux", "Redux Toolkit", "RxJS", "REST API integration", "Reactive Forms"] },
       { label: "Styling",         hot: true, years: "3 yrs 5 mos", items: ["Tailwind CSS", "SCSS", "CSS Grid / Flexbox", "Responsive design"] },
+      { label: "State & data",    hot: true, years: "3 yrs 5 mos", items: ["Redux", "Redux Toolkit", "RxJS", "REST API integration", "Reactive Forms"] },
+      { label: "Platform",        hot: true, years: "3 yrs 5 mos", items: ["Shopify Liquid", "Chrome Extension APIs", "Firebase", "Git"] },
       { label: "Backend",         hot: true, years: "2 yrs", items: ["Java Spring Boot", "Node.js + Express", "PostgreSQL", "REST design"] },
-      { label: "Platform",        hot: true, years: "2 yrs", items: ["Shopify Liquid", "Chrome Extension APIs", "Firebase", "Git"] }
     ],
     workflow: [
       
