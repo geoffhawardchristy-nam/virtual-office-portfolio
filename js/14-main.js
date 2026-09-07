@@ -17,7 +17,7 @@ function frame() {
   STATE.idle += dt;
 
   if (HERO) updateHero(dt);
-  coordReadout();
+  /* coordReadout(); */  /* dev aid — uncomment with the #coords div to bring it back */
   camUpdate(dt);
   updateProximity();
 
@@ -186,7 +186,6 @@ function bootInner() {
     camFocus({ target: new THREE.Vector3(HERO.group.position.x, 1.15, HERO.group.position.z), theta: 0, phi: 1.02, radius: 8.5 }, 2400);
     if (!STATE.mobile) setTimeout(() => el('legend').classList.remove('hide'), 1200);
   };
-  el('btnSkip').onclick = () => { el('intro').classList.add('gone'); STATE.ready = true; showClassic(true); };
   el('btnClassic').onclick = () => showClassic(true);
   el('btnBack3D').onclick = () => showClassic(false);
   el('btnHelp').onclick = () => el('legend').classList.toggle('hide');
@@ -198,6 +197,8 @@ function bootInner() {
     b.onclick = () => { if (b.dataset.scene !== (ACTIVE && ACTIVE.id)) gotoScene(b.dataset.scene); };
   });
   el('body').addEventListener('click', (e) => {
+    const ed = e.target.closest('[data-editid]');
+    if (ed) { openEditorAt(ed.dataset.editid); return; }
     const en = e.target.closest('[data-enter]');
     if (en) { enterDoor(en.dataset.enter); return; }
     const op = e.target.closest('[data-open]');
@@ -248,7 +249,16 @@ const EDIT_SKIP = new Set(['id', 'screen', 'shirt', 'seatKey', 'tier', 'hot', 's
 const LONG_KEYS = new Set(['summary', 'description', 'collab', 'blurb', 'challenge',
   'solution', 'impact', 'architecture', 'note', 'intro', 'clients', 'headline']);
 
-const titleOf = (o, i) => o.name || o.title || o.company || o.label || o.what || o.designation || ('Item ' + (i + 1));
+/* string-list fields that must stay editable even when they are empty */
+const LIST_KEYS = new Set(['tech', 'responsibilities', 'features', 'apis', 'stack',
+  'learned', 'pitch', 'extra', 'workflow', 'looking', 'bring', 'mine', 'theirs',
+  'projects', 'points', 'teamwork', 'items']);
+
+const titleOf = (o, i) => {
+  const n = o.name || o.title || o.company || o.label || o.what || o.designation;
+  if (o.station) return o.station + (n && n !== 'Untitled workstation' ? ' · ' + n : '');
+  return n || ('Item ' + (i + 1));
+};
 const labelOf = (k) => k.replace(/([A-Z])/g, ' $1').replace(/^./, c => c.toUpperCase());
 
 function fieldHTML(key, path, val) {
@@ -264,7 +274,7 @@ function listHTML(key, path, arr) {
   const id = 'f_' + path.replace(/[^\w]/g, '_');
   return `<div class="efield">
     <label for="${id}">${esc(labelOf(key))}</label>
-    <textarea id="${id}" data-path="${path}" data-list="1" rows="${Math.min(10, arr.length + 1)}">${esc(arr.join('\n'))}</textarea>
+    <textarea id="${id}" data-path="${path}" data-list="1" rows="${Math.min(10, Math.max(3, arr.length + 1))}">${esc(arr.join('\n'))}</textarea>
     <div class="hint">one per line</div>
   </div>`;
 }
@@ -274,12 +284,12 @@ function nodeHTML(key, path, val, depth) {
   if (typeof val === 'string') return fieldHTML(key, path, val);
   if (typeof val === 'number' || typeof val === 'boolean') return '';
   if (Array.isArray(val)) {
-    if (!val.length) return '';
+    if (!val.length) return LIST_KEYS.has(key) ? listHTML(key, path, val) : '';
     if (typeof val[0] === 'string') return listHTML(key, path, val);
     return `<details class="egrp"${depth < 1 ? '' : ''}>
       <summary>${esc(labelOf(key))} <span style="color:var(--dim);font-family:var(--mono);font-size:10px">${val.length}</span></summary>
       <div class="inner">${val.map((item, i) => `
-        <details class="egrp"><summary>${esc(titleOf(item, i))}</summary>
+        <details class="egrp" data-item="${path}.${i}"><summary>${esc(titleOf(item, i))}</summary>
           <div class="inner">${Object.keys(item).map(k => nodeHTML(k, path + '.' + i + '.' + k, item[k], depth + 1)).join('')}</div>
         </details>`).join('')}</div></details>`;
   }
@@ -310,6 +320,21 @@ function buildEditor() {
     nodeHTML('coffee', 'DATA.coffee', DATA.coffee, 0)
   ].join('');
   el('ebody').innerHTML = html;
+}
+
+/* jump from a desk panel straight to that desk's fields */
+function openEditorAt(id) {
+  const i = DATA.projects.findIndex(p => p.id === id);
+  if (i < 0) return;
+  if (!el('editor').classList.contains('on')) el('btnEdit').onclick();
+  const node = el('ebody').querySelector('[data-item="DATA.projects.' + i + '"]');
+  if (!node) return;
+  for (let n = node; n && n !== el('ebody'); n = n.parentElement) {
+    if (n.tagName === 'DETAILS') n.open = true;
+  }
+  node.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  const first = node.querySelector('input, textarea');
+  if (first) setTimeout(() => first.focus(), 350);
 }
 
 let refreshTimer = null;

@@ -90,12 +90,14 @@
 <!-- ================= PROXIMITY PROMPT ================= -->
 <div id="prompt"><kbd>E</kbd><span class="txt"></span></div>
 
-<!-- ================= COORD READOUT (dev aid — delete this div and the
-     coordReadout() call in the render loop to remove) ================= -->
+<!-- ================= COORD READOUT (dev aid — commented out. To bring it
+     back, uncomment this div and the coordReadout() call in the render
+     loop; the function itself is still in js/14-main.js) =================
 <div id="coords" style="position:fixed;left:14px;bottom:14px;z-index:200;
   font:12px/1.5 ui-monospace,Menlo,Consolas,monospace;color:#EDF0F5;
   background:rgba(8,10,14,.72);border:1px solid rgba(255,255,255,.14);
   border-radius:8px;padding:7px 10px;pointer-events:none"></div>
+-->
 
 <!-- ================= HOVER TOOLTIP ================= -->
 <div id="tip"><div class="s"></div><div class="t"></div></div>
@@ -131,9 +133,43 @@
         <svg viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg>
         Explore
       </button>
-      <button class="btn" id="btnSkip">Read the text version</button>
     </div>
     <p class="fineprint">Best on a desktop · takes a moment to load</p>
+  </div>
+</div>
+
+<!-- ================= DESKTOP-ONLY GATE ================= -->
+<div id="gate" role="dialog" aria-modal="true" aria-labelledby="gateTitle">
+  <div id="gateCard">
+    <svg class="ch" viewBox="0 0 180 210" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <ellipse class="shade" cx="88" cy="200" rx="40" ry="6.5"/>
+      <rect x="72" y="150" width="16" height="46" rx="8" fill="#1B2130"/>
+      <rect x="92" y="150" width="16" height="46" rx="8" fill="#1B2130"/>
+      <rect x="62" y="82" width="56" height="76" rx="17" fill="#2B3242"/>
+      <path d="M76 82 H104 L90 108 Z" fill="#EDF0F5"/>
+      <path d="M90 102 l6 6 -6 26 -6 -26 Z" fill="#B03A3A"/>
+      <g>
+        <rect x="54" y="88" width="14" height="58" rx="7" fill="#2B3242" transform="rotate(8 61 96)"/>
+        <circle cx="54" cy="144" r="8.5" fill="#D8AE86"/>
+      </g>
+      <rect x="82" y="62" width="16" height="24" rx="7" fill="#C0946C"/>
+      <circle cx="90" cy="44" r="25" fill="#D8AE86"/>
+      <path d="M65 44c0-16 11-27 25-27s25 11 25 27c-5-5-7-12-14-14-7 6-21 7-29 3-3 3-5 7-7 11Z" fill="#241C18"/>
+      <circle cx="81" cy="45" r="2.7" fill="#241C18"/>
+      <circle cx="99" cy="45" r="2.7" fill="#241C18"/>
+      <path d="M83 55c4 3.4 10 3.4 14 0" stroke="#241C18" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+      <g class="wave">
+        <rect x="112" y="46" width="14" height="54" rx="7" fill="#2B3242" transform="rotate(22 119 98)"/>
+        <circle cx="137" cy="52" r="9" fill="#D8AE86"/>
+      </g>
+    </svg>
+    <span class="eyebrow">Desktop only</span>
+    <h1 id="gateTitle">Please open this on a laptop</h1>
+    <p>This portfolio isn't a page you scroll — it's a 3D office you walk through. Phones and tablets have no keyboard and no mouse, so most of it can't be reached.</p>
+    <div class="why">
+      <div>WASD to walk · drag to look · click to inspect</div>
+      <div>Built for screens 1024px and wider</div>
+    </div>
   </div>
 </div>
 

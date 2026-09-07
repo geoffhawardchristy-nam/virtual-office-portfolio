@@ -33,17 +33,19 @@ function renderVacancy(v) {
 }
 
 function renderProject(p) {
+  const has = (a) => Array.isArray(a) && a.length > 0;
   return [
     sec('', meta([['Company', p.company], ['Role', p.role], ['When', p.duration]])),
     sec('What it is', `<p>${esc(p.description)}</p>`),
-    sec('Built with', tags(p.tech, true)),
-    sec('What I did', list(p.responsibilities)),
-    p.features ? sec('Key features', list(p.features, true)) : '',
-    p.apis ? sec('APIs & integrations', tags(p.apis)) : '',
+    has(p.tech) ? sec('Built with', tags(p.tech, true)) : '',
+    has(p.responsibilities) ? sec('What I did', list(p.responsibilities)) : '',
+    has(p.features) ? sec('Key features', list(p.features, true)) : '',
+    has(p.apis) ? sec('APIs & integrations', tags(p.apis)) : '',
     p.challenge ? sec('Challenge → solution', `<div class="split">
         <div class="card"><h4>The problem</h4><p>${esc(p.challenge)}</p></div>
         <div class="card"><h4>What I changed</h4><p>${esc(p.solution)}</p></div></div>`) : '',
-    p.impact ? sec('Result', `<p>${esc(p.impact)}</p>`) : ''
+    p.impact ? sec('Result', `<p>${esc(p.impact)}</p>`) : '',
+    p.id ? sec('', `<div class="act"><button class="btn" data-editid="${esc(p.id)}">Edit this desk</button></div>`) : ''
   ].join('');
 }
 

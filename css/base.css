@@ -115,8 +115,9 @@ kbd{
 
 /* ============================ INFO PANEL ============================ */
 #panel{
-  position:fixed;z-index:25;top:74px;right:16px;width:min(430px,calc(100vw - 32px));
+  position:fixed;z-index:25;top:74px;right:16px;width:min(620px,calc(100vw - 32px));
   max-height:calc(100vh - 108px);display:flex;flex-direction:column;
+  container-type:inline-size;
   opacity:0;transform:translateX(26px) scale(.985);pointer-events:none;
   transition:opacity .34s var(--ease),transform .34s var(--ease);
 }
@@ -166,7 +167,8 @@ ul.list li::before{
   background:var(--signal);opacity:.75;
 }
 ul.list.amber li::before{background:var(--amber)}
-.split{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.split{display:grid;grid-template-columns:1fr;gap:14px;align-items:start}
+@container (min-width:560px){.split{grid-template-columns:1fr 1fr}}
 .card{background:rgba(255,255,255,.035);border:1px solid var(--hair-2);border-radius:var(--radius-sm);padding:12px 13px}
 .card h4{margin:0 0 6px;font-size:11.5px;font-weight:600;color:var(--text);letter-spacing:-.005em}
 .card p{font-size:12.5px;line-height:1.55}
