@@ -312,6 +312,39 @@ const LAYOUTS = {
     if (Array.isArray(wnd.size)) wnd.size[0] *= k;   // width only; height stays
   }
 })(0.9);
+/* ==========================================================================
+   Every desk is a workstation you can open
+   Seats that already name a project keep it. Every other seat gets a blank
+   record of its own and is wired to it, so each screen on the floor opens a
+   panel you can write into from the content editor.
+   ========================================================================== */
+(function fillWorkstations() {
+  Object.keys(LAYOUTS).forEach(key => {
+    const L = LAYOUTS[key];
+    let n = 0;
+    (L.tables || []).forEach((t, ti) => {
+      (t.seats || []).forEach((seat, si) => {
+        n++;
+        if (seat.p) return;
+        const id = key + '-d' + (ti + 1) + '-' + (si + 1);
+        seat.p = id;
+        // a desk already carried in DATA.projects keeps its content — no second copy
+        if (DATA.projects.some(p => p.id === id)) return;
+        DATA.projects.push({
+          id: id,
+          station: (L.name || key) + ' · desk ' + String(n).padStart(2, '0'),
+          name: 'Untitled workstation',
+          company: '', role: '', duration: '', screen: 'code',
+          tech: [],
+          description: 'Write what you worked on at this desk.',
+          responsibilities: [], features: [], apis: [],
+          challenge: '', solution: '', impact: ''
+        });
+      });
+    });
+  });
+})();
+
 const TIERS = {
   silver:   { base: 0xC3CBD6, glow: 0x8FA6BF, metal: 0.85, rough: 0.28, css: '#C8D0DA' },
   gold:     { base: 0xE0A233, glow: 0xF5A524, metal: 0.9,  rough: 0.24, css: '#F5A524' },
