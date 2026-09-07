@@ -117,7 +117,7 @@ const LAYOUTS = {
 
     npcs: [{ id: 'npc05', x: 3, z: 4, ry: -0.7 }],
     shelf: null,
-    whiteboard: { x: -15.85, z: -0.85, ry: Math.PI / 2, s: 0.4, y: 1.39 },
+    whiteboard: { x: -15.85, z: -0.85, ry: Math.PI / 2, s: 0.4, y: 1.39, clickable:false },
     plaque: null,
     storage: [],
     plants: []
@@ -219,7 +219,7 @@ const LAYOUTS = {
 
     desks: [],
     npcs: [],
-    whiteboard: { x: -6.8, z: 7.88, ry: Math.PI, s: 1 },   // was 0.7, never applied
+    whiteboard: { x: -6.8, z: 7.88, ry: Math.PI, s: 1, clickable:false },   // was 0.7, never applied
     plaque: null,
     caboodh: [{ x: 4.25, z: 7.64, ry: Math.PI, w: 2.8, h: 3.7 }],   // runs from the washroom wall to the gate jamb
     shelves: [{ x: 8.2, z: 3.6, ry: 0, len: 3.1, bays: 3, levels: 4 }],

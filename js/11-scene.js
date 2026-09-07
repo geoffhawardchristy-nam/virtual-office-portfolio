@@ -5,8 +5,11 @@
    ========================================================================== */
 function registerInteractive(obj, cfg, sc) {
   sc = sc || ACTIVE;
-  // anything whose record carries clickable:false is still built and still
-  // visible — it just never registers, so no ring, no prompt, no panel
+  // anything switched off is still built and still visible — it just never
+  // registers, so no ring, no prompt, no panel. Two ways to switch one off:
+  // clickable:false on its DATA record (covers everything sharing that record)
+  // or clickable:false on this one placement (covers just this object)
+  if (cfg.clickable === false) return null;
   if (cfg.data && cfg.data.clickable === false) return null;
   // whatever scale the object was built at — the hover nudge multiplies this
   // rather than overwriting it, which used to reset scaled props back to 1
@@ -218,6 +221,7 @@ function buildHub(sc) {
     ring: { r: 0.95, y: -0.47 }, hotspot: { y: 1.15 }, marker: 'arrow', label: 'Skills', color: '#C58AF0',
     focus: focusPose(-9.2, 0.85, 5, 3.8, 0.85, 1.12),
     prox: new THREE.Vector3(-9.2, 0, 6.8), proxLabel: 'Open the laptop',
+    clickable: L.laptop && L.laptop.clickable,   // LAYOUTS.hub.laptop = { clickable: false }
     data: DATA.skills
   }, sc);
   blocker(sc, -11.4, 5, 0.6, 1.5); blocker(sc, -7, 5, 0.6, 1.2); blocker(sc, -9.2, 5, 0.9, 0.6);
@@ -475,6 +479,7 @@ function buildOffice(sc, L) {
       ring: { r: 1.5, z: 1.3 }, hotspot: { y: 3.35, z: 0.35 },
       focus: focusPose(f.x, 1.9, f.z, 7.4, L.whiteboard.ry, 1.12),
       prox: new THREE.Vector3(f.x, 0, f.z), proxLabel: 'Read the whiteboard',
+      clickable: L.whiteboard.clickable,
       data: DATA.skills
     }, sc);
   }

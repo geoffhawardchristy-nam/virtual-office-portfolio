@@ -2133,7 +2133,7 @@ const DATA = {
      These are stand-in colleagues, not real named individuals. */
   employees: [
     {
-      id: "npc01", clickable: false, name: "Rohit Sharma", designation: "Senior Frontend Developer", department: "Engineering",
+      id: "npc01", clickable: false, name: "Namrata Baldaniya", designation: "Senior Frontend Developer", department: "Engineering",
       shirt: 0x4A6FA5, seatKey: "ws02",
       projects: ["HR Service Center", "Analytics Dashboard", "Chrome Extension Toolkit"],
       duration: "About 18 months, same pod",
@@ -2188,7 +2188,7 @@ const DATA = {
   skills: {
     clickable: true,
     groups: [
-      { label: "Frontend",        hot: true,  years: "3 yrs 5 mos", items: ["React", "Angular", "Next.js", "React Native", "JavaScript (ES6+)", "TypeScript"] },
+      { label: "Frontend",        hot: true,  years: "3 yrs 5 mos", items: ["React", "Angular", "Next.js", "React Native", "JavaScript (ES6+)", "TypeScript"] },  
       { label: "Styling",         hot: true, years: "3 yrs 5 mos", items: ["Tailwind CSS", "SCSS", "CSS Grid / Flexbox", "Responsive design"] },
       { label: "State & data",    hot: true, years: "3 yrs 5 mos", items: ["Redux", "Redux Toolkit", "RxJS", "REST API integration", "Reactive Forms"] },
       { label: "Platform",        hot: true, years: "3 yrs 5 mos", items: ["Shopify Liquid", "Chrome Extension APIs", "Firebase", "Git"] },
