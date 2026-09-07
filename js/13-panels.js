@@ -13,8 +13,8 @@ function renderDoor(d) {
     sec('', `<span class="chip t-${d.tier}">${esc(d.tierLabel)} · ${esc(d.span)}</span>`),
     sec('', meta([['Role', d.role], ['When', d.when]])),
     sec(d.headline, `<p>${esc(d.blurb)}</p>`),
-    sec('Stack on this floor', tags(d.stack, true)),
-    sec(d.id === 'vacant' ? 'What would fill it' : 'What it taught me', list(d.learned)),
+    //sec('Stack on this floor', tags(d.stack, true)),
+    //sec(d.id === 'vacant' ? 'What would fill it' : 'What it taught me', list(d.learned)),
     inHub ? sec('', `<div class="act">
       <button class="btn primary" data-enter="${d.id}">
         <svg viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg>

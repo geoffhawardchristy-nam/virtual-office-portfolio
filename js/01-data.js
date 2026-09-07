@@ -2152,9 +2152,9 @@ const DOORS = [
     id: 'evision2', tier: 'silver', tierLabel: 'Silver',
     company: 'Evision IT Solution 207', marker: 'Evision 207',
     role: 'Frontend Developer',
-    when: 'Set this in the editor', span: '',
+    when: 'May 2022 – Mar 2024', span: '1 yr 11 mos',
     headline: 'The floor Evision moved into',
-    blurb: 'Same team, same job — Evision took a new office and we moved in. Dates and the rest of this copy are still placeholders; open the content editor to set them.',
+    blurb: 'Same team, same job — Evision took a new office',
     stack: ['Angular', 'TypeScript', 'RxJS', 'Reactive Forms', 'Shopify Liquid', 'Java Spring Boot'],
     learned: [
       'Placeholder — replace in the content editor'
@@ -2165,14 +2165,10 @@ const DOORS = [
     company: 'Evision IT Solution 203 & 204', marker: 'Evision 203 204', nav: 'Evision 203-4',
     role: 'Frontend Developer',
     when: 'May 2022 – Mar 2024', span: '1 yr 11 mos',
-    headline: 'Where I learned to ship',
-    blurb: 'Straight out of LDRP into a delivery team. Angular, Reactive Forms, RxJS, and a Shopify theme practice on the side. This is the floor where I stopped writing code that only worked on my machine.',
-    stack: ['Angular', 'TypeScript', 'RxJS', 'Reactive Forms', 'Shopify Liquid', 'Java Spring Boot'],
+    headline: '',
+    blurb: '',
+    stack: [],
     learned: [
-      'Lazy-loaded feature modules, and why the bundle size is somebody\'s first impression',
-      'Centralised HTTP error handling instead of a try/catch in every component',
-      'Reading a Spring Boot endpoint before complaining about its payload',
-      'Talking to a client without a PM translating for me'
     ]
   },
   {
