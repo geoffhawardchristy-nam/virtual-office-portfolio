@@ -2277,8 +2277,8 @@ const DOORS = [
     company: 'Logieagle Private Limited',
     role: 'Frontend Developer',
     when: 'Mar 2024 – Nov 2025', span: '1 yr 9 mos',
-    headline: 'Where the work got serious',
-    blurb: 'Enterprise HR and project systems with real permission models, a React Native app, an analytics dashboard and a Chrome Extension. Four products, one frontend, three teammates I still think about when I write code.',
+    headline: '',
+    blurb: '',
     stack: ['React', 'Redux Toolkit', 'React Native', 'RBAC', 'Firebase', 'Chrome Extension APIs'],
     learned: [
       'Role-based access control belongs in one map, never scattered across components',
