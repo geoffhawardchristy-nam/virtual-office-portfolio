@@ -33,9 +33,9 @@ const DATA = {
 
   contact: {
     email: "geoffhawardchristy@gmail.com",
-    phone: "{{+91 88496 43784}}",
-    linkedin: "{{linkedin.com/in/geoffhaward-christy}}",
-    github: "{{github.com/geoffhawardchristy-nam}}",
+    phone: "+91 88496 43784",
+    linkedin: "linkedin.com/in/geoffhaward-christy",
+    github: "github.com/geoffhawardchristy-nam",
   },
 
   /* ---------- WORKSTATIONS -> projects. Order matches the desks on the floor. */
