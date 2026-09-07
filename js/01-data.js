@@ -2126,14 +2126,10 @@ const DATA = {
       { label: "Platform",        hot: false, years: "2 yrs", items: ["Shopify Liquid", "Chrome Extension APIs", "Firebase", "Git"] }
     ],
     workflow: [
-      "Read the API contract before writing a component",
-      "Build the state machine — loading, empty, error, denied — before the happy path looks pretty",
-      "Keep permissions in one map, never scattered across components",
-      "Reusable component first, one-off second",
-      "Test on the cheapest device anyone will actually use"
+     
     ],
-    architecture:
-      "The pattern I keep returning to: a thin API layer that normalises every response, a typed store shape that screens read from, and dumb presentational components that receive exactly what they render. It survives a redesign, and it survives a backend changing its mind."
+    architecture:""
+     
   },
 
   /* ---------- MEETING ROOM -> experience & teamwork */
