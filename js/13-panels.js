@@ -106,7 +106,7 @@ function renderContact(c) {
   return [
     sec('', `<p>${esc(c.note)}</p>`),
     sec('Reach me', line('Email', c.email) + line('Phone', c.phone) + line('LinkedIn', c.linkedin) + line('GitHub', c.github)),
-    sec('', `<p class="note">These are placeholders. Open DATA.contact at the top of the file and replace the {{ }} values.</p>`)
+    // sec('', `<p class="note">These are placeholders. Open DATA.contact at the top of the file and replace the {{ }} values.</p>`)
   ].join('');
 }
 
