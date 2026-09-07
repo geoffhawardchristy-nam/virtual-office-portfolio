@@ -5,6 +5,9 @@
    ========================================================================== */
 function registerInteractive(obj, cfg, sc) {
   sc = sc || ACTIVE;
+  // anything whose record carries clickable:false is still built and still
+  // visible — it just never registers, so no ring, no prompt, no panel
+  if (cfg.data && cfg.data.clickable === false) return null;
   // whatever scale the object was built at — the hover nudge multiplies this
   // rather than overwriting it, which used to reset scaled props back to 1
   const rec = Object.assign({ obj, hl: 0, target: 0, scene: sc.id,
@@ -277,18 +280,14 @@ function buildOffice(sc, L) {
 
     const type = cfg.vacant ? 'vacancy' : (cfg.side ? 'side' : 'project');
     const data = cfg.vacant ? VACANCY : (cfg.side ? DATA.sideProject : proj);
-    // a desk switched off in the data still gets built — it just does not open.
-    // wrapped rather than returned, so the colleague below still gets placed
-    if (!(type === 'project' && (!data || data.clickable === false))) {
-      registerInteractive(ws, {
-        type, id: cfg.p, title: data.name || data.title, sub: cfg.vacant ? 'Unoccupied' : (proj ? proj.station : 'Side project'),
-        ring: { r: 1.75, z: 0.1 }, hotspot: { y: 1.95, z: -0.34 },
-        focus: focusPose(cfg.x, 1.05, cfg.z - 0.2, 5.6, 0.34, 1.02),
-        prox: new THREE.Vector3(cfg.x, 0, cfg.z + 2.5),
-        proxLabel: cfg.vacant ? 'Look at the empty desk' : 'Open ' + (data.name || data.title),
-        data
-      }, sc);
-    }
+    registerInteractive(ws, {
+      type, id: cfg.p, title: data.name || data.title, sub: cfg.vacant ? 'Unoccupied' : (proj ? proj.station : 'Side project'),
+      ring: { r: 1.75, z: 0.1 }, hotspot: { y: 1.95, z: -0.34 },
+      focus: focusPose(cfg.x, 1.05, cfg.z - 0.2, 5.6, 0.34, 1.02),
+      prox: new THREE.Vector3(cfg.x, 0, cfg.z + 2.5),
+      proxLabel: cfg.vacant ? 'Look at the empty desk' : 'Open ' + (data.name || data.title),
+      data
+    }, sc);
 
     if (cfg.npc) placeNPC(sc, cfg.npc, cfg.x + 0.08, cfg.z + 1.0, Math.PI, true);
   });
@@ -352,7 +351,7 @@ function buildOffice(sc, L) {
 
       const wx = seatW.x, wz = seatW.z;
       if (seat.npc) placeNPC(sc, seat.npc, wx, wz, (side > 0 ? Math.PI : 0) + ry, true);
-      if (!proj || proj.clickable === false) return;
+      if (!proj) return;
       registerInteractive(seatG, {
         type: 'project', id: proj.id, title: proj.name, sub: proj.station,
         ring: { r: 1.15, z: side * 1.0 },

@@ -64,8 +64,8 @@ function renderPerson(e) {
 function renderSkills(s) {
   return [
     ...s.groups.map(g => sec(g.label, tags(g.items, g.hot))),
-    sec('How I work', list(s.workflow, true)),
-    sec('The pattern I keep', `<p>${esc(s.architecture)}</p>`)
+    //sec('How I work', list(s.workflow, true)),
+    //sec('The pattern I keep', `<p>${esc(s.architecture)}</p>`)
   ].join('');
 }
 

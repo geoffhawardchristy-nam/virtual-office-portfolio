@@ -16,6 +16,7 @@
 const DATA = {
 
   owner: {
+    clickable: true,
     name: "GeoffHaward Christy",
     role: "Frontend Developer",
     location: "Gandhinagar / Ahmedabad, Gujarat, India",
@@ -32,6 +33,7 @@ const DATA = {
   },
 
   contact: {
+    clickable: true,
     email: "geoffhawardchristy@gmail.com",
     phone: "+91 88496 43784",
     linkedin: "linkedin.com/in/geoffhaward-christy",
@@ -45,7 +47,7 @@ const DATA = {
     {
       "id": "ws01",
       "station": "Workstation 01",
-      "clickable": false,
+      "clickable": true,
       "name": "",
       "company": "",
       "role": "",
@@ -63,7 +65,7 @@ const DATA = {
     {
       "id": "ws02",
       "station": "Workstation 02",
-      "clickable": false,
+      "clickable": true,
       "name": "",
       "company": "",
       "role": "",
@@ -81,7 +83,7 @@ const DATA = {
     {
       "id": "ws03",
       "station": "Workstation 03",
-      "clickable": false,
+      "clickable": true,
       "name": "",
       "company": "",
       "role": "",
@@ -176,7 +178,7 @@ const DATA = {
     {
       "id": "ws06",
       "station": "Workstation 06",
-      "clickable": false,
+      "clickable": true,
       "name": "",
       "company": "",
       "role": "",
@@ -374,7 +376,7 @@ const DATA = {
     {
       "id": "evision-d2-5",
       "station": "Evision floor · desk 13",
-      "clickable": false,
+      "clickable": true,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -2103,6 +2105,7 @@ const DATA = {
 
   /* ---------- SIDE PROJECT — the laptop in the lounge */
   sideProject: {
+    clickable: false,
     id: "side",
     name: "India Vehicle Comparison Platform",
     company: "Personal project · in progress",
@@ -2130,7 +2133,7 @@ const DATA = {
      These are stand-in colleagues, not real named individuals. */
   employees: [
     {
-      id: "npc01", name: "Rohit Sharma", designation: "Senior Frontend Developer", department: "Engineering",
+      id: "npc01", clickable: false, name: "Rohit Sharma", designation: "Senior Frontend Developer", department: "Engineering",
       shirt: 0x4A6FA5, seatKey: "ws02",
       projects: ["HR Service Center", "Analytics Dashboard", "Chrome Extension Toolkit"],
       duration: "About 18 months, same pod",
@@ -2140,7 +2143,7 @@ const DATA = {
       tech: ["React", "Redux Toolkit", "TypeScript", "SCSS"]
     },
     {
-      id: "npc02", name: "Ankit Verma", designation: "Backend Developer", department: "Engineering",
+      id: "npc02", clickable: false, name: "Namrata Baldaniya", designation: "Backend Developer", department: "Engineering",
       shirt: 0x3F7D6B, seatKey: "ws01",
       projects: ["HR Service Center", "Project Management System", "Analytics Dashboard"],
       duration: "Roughly 2 years across two products",
@@ -2150,7 +2153,7 @@ const DATA = {
       tech: ["Java Spring Boot", "REST", "JWT", "PostgreSQL"]
     },
     {
-      id: "npc03", name: "Priya Nair", designation: "UI/UX Designer", department: "Design",
+      id: "npc03", clickable: false, name: "Namrata Baldaniya", designation: "UI/UX Designer", department: "Design",
       shirt: 0x8A5CA8, seatKey: "ws03",
       projects: ["Analytics Dashboard", "Task Management Mobile App", "Shopify Storefront"],
       duration: "About 14 months",
@@ -2160,7 +2163,7 @@ const DATA = {
       tech: ["Figma", "Design tokens", "Responsive layout"]
     },
     {
-      id: "npc04", name: "Sneha Patel", designation: "QA Engineer", department: "Quality Assurance",
+      id: "npc04", clickable: false, name: "Namrata Baldaniya", designation: "QA Engineer", department: "Quality Assurance",
       shirt: 0xC2703C, seatKey: "board",
       projects: ["HR Service Center", "Project Management System", "Task Management Mobile App"],
       duration: "Across most of both roles",
@@ -2170,7 +2173,7 @@ const DATA = {
       tech: ["Manual + regression testing", "Android device testing", "Bug tracking"]
     },
     {
-      id: "npc05", name: "Manav Desai", designation: "Project Manager", department: "Delivery",
+      id: "npc05", clickable: false, name: "Namrata Baldaniya", designation: "Project Manager", department: "Delivery",
       shirt: 0x5A6270, seatKey: "meeting",
       projects: ["HR Service Center", "Project Management System", "Shopify Storefront"],
       duration: "Full delivery cycles on three products",
@@ -2183,6 +2186,7 @@ const DATA = {
 
   /* ---------- WHITEBOARD -> skills */
   skills: {
+    clickable: true,
     groups: [
       { label: "Frontend",        hot: true,  years: "3 yrs 5 mos", items: ["React", "Angular", "Next.js", "React Native", "JavaScript (ES6+)", "TypeScript"] },
       { label: "State & data",    hot: true, years: "3 yrs", items: ["Redux", "Redux Toolkit", "RxJS", "REST API integration", "Reactive Forms"] },
@@ -2198,6 +2202,7 @@ const DATA = {
 
   /* ---------- MEETING ROOM -> experience & teamwork */
   experience: {
+    clickable: false,
     roles: [
       { when: "Mar 2024 – Nov 2025", what: "Frontend Developer", who: "Logieagle Private Limited",
         points: ["HRSC and PMS enterprise modules", "React Native task app", "Analytics dashboard", "Chrome Extension", "RBAC across products"] },
@@ -2216,6 +2221,7 @@ const DATA = {
 
   /* ---------- BOOKSHELF -> education */
   education: {
+    clickable: false,
     degree: "B.E. Computer Engineering",
     school: "LDRP Institute of Technology and Research",
     year: "2022",
