@@ -42,8 +42,7 @@ const DATA = {
 
   /* ---------- WORKSTATIONS -> projects. Order matches the desks on the floor.
      Baked from the content editor export — edit here or in the editor. */
-  projects:
-  [
+  projects: [
     {
       "id": "ws01",
       "station": "Workstation 01",
@@ -102,78 +101,37 @@ const DATA = {
       "id": "ws04",
       "station": "Workstation 04",
       "clickable": true,
-      "name": "Project Management System (PMS)",
-      "company": "Evision IT Solution Pvt. Ltd.",
-      "role": "Frontend Developer",
-      "duration": "2022 – 2024",
+      "name": "",
+      "company": "",
+      "role": "",
+      "duration": "",
       "screen": "kanban",
-      "tech": [
-        "Angular",
-        "TypeScript",
-        "RxJS",
-        "Reactive Forms",
-        "Java Spring Boot",
-        "RBAC"
-      ],
-      "description": "Projects, sprints, timesheets and approvals for delivery teams — the system the company ran its own work on.",
-      "responsibilities": [
-        "Built lazy-loaded feature modules for projects, tasks and timesheets",
-        "Wrote complex Reactive Forms with cross-field validation",
-        "Centralised HTTP error handling in interceptors",
-        "Implemented role-based menus and route guards",
-        "Contributed to Spring Boot REST endpoints where the frontend needed a better-shaped response"
-      ],
-      "features": [
-        "Sprint board with drag-and-drop",
-        "Timesheet entry with approval flow",
-        "Project health summaries",
-        "Audit history per record"
-      ],
-      "apis": [
-        "Spring Boot REST",
-        "Auth interceptor + guards",
-        "Timesheet & approval services"
-      ],
-      "challenge": "The initial bundle carried the whole application, so first load was slow for users who only ever opened one module.",
-      "solution": "Split features into lazy-loaded routes and moved shared UI into a single shared module, so each area downloads only when it is opened.",
-      "impact": "Noticeably faster first paint, and adding a new module stopped making every other page slower."
+      "tech": [],
+      "description": "",
+      "responsibilities": [],
+      "features": [],
+      "apis": [],
+      "challenge": "",
+      "solution": "",
+      "impact": ""
     },
     {
       "id": "ws05",
       "station": "Workstation 05",
       "clickable": true,
-      "name": "Shopify Storefront Build",
-      "company": "Evision IT Solution Pvt. Ltd.",
-      "role": "Frontend Developer",
-      "duration": "2022 – 2024",
+      "name": "",
+      "company": "",
+      "role": "",
+      "duration": "",
       "screen": "shop",
-      "tech": [
-        "Shopify",
-        "Liquid",
-        "JavaScript",
-        "HTML",
-        "CSS"
-      ],
-      "description": "Custom Shopify theme work: sections merchants could rearrange themselves, without calling a developer for every banner change.",
-      "responsibilities": [
-        "Built custom Liquid sections and schema-driven settings",
-        "Implemented product, collection and cart page customisations",
-        "Optimised images and above-the-fold loading",
-        "Fixed cross-browser and mobile layout issues"
-      ],
-      "features": [
-        "Merchant-editable sections",
-        "Custom cart drawer",
-        "Collection filtering",
-        "Mobile-first product pages"
-      ],
-      "apis": [
-        "Shopify AJAX Cart API",
-        "Storefront metafields"
-      ],
-      "challenge": "Content changes kept coming back as developer tickets.",
-      "solution": "Exposed the right settings through section schema so copy, ordering and imagery became merchant-editable in the theme editor.",
-      "impact": "The client stopped needing a developer for routine content updates."
+      "tech": [],
+      "description": "",
+      "responsibilities": [],
+      "features": [],
+      "apis": [],
+      "challenge": "",
+      "solution": "",
+      "impact": ""
     },
     {
       "id": "ws06",
@@ -269,19 +227,51 @@ const DATA = {
       "id": "evision-d1-7",
       "station": "Evision floor · desk 07",
       "clickable": true,
-      "name": "Untitled workstation",
+      "name": "Marcaria - Trademark Search Tool",
       "company": "",
-      "role": "",
+      "role": "Frontend Developer - UI, JavaScript & Localization",
       "duration": "",
       "screen": "code",
-      "tech": [],
-      "description": "Write what you worked on at this desk.",
-      "responsibilities": [],
-      "features": [],
+      "tech": [
+        "JavaScript (ES6+)",
+        "jQuery",
+        "HTML5 / CSS3",
+        "Responsive Design",
+        "Localization / i18n",
+        "SEO-friendly URL structure",
+        "Chrome DevTools",
+        "Git"
+      ],
+      "description": "Worked on Marcaria's public trademark search tool - a free search platform covering trademark registries across more than 70 countries and jurisdictions. I handled the frontend: building out the interface and layouts, writing the JavaScript that drives the search filters and interactions, and implementing localization so the entire site works across English, Spanish, French and Portuguese.",
+      "responsibilities": [
+        "Built the site layouts and components in HTML and CSS across all pages",
+        "Implemented localization across four languages -English, Spanish, French and Portuguese",
+        "Set up language switching with locale-based URL paths so each language had its own routes",
+        "Localized all interface content including country names, form labels, filters and FAQ sections",
+        "Built the continent-wise navigation covering over 70 countries and jurisdictions",
+        "Implemented the tabbed jurisdiction selector grouping countries by region",
+        "Built the class number selector covering all 45 Nice Classification classes",
+        "Implemented advanced search controls - trademark status, search-by field and match mode",
+        "Built the FAQ section with expand and collapse behaviour and a show more control",
+        "Implemented the login modal and its interactions",
+        "Ensured responsive behaviour across desktop, tablet and mobile",
+        "Handled cross-browser layout and behaviour consistency"
+      ],
+      "features": [
+        "Multilingual interface across English, Spanish, French and Portuguese",
+        "Locale-based URL paths so each language has its own indexable routes",
+        "Country and language flag indicators in the switcher and navigation",
+        "Continent-grouped navigation covering more than 70 trademark jurisdictions",
+        "Tabbed jurisdiction selector with a Popular tab for frequently used countries",
+        "Class number selector covering all 45 Nice Classification classes",
+        "Advanced search controls - status, search-by field and match mode",
+        "Collapsible FAQ section with expand and show-more behaviour",
+        "Responsive layouts working from desktop down to mobile"
+      ],
       "apis": [],
-      "challenge": "",
-      "solution": "",
-      "impact": ""
+      "challenge": "Localization on this site was not just a matter of swapping labels - country names, jurisdiction listings, form controls, search filters and long-form FAQ content all had to render correctly in four languages, and each language needed its own URL path so the pages stayed separately indexable. Text length changes considerably between English, Spanish, French and Portuguese, so layouts that looked fine in one language could break in another, particularly in the navigation and filter controls where space was tight. On top of that, the navigation had to expose over 70 jurisdictions grouped by continent without overwhelming the page or becoming unusable on mobile.",
+      "solution": "Kept all interface text in language-specific resource files rather than hardcoding it in markup, so adding or correcting a language meant editing content rather than touching layout, and language switching was handled by locale-prefixed routes so each version had its own indexable URL. Layouts were built with flexible widths and wrapping rather than fixed dimensions, so longer translations expanded cleanly instead of overflowing, and every language was checked against the tighter areas of the UI rather than assuming what worked in English would hold. The jurisdiction list was organised into continent tabs with a Popular tab surfacing the most-used countries first, which kept over 70 options browsable on desktop and collapsible on mobile instead of presenting them as one long list.",
+      "impact": "Delivered a public-facing search tool serving users across four languages and more than 70 trademark jurisdictions, with each language version living on its own URL path and indexable independently. Keeping translations in resource files rather than in markup meant a new language or a content correction could be handled without rebuilding the interface."
     },
     {
       "id": "evision-d1-8",
@@ -395,55 +385,165 @@ const DATA = {
       "id": "evision-d2-6",
       "station": "Evision floor · desk 14",
       "clickable": true,
-      "name": "Untitled workstation",
+      "name": "Barcomade - Shopify Store (Medical Apparel)",
       "company": "",
-      "role": "",
+      "role": "Frontend Developer - Shopify Development",
       "duration": "",
       "screen": "code",
       "tech": [],
-      "description": "Write what you worked on at this desk.",
-      "responsibilities": [],
-      "features": [],
+      "description": "Worked on Barcomade, an e-commerce store selling medical and hospital apparel, built on Shopify. My work covered the storefront end to end - editing Liquid templates to customise how product, collection, cart and homepage sections rendered, writing the custom JavaScript and CSS the store needed beyond the base theme, integrating third-party apps for reviews, wishlist and size guide, and configuring the store through Shopify's own customization settings.",
+      "responsibilities": [
+        "Edited Shopify Liquid template files to customise page structure and rendering",
+        "Wrote custom JavaScript for store interactions not covered by the base theme",
+        "Customised the theme styling in CSS to match the brand's look",
+        "Configured the store through Shopify's theme customizer - colours, sections and layout settings",
+        "Built product pages with variant swatches, quantity selector and size chart",
+        "Implemented related and recommended product sections on product pages",
+        "Built collection pages with filtering, sorting and pagination",
+        "Implemented the drawer cart with discount code entry and shipping estimate",
+        "Built homepage sections - sliders, banners, testimonials and custom content blocks",
+        "Integrated third-party Shopify apps for reviews, wishlist and size guide",
+        "Made theme sections configurable so content could be edited from the Shopify admin",
+        "Ensured responsive behaviour across desktop, tablet and mobile",
+        "Tested cart and checkout flows across browsers and devices"
+      ],
+      "features": [
+        "Product pages with variant swatches for size and colour, quantity selector and size chart",
+        "Related and recommended products surfaced on product pages",
+        "Collection pages with filtering, sorting and pagination",
+        "Drawer cart with discount code entry and shipping estimate",
+        "Homepage built from custom sections — sliders, banners and testimonials",
+        "Product reviews, wishlist and size guide through integrated Shopify apps",
+        "Theme sections editable from the Shopify admin without touching code",
+        "Colour and styling controlled through Shopify's theme customizer",
+        "Responsive layouts working across desktop, tablet and mobile"
+      ],
       "apis": [],
-      "challenge": "",
-      "solution": "",
-      "impact": ""
+      "challenge": "Shopify themes are not a blank canvas - the platform controls page structure and the checkout flow, so customisation has to work within what Liquid exposes rather than against it. An apparel store makes that harder: variants have to map correctly to size and colour inventory, filtering and sorting on collection pages have to stay in step with what is actually in stock, and a size chart matters more for medical wear than for most categories since customers cannot try before buying. Third-party apps for reviews, wishlist and size guide each inject their own scripts and styles, which meant they could slow the store down or clash with the theme's own CSS. And anything hardcoded into Liquid would have left the client dependent on a developer for every small content change.",
+      "solution": "Worked within Liquid's structure and Shopify's section and settings system rather than around it - homepage sections, banners and content were exposed as theme settings so the client could manage them from the admin without a code change. Custom JavaScript and CSS were layered onto the theme as additions rather than rewrites, which kept the store maintainable through theme updates. App integrations were scoped so their styles were contained and did not leak into the rest of the theme, and their scripts were loaded where they were actually needed rather than on every page. Variant behaviour, filtering and the cart were tested against real product combinations and verified across browsers and devices, since cart and checkout issues cost the client directly.",
+      "impact": "Delivered a full e-commerce storefront for a medical apparel brand - product, collection, cart and homepage experiences all customised beyond the base theme, with reviews, wishlist and size guide integrated. Because sections and content were exposed through theme settings, the client could run day-to-day updates themselves without needing a developer for every change."
     },
     {
       "id": "evision-d2-7",
       "station": "Evision floor · desk 15",
       "clickable": true,
-      "name": "Untitled workstation",
+      "name": "HRMS - Human Resource Management System",
       "company": "",
-      "role": "",
+      "role": "Frontend Developer - HRMS Modules & Angular Migration",
       "duration": "",
       "screen": "code",
-      "tech": [],
-      "description": "Write what you worked on at this desk.",
-      "responsibilities": [],
-      "features": [],
-      "apis": [],
-      "challenge": "",
-      "solution": "",
-      "impact": ""
+      "tech": [
+        "Angular",
+        "TypeScript",
+        "JavaScript (ES6+)",
+        "jQuery",
+        "HTML5 / CSS3",
+        "RxJS",
+        "Angular Router & Guards",
+        "REST APIs",
+        "Role-Based Access Control (RBAC)",
+        "Git"
+      ],
+      "description": "Worked on an enterprise HRMS covering the full employee lifecycle - organization structure, employee records, attendance with check-in and check-out, leave and holidays, and role-based access across every module. The product started out in plain JavaScript, jQuery and CSS and was later moved to Angular, so I built the modules in both and handled the migration of existing screens into the Angular structure.",
+      "responsibilities": [
+        "Built HRMS modules initially in plain JavaScript, jQuery and CSS",
+        "Migrated the existing screens and modules into Angular as the product moved off jQuery",
+        "Restructured page-level jQuery logic into Angular components, services and routing",
+        "Implemented role-based access across the system - employee, manager, HR and admin views",
+        "Built route guards so users could only reach modules their role permitted",
+        "Built the attendance module with check-in and check-out, daily logs and monthly views",
+        "Built the leave management flow with application, approval and balance tracking",
+        "Built the holiday calendar with organization and location-wise holiday lists",
+        "Built employee master screens - profile, documents, designation and reporting structure",
+        "Built the organization module covering departments, designations and hierarchy",
+        "Implemented approval flows where requests routed to the correct approver by hierarchy",
+        "Integrated REST APIs across all modules with loading, empty and error states",
+        "Built listing screens with search, filters, sorting and pagination",
+        "Implemented dashboards showing attendance, leave balance and pending approvals per role"
+      ],
+      "features": [
+        "Role-based access with separate Employee, Manager, HR and Admin experiences",
+        "Navigation and route access rendered from the logged-in user's role",
+        "Attendance with check-in and check-out, daily logs and monthly attendance views",
+        "Leave management - application, approval flow and leave balance tracking",
+        "Holiday calendar maintained organization and location-wise",
+        "Employee master with profile, documents, designation and reporting manager",
+        "Organization structure - departments, designations and reporting hierarchy",
+        "Approval flows routed automatically to the correct approver",
+        "Role-specific dashboards showing attendance, leave balance and pending actions",
+        "Listing screens with search, filters, sorting and pagination throughout"
+      ],
+      "apis": [
+        "Authentication and role-permission endpoints",
+        "Attendance endpoints - check-in, check-out and attendance history",
+        "Leave application, approval and balance endpoints",
+        "Employee and organization master CRUD endpoints",
+        "Holiday calendar endpoints",
+        "Dashboard and summary endpoints"
+      ],
+      "challenge": "In an HRMS, a role is not just a permission flag - it sits inside a reporting hierarchy, so the same leave request has to be visible to the employee who raised it, the manager who approves it, and HR who oversees it, each seeing a different set of actions on the same record. Getting that wrong means either someone approving what they should not, or a request that reaches nobody. On top of that, the product began as page-level jQuery where logic, DOM handling and data were mixed together per screen, and it had to be moved into Angular's component and service structure without changing how any module behaved for users already depending on it. Attendance made this harder still, since check-in and check-out data had to stay consistent across daily and monthly views while the underlying implementation was being replaced.",
+      "solution": "Role and permission data was fetched at login and held centrally, with navigation and Angular route guards built from it, so an unauthorised module was never reachable rather than merely hidden and every action re-checked permission before firing. Approval routing was driven by the reporting hierarchy returned from the backend rather than hardcoded role checks, which meant a change in reporting structure did not require a code change. For the migration, modules were moved across one at a time rather than all at once, with jQuery's page-level logic split into Angular components for the view, services for data and shared state, so behaviour could be verified module by module instead of in one risky cutover. API calls moved into services with a shared pattern for loading and error handling, which removed the duplicated fetch logic that had built up in the jQuery version.",
+      "impact": "Delivered a full HRMS covering organization structure, employee records, attendance, leave and holidays, serving employees, managers, HR and admins from a single application with each role seeing only what they were entitled to. The migration brought the product onto Angular without disrupting modules already in use, and replacing duplicated page-level logic with shared services and components meant new modules could be added on an established structure instead of being built from scratch each time."
     },
     {
       "id": "evision-d2-8",
       "station": "Evision floor · desk 16",
       "clickable": true,
-      "name": "Untitled workstation",
+      "name": "Wisely Admin - Super Admin & Tenant Management",
       "company": "",
-      "role": "",
+      "role": "Frontend Developer - Admin Panel",
       "duration": "",
       "screen": "code",
-      "tech": [],
-      "description": "Write what you worked on at this desk.",
-      "responsibilities": [],
-      "features": [],
-      "apis": [],
-      "challenge": "",
-      "solution": "",
-      "impact": ""
+      "tech": [
+        "JavaScript (ES6+)",
+        "jQuery",
+        "Angular",
+        "React",
+        "TypeScript",
+        "HTML5 / CSS3",
+        "REST APIs",
+        "JWT - Access & Refresh Tokens",
+        "Role-Based Access Control (RBAC)",
+        "Postman",
+        "Git"
+      ],
+      "description": "Built the super admin panel for Wisely - the control layer sitting above the product, used only by super admins and the highest privilege level. From here organizations were created, viewed, suspended or removed, access and refresh token lifetimes were configured, subscription plans per organization were managed, and organization-level data across the platform could be monitored. The panel went through two stack migrations during its life it started in plain JavaScript, moved to Angular, and was later rebuilt in React - and I built it through all three.",
+      "responsibilities": [
+        "Built the super admin panel in plain JavaScript, then rebuilt it in Angular, and later again in React",
+        "Migrated page-level JavaScript logic into Angular components, services and routing",
+        "Rebuilt the Angular implementation in React, replacing services and guards with hooks and route-level checks",
+        "Implemented organization management - creating, viewing, suspending and removing organizations",
+        "Built the token configuration screens for setting access token and refresh token expiry durations",
+        "Implemented subscription management showing which plan each organization is on",
+        "Built screens to view plan details, limits and subscription status per organization",
+        "Implemented privilege-based access so only super admins could reach the panel",
+        "Gated sensitive actions behind additional confirmation before they could be executed",
+        "Built organization listing with search, filters, sorting and pagination",
+        "Built dashboards and views showing organization-level data across the platform",
+        "Integrated all admin REST APIs with loading, empty and error states",
+        "Implemented token handling on the panel itself, including refresh flow and session expiry"
+      ],
+      "features": [
+        "Super admin only access, restricted to the highest privilege level",
+        "Organization management - create, view, suspend and remove organizations",
+        "Access token and refresh token expiry configurable per policy",
+        "Subscription management showing each organization's plan and status",
+        "Plan details and limits viewable per organization",
+        "Organization-level data monitoring across the platform",
+        "Destructive actions protected behind explicit confirmation",
+        "Organization listing with search, filters, sorting and pagination",
+        "Session handling on the panel with token refresh and expiry logout"
+      ],
+      "apis": [
+        "Organization management endpoints - create, update, suspend and delete",
+        "Token policy configuration endpoints",
+        "Subscription and plan management endpoints",
+        "Organization data and reporting endpoints",
+        "Authentication endpoints with access and refresh token handling"
+      ],
+      "challenge": "This panel sits above the product rather than inside it, so every action reaches across the whole platform  suspending or removing an organization affects every user inside it at once, and changing token expiry alters session behaviour for everyone. Actions like that cannot be one careless click away, and privilege here is not about what a user sees but about what they can do to other people's data. The panel also went through two full stack migrations, from plain JavaScript to Angular and then to React, and in an admin panel a migration is riskier than usual: a permission check that silently stops working during a rewrite does not throw an error, it just quietly lets someone reach something they should not. Token handling added to it, since the panel itself ran on access and refresh tokens while also being the place where those lifetimes were configured.",
+      "solution": "Privilege was enforced on the routes themselves rather than only in the UI, so a non-super-admin never reached the panel even by URL, and every sensitive action re-checked privilege before firing instead of trusting the screen that rendered it. Because the permission rules were held centrally rather than scattered through components, they carried across both migrations intact — Angular guards and React route checks were different implementations of the same rule set, not rewritten logic. Destructive operations were put behind explicit confirmation showing exactly which organization was affected, and token expiry inputs were validated against sensible bounds since that field controls session behaviour platform-wide. Each migration moved across screen by screen with behaviour verified against the previous version rather than being cut over in one go.",
+      "impact": "Gave the platform a single control layer for managing every organization on it - provisioning, suspension, token policy and subscriptions handled from one place instead of through direct backend intervention. The panel survived two full stack migrations without its permission model or behaviour changing, because access rules were centralised rather than built into the UI of any one framework."
     },
     {
       "id": "evision-d3-1",
@@ -683,19 +783,60 @@ const DATA = {
       "id": "evision-d4-6",
       "station": "Evision floor · desk 30",
       "clickable": true,
-      "name": "Untitled workstation",
+      "name": "PMS - Project Management System",
       "company": "",
-      "role": "",
+      "role": "Frontend Developer - PMS Modules & Angular Migration",
       "duration": "",
       "screen": "code",
-      "tech": [],
-      "description": "Write what you worked on at this desk.",
-      "responsibilities": [],
-      "features": [],
-      "apis": [],
-      "challenge": "",
-      "solution": "",
-      "impact": ""
+      "tech": [
+        "JavaScript (ES6+)",
+        "jQuery",
+        "Angular",
+        "TypeScript",
+        "HTML5 / CSS3",
+        "RxJS",
+        "Angular Router & Guards",
+        "REST APIs",
+        "Role-Based Access Control (RBAC)",
+        "Git"
+      ],
+      "description": "Worked on an enterprise project management system covering projects, tasks, team assignment and access control. Users only saw the projects they were assigned to, and within a project their permissions depended on whether they were a project admin, a member or view-only - so the same screen behaved differently for different people on different projects. The product started in plain JavaScript and jQuery and was later moved to Angular, and I built the modules in both.",
+      "responsibilities": [
+        "Built PMS modules initially in plain JavaScript, jQuery and CSS",
+        "Migrated the existing modules into Angular as the product moved off jQuery",
+        "Restructured page-level jQuery logic into Angular components, services and routing",
+        "Implemented project-scoped access so users only saw projects they were assigned to",
+        "Built permission handling within projects — project admin, member and view-only rights",
+        "Built project creation and configuration screens with team assignment",
+        "Built task management - creation, assignment, status updates and priority",
+        "Implemented project listing and detail views with role-appropriate actions",
+        "Built team and member management within each project",
+        "Implemented activity and status tracking across projects and tasks",
+        "Built listing screens with search, filters, sorting and pagination",
+        "Integrated REST APIs across all modules with loading, empty and error states",
+        "Built dashboards showing assigned projects, tasks and pending items per user"
+      ],
+      "features": [
+        "Project-scoped visibility - users only see projects assigned to them",
+        "Per-project permissions with project admin, member and view-only access",
+        "Edit and delete actions available only to those with rights on that project",
+        "Project creation and configuration with team assignment",
+        "Task management - creation, assignment, status and priority",
+        "Team and member management within each project",
+        "Project and task listing with search, filters, sorting and pagination",
+        "Dashboards showing each user's assigned projects and pending tasks",
+        "Activity and status tracking across projects"
+      ],
+      "apis": [
+        "Authentication and permission endpoints",
+        "Project CRUD and configuration endpoints",
+        "Project assignment and membership endpoints",
+        "Task creation, assignment and status endpoints",
+        "Dashboard and summary endpoints"
+      ],
+      "challenge": "Access in a PMS is not decided by a single role on the account — it is decided per project. The same person can be a project admin on one project, an ordinary member on another, and have no visibility into a third, so permissions have to be resolved against the project being viewed rather than against the user alone. That means every list has to be filtered to what the user is assigned to, and every action on a project detail screen - edit, delete, assign, change status has to be checked against that user's rights on that specific project. Getting it wrong is not a cosmetic bug: it means someone editing a project they were never part of. On top of that, the product began as page-level jQuery with logic and DOM handling mixed together per screen, and it had to move into Angular without any of those permission rules drifting during the rewrite.",
+      "solution": "Permissions were resolved per project rather than globally - the user's rights on a project came back with the project data itself, and the UI rendered actions from that instead of from an account-level role. Project lists were filtered server-side to what the user was actually assigned to, so unassigned projects were never sent to the client rather than merely hidden, and every action re-checked rights before firing rather than trusting the button that rendered it. Because those rules lived in one place rather than being checked ad hoc inside components, they carried into Angular intact during the migration. Modules were moved across one at a time with jQuery's page-level logic split into components for the view and services for data and shared state, so each module's permission behaviour could be verified against the old version before moving to the next.",
+      "impact": "Delivered a project management system where access followed project membership rather than a blanket account role - users saw only their own projects and could only act within the rights they held on each one. The migration brought the product onto Angular without disrupting modules already in use, and replacing duplicated page-level logic with shared services meant new modules could be built on an established structure."
     },
     {
       "id": "evision-d4-7",
@@ -934,7 +1075,7 @@ const DATA = {
     {
       "id": "evision2-d1-1",
       "station": "Evision 207 · desk 01",
-      "clickable": true,
+      "clickable": false,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -952,7 +1093,7 @@ const DATA = {
     {
       "id": "evision2-d1-2",
       "station": "Evision 207 · desk 02",
-      "clickable": true,
+      "clickable": false,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -971,24 +1112,62 @@ const DATA = {
       "id": "evision2-d1-3",
       "station": "Evision 207 · desk 03",
       "clickable": true,
-      "name": "Untitled workstation",
+      "name": "Finnacord - Financial Reports & Analytics",
       "company": "",
-      "role": "",
+      "role": "Frontend Developer - API Integration & Performance Optimization",
       "duration": "",
       "screen": "code",
-      "tech": [],
-      "description": "Write what you worked on at this desk.",
-      "responsibilities": [],
-      "features": [],
-      "apis": [],
-      "challenge": "",
-      "solution": "",
-      "impact": ""
+      "tech": [
+        "JavaScript (ES6+)",
+        "jQuery",
+        "HTML5 / CSS3",
+        "Chart.js",
+        "REST APIs",
+        "JSON",
+        "IndexedDB / Local Storage",
+        "Postman",
+        "Chrome DevTools",
+        "Git"
+      ],
+      "description": "Worked on Finnacord, a financial reporting and analytics product, focusing on two areas integrating the reporting APIs and making the report pages fast. Report data was visualised using Chart.js across multiple chart types, and since reports returned large datasets, a lot of the work went into controlling what loaded and rendered first so the pages felt responsive instead of freezing while data came in.",
+      "responsibilities": [
+        "Integrated financial reporting and analytics REST APIs into the report screens",
+        "Tested endpoints in Postman and verified response structures before integration",
+        "Built Chart.js visualisations - line, bar, pie and comparison charts for financial data",
+        "Mapped API responses into the exact data structure Chart.js expected",
+        "Implemented date-range, category and account filters driving the report APIs",
+        "Controlled script loading with defer and async so parsing never blocked page rendering",
+        "Decided load order per script so critical rendering ran first and heavy logic loaded after",
+        "Stored selected report data in a local offline database so repeat views did not always refetch",
+        "Added loading skeletons and placeholder states so the page never appeared frozen",
+        "Handled loading, empty and error states across every report screen",
+        "Debugged performance issues using Chrome DevTools network and performance panels"
+      ],
+      "features": [
+        "Financial report screens driven by live analytics APIs",
+        "Chart.js visualisations across multiple chart types with tooltips and legends",
+        "Date-range, category and account filters applied server-side",
+        "Deferred and async script loading so the page renders before heavy scripts execute",
+        "Controlled load order with critical scripts prioritised over non-essential ones",
+        "Selected report data persisted locally for offline availability and faster repeat views",
+        "Loading skeletons shown while report data is fetched",
+        "Charts updated in place on filter change instead of being rebuilt",
+        "Consistent loading, empty and error states across reports"
+      ],
+      "apis": [
+        "Financial reporting and analytics endpoints",
+        "Summary and aggregate data endpoints powering charts",
+        "Filter and date-range parameterised report endpoints",
+        "Authentication and session endpoints"
+      ],
+      "challenge": "Financial report pages carry a lot of weight at once  several charts on one screen, each backed by its own dataset, with filters that re-fetch on every change. The pages felt slow not because the data took long, but because every script in the page loaded and executed before anything rendered, so the browser was busy parsing JavaScript that was not needed yet while the user stared at a blank screen. Chart.js added to it, since each filter change rebuilt charts from scratch rather than updating them. The API responses were also structured for reporting rather than for charting, so raw data could not be handed to Chart.js directly and had to be reshaped before rendering.",
+      "solution": "Reworked what loads when rather than trying to make everything faster at once. Scripts were split by priority and loaded with defer or async depending on whether the page needed them to render, so parsing no longer blocked the first paint and the layout, filters and page shell appeared while report data was still on its way, with skeletons standing in for the empty regions. Chart instances were updated in place on filter change instead of being destroyed and recreated, which removed most of the visible lag when switching date ranges. Response-to-chart transformation was pulled into a single mapping layer so data was reshaped once and reused across charts, and selected report data was stored in a local offline database so frequently revisited reports could render from local data instead of waiting on the network every time.",
+      "impact": "Report pages became usable almost immediately instead of showing a blank screen while scripts and data loaded, which mattered most on the heaviest screens with several charts at once. Switching filters and date ranges stopped feeling laggy since charts updated rather than rebuilt, and keeping the chart data mapping in one place meant new report types could be added without rewriting the transformation logic each time."
     },
     {
       "id": "evision2-d1-4",
       "station": "Evision 207 · desk 04",
-      "clickable": true,
+      "clickable": false,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -1006,7 +1185,7 @@ const DATA = {
     {
       "id": "evision2-d2-1",
       "station": "Evision 207 · desk 05",
-      "clickable": true,
+      "clickable": false,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -1024,7 +1203,7 @@ const DATA = {
     {
       "id": "evision2-d2-2",
       "station": "Evision 207 · desk 06",
-      "clickable": true,
+      "clickable": false,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -1042,7 +1221,7 @@ const DATA = {
     {
       "id": "evision2-d2-3",
       "station": "Evision 207 · desk 07",
-      "clickable": true,
+      "clickable": false,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -1060,7 +1239,7 @@ const DATA = {
     {
       "id": "evision2-d2-4",
       "station": "Evision 207 · desk 08",
-      "clickable": true,
+      "clickable": false,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -1078,7 +1257,7 @@ const DATA = {
     {
       "id": "evision2-d2-5",
       "station": "Evision 207 · desk 09",
-      "clickable": true,
+      "clickable": false,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -1097,24 +1276,51 @@ const DATA = {
       "id": "evision2-d2-6",
       "station": "Evision 207 · desk 10",
       "clickable": true,
-      "name": "Untitled workstation",
+      "name": "MLA - UI Development & API Integration",
       "company": "",
-      "role": "",
+      "role": "Frontend Developer - UI & API Integration",
       "duration": "",
       "screen": "code",
-      "tech": [],
-      "description": "Write what you worked on at this desk.",
-      "responsibilities": [],
-      "features": [],
-      "apis": [],
-      "challenge": "",
-      "solution": "",
-      "impact": ""
+      "tech": [
+        "JavaScript (ES6+)",
+        "CSS3",
+        "HTML5",
+        "Responsive Design",
+        "REST APIs",
+        "JSON",
+        "Postman",
+        "Chrome DevTools",
+        "Git"
+      ],
+      "description": "Handled the frontend development side of the same MLA project on a separate setup - building out the UI in CSS3 and HTML, and writing the JavaScript that fetched and rendered data from the backend APIs. This was the development counterpart to the CMS work: where the CMS side assembled pages from existing modules, this side was about building how those components looked and how they pulled in live data.",
+      "responsibilities": [
+        "Built page layouts and components in HTML and CSS3 from the design requirements",
+        "Implemented responsive behaviour across desktop, tablet and mobile breakpoints",
+        "Wrote JavaScript to fetch data from REST APIs and render it into the page",
+        "Handled loading, empty and error states on data-driven sections",
+        "Tested endpoints in Postman and verified response structures before integration",
+        "Mapped API responses into the structure the UI needed before rendering",
+        "Fixed cross-browser layout and behaviour inconsistencies",
+        "Ensured styling stayed consistent with the existing site design system"
+      ],
+      "features": [
+        "Responsive layouts working across desktop, tablet and mobile",
+        "Data-driven sections rendered dynamically from REST APIs",
+        "Consistent loading, empty and error states on API-backed content",
+        "Styling aligned with the existing site design system",
+        "Cross-browser compatible markup and CSS"
+      ],
+      "apis": [
+        "REST APIs supplying content and data to page components"
+      ],
+      "challenge": "The UI had to fit into an existing large site with its own established styling, so new components could not be built in isolation they had to match what was already there and not break surrounding styles. On the data side, API responses were structured around how the data was stored rather than how the page needed to render it, so the response could not be dropped straight into the markup. Layouts also had to hold up across browsers and screen sizes with plain CSS doing the work.",
+      "solution": "Built components against the existing design conventions rather than introducing new patterns, with a consistent class structure and breakpoints defined in one place so responsive behaviour stayed predictable. API responses were passed through a mapping step before rendering, so the markup worked with the shape the page actually needed rather than the raw response. Endpoints were verified in Postman before integration, and browser-specific issues were tested and fixed as components were built instead of being left to the end.",
+      "impact": "Delivered UI components that fit cleanly into an existing large-scale site while working responsively across devices, with dynamic sections pulling live data rather than being hardcoded. Keeping to the site's existing conventions meant new work integrated without needing surrounding styles to be reworked."
     },
     {
       "id": "evision2-d3-1",
       "station": "Evision 207 · desk 11",
-      "clickable": true,
+      "clickable": false,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -1132,7 +1338,7 @@ const DATA = {
     {
       "id": "evision2-d3-2",
       "station": "Evision 207 · desk 12",
-      "clickable": true,
+      "clickable": false,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -1150,7 +1356,7 @@ const DATA = {
     {
       "id": "evision2-d3-3",
       "station": "Evision 207 · desk 13",
-      "clickable": true,
+      "clickable": false,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -1169,24 +1375,46 @@ const DATA = {
       "id": "evision2-d3-4",
       "station": "Evision 207 · desk 14",
       "clickable": true,
-      "name": "Untitled workstation",
+      "name": "MLA - Episerver CMS & Content Operations",
       "company": "",
-      "role": "",
+      "role": "Frontend Developer - CMS & Content Operations",
       "duration": "",
       "screen": "code",
-      "tech": [],
-      "description": "Write what you worked on at this desk.",
-      "responsibilities": [],
-      "features": [],
+      "tech": [
+        "Episerver (Optimizely CMS)",
+        "CMS Blocks & Content Types",
+        "HTML",
+        "Media & Asset Management",
+        "Content Staging / Production Environments",
+        "Git"
+      ],
+      "description": "Worked on the Episerver CMS side of MLA (Meat & Livestock Australia) - building out pages within the CMS, placing modules and blocks in the right positions, uploading and organising images and media assets, and moving content through to production. Each page had its own structure depending on where it sat in the site, so a large part of the work was knowing which module belonged where and making sure content went live correctly.",
+      "responsibilities": [
+        "Built new pages in Episerver using the available content types and templates",
+        "Placed and configured modules and blocks according to each page's layout requirement",
+        "Uploaded, organised and linked images and media assets within the CMS",
+        "Included and arranged existing modules when assembling new pages",
+        "Verified page structure and content rendering across environments before publishing",
+        "Followed the deployment path from staging through to production for content releases",
+        "Checked published pages for broken links, missing media and layout issues",
+        "Coordinated with the team on where specific content and modules were meant to be placed"
+      ],
+      "features": [
+        "Page creation through Episerver content types and templates",
+        "Reusable module and block placement across multiple pages",
+        "Centralised media library management for images and assets",
+        "Content verification before publishing to production",
+        "Staging-to-production content release process"
+      ],
       "apis": [],
-      "challenge": "",
-      "solution": "",
-      "impact": ""
+      "challenge": "The site was large and modular, so the same block could behave differently depending on which page and which position it was placed in. Getting placement wrong was not obvious in the editor but showed up clearly on the rendered page. Media assets also had to be correctly sized, named and linked, since a missing or mislinked asset only surfaced once a page was live. And because changes moved through environments before reaching production, anything missed during verification meant a live site issue rather than something fixable quietly.",
+      "solution": "Verified every page against its intended layout in the editor and on the rendered preview before publishing, rather than trusting the editor view alone. Media was checked for correct linking and display at the point of upload instead of after the page was assembled. Each release was walked through the staging environment first with a check on structure, media and links, so issues were caught before production rather than after going live.",
+      "impact": "Pages and content went live correctly across a large production website, with modules placed as intended and media assets linked and displaying properly. Catching structural and asset issues in staging kept problems off the live site."
     },
     {
       "id": "evision2-d3-5",
       "station": "Evision 207 · desk 15",
-      "clickable": true,
+      "clickable": false,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -1204,7 +1432,7 @@ const DATA = {
     {
       "id": "evision2-d3-6",
       "station": "Evision 207 · desk 16",
-      "clickable": true,
+      "clickable": false,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -1222,7 +1450,7 @@ const DATA = {
     {
       "id": "evision2-d4-1",
       "station": "Evision 207 · desk 17",
-      "clickable": true,
+      "clickable": false,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -1240,7 +1468,7 @@ const DATA = {
     {
       "id": "evision2-d4-2",
       "station": "Evision 207 · desk 18",
-      "clickable": true,
+      "clickable": false,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -1258,7 +1486,7 @@ const DATA = {
     {
       "id": "evision2-d4-3",
       "station": "Evision 207 · desk 19",
-      "clickable": true,
+      "clickable": false,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -1276,7 +1504,7 @@ const DATA = {
     {
       "id": "evision2-d4-4",
       "station": "Evision 207 · desk 20",
-      "clickable": true,
+      "clickable": false,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -1294,7 +1522,7 @@ const DATA = {
     {
       "id": "evision2-d4-5",
       "station": "Evision 207 · desk 21",
-      "clickable": true,
+      "clickable": false,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -1312,7 +1540,7 @@ const DATA = {
     {
       "id": "evision2-d4-6",
       "station": "Evision 207 · desk 22",
-      "clickable": true,
+      "clickable": false,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -1330,7 +1558,7 @@ const DATA = {
     {
       "id": "evision2-d5-1",
       "station": "Evision 207 · desk 23",
-      "clickable": true,
+      "clickable": false,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -1348,7 +1576,7 @@ const DATA = {
     {
       "id": "evision2-d5-2",
       "station": "Evision 207 · desk 24",
-      "clickable": true,
+      "clickable": false,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -1366,7 +1594,7 @@ const DATA = {
     {
       "id": "evision2-d5-3",
       "station": "Evision 207 · desk 25",
-      "clickable": true,
+      "clickable": false,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -1384,7 +1612,7 @@ const DATA = {
     {
       "id": "evision2-d5-4",
       "station": "Evision 207 · desk 26",
-      "clickable": true,
+      "clickable": false,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -1402,7 +1630,7 @@ const DATA = {
     {
       "id": "evision2-d5-5",
       "station": "Evision 207 · desk 27",
-      "clickable": true,
+      "clickable": false,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -1420,7 +1648,7 @@ const DATA = {
     {
       "id": "evision2-d5-6",
       "station": "Evision 207 · desk 28",
-      "clickable": true,
+      "clickable": false,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -2188,26 +2416,30 @@ const DATA = {
   skills: {
     clickable: true,
     groups: [
-      { label: "Frontend",        hot: true,  years: "3 yrs 5 mos", items: ["React", "Angular", "Next.js", "React Native", "JavaScript (ES6+)", "TypeScript"] },  
-      { label: "Styling",         hot: true, years: "3 yrs 5 mos", items: ["Tailwind CSS", "SCSS", "CSS Grid / Flexbox", "Responsive design"] },
-      { label: "State & data",    hot: true, years: "3 yrs 5 mos", items: ["Redux", "Redux Toolkit", "RxJS", "REST API integration", "Reactive Forms"] },
-      { label: "Platform",        hot: true, years: "3 yrs 5 mos", items: ["Shopify Liquid", "Chrome Extension APIs", "Firebase", "Git"] },
-      { label: "Backend",         hot: true, years: "2 yrs", items: ["Java Spring Boot", "Node.js + Express", "PostgreSQL", "REST design"] },
+      { label: "Frontend", hot: true, years: "3 yrs 5 mos", items: ["React", "Angular", "Next.js", "React Native", "JavaScript (ES6+)", "TypeScript"] },
+      { label: "Styling", hot: true, years: "3 yrs 5 mos", items: ["Tailwind CSS", "SCSS", "CSS Grid / Flexbox", "Responsive design"] },
+      { label: "State & data", hot: true, years: "3 yrs 5 mos", items: ["Redux", "Redux Toolkit", "RxJS", "REST API integration", "Reactive Forms"] },
+      { label: "Platform", hot: true, years: "3 yrs 5 mos", items: ["Shopify Liquid", "Chrome Extension APIs", "Firebase", "Git"] },
+      { label: "Backend", hot: true, years: "2 yrs", items: ["Java Spring Boot", "Node.js + Express", "PostgreSQL", "REST design"] },
     ],
     workflow: [
-      
+
     ],
-    architecture:""
+    architecture: ""
   },
 
   /* ---------- MEETING ROOM -> experience & teamwork */
   experience: {
     clickable: false,
     roles: [
-      { when: "Mar 2024 – Nov 2025", what: "Frontend Developer", who: "Logieagle Private Limited",
-        points: ["HRSC and PMS enterprise modules", "React Native task app", "Analytics dashboard", "Chrome Extension", "RBAC across products"] },
-      { when: "May 2022 – Mar 2024", what: "Frontend Developer", who: "Evision IT Solution Pvt. Ltd.",
-        points: ["Angular project management system", "Shopify theme development", "Reactive Forms and RxJS-heavy modules", "First exposure to Spring Boot APIs"] }
+      {
+        when: "Mar 2024 – Nov 2025", what: "Frontend Developer", who: "Logieagle Private Limited",
+        points: ["HRSC and PMS enterprise modules", "React Native task app", "Analytics dashboard", "Chrome Extension", "RBAC across products"]
+      },
+      {
+        when: "May 2022 – Mar 2024", what: "Frontend Developer", who: "Evision IT Solution Pvt. Ltd.",
+        points: ["Angular project management system", "Shopify theme development", "Reactive Forms and RxJS-heavy modules", "First exposure to Spring Boot APIs"]
+      }
     ],
     teamwork: [
       "Agile / Scrum: daily standups, sprint planning, retrospectives",
@@ -2287,40 +2519,40 @@ const DOORS = [
       'Manifest V3 will delete your architecture and not apologise'
     ]
   }
-/* ===== PLATINUM + DIAMOND — parked for now =================================
-   Uncomment this block (and the matching LAYOUTS + nav buttons below) to bring
-   both doors back. Door positions in the lobby recalculate automatically.
-  {
-    id: 'independent', tier: 'platinum', tierLabel: 'Platinum',
-    company: 'Independent',
-    role: 'Building my own things',
-    when: 'Nov 2025 – present', span: 'ongoing',
-    headline: 'Where nobody hands me the spec',
-    blurb: 'A full-stack side project, freelance work, and the uncomfortable discovery that scoping your own product is harder than building it. Next.js, my own Postgres, my own bad decisions.',
-    stack: ['Next.js 14', 'Node.js', 'Express', 'PostgreSQL', 'Tailwind CSS'],
-    learned: [
-      'Owning the database beats depending on somebody else\'s API staying alive',
-      'Phase 1 means cutting the features you\'re most excited about',
-      'A product needs a verdict, not just data',
-      'Backend skills stop being theoretical the moment nobody else has them'
-    ]
-  },
-  {
-    id: 'vacant', tier: 'diamond', tierLabel: 'Diamond',
-    company: 'Vacant',
-    role: 'Reserved for the next team',
-    when: 'Available now', span: 'open',
-    headline: 'The one you can fill',
-    blurb: 'Empty desk, working monitor, nothing on the walls yet. This is the room where whatever I build next goes — and it stays empty until somebody hires me to furnish it.',
-    stack: ['React', 'Next.js', 'TypeScript', 'React Native', 'Node.js'],
-    learned: [
-      'Frontend roles where the UI is the product, not a wrapper',
-      'Teams that write down API contracts before building either side',
-      'Somewhere I can keep one foot in the backend',
-      'Remote, hybrid or Ahmedabad / Gandhinagar'
-    ]
-  }
-   ========================================================================= */
+  /* ===== PLATINUM + DIAMOND — parked for now =================================
+     Uncomment this block (and the matching LAYOUTS + nav buttons below) to bring
+     both doors back. Door positions in the lobby recalculate automatically.
+    {
+      id: 'independent', tier: 'platinum', tierLabel: 'Platinum',
+      company: 'Independent',
+      role: 'Building my own things',
+      when: 'Nov 2025 – present', span: 'ongoing',
+      headline: 'Where nobody hands me the spec',
+      blurb: 'A full-stack side project, freelance work, and the uncomfortable discovery that scoping your own product is harder than building it. Next.js, my own Postgres, my own bad decisions.',
+      stack: ['Next.js 14', 'Node.js', 'Express', 'PostgreSQL', 'Tailwind CSS'],
+      learned: [
+        'Owning the database beats depending on somebody else\'s API staying alive',
+        'Phase 1 means cutting the features you\'re most excited about',
+        'A product needs a verdict, not just data',
+        'Backend skills stop being theoretical the moment nobody else has them'
+      ]
+    },
+    {
+      id: 'vacant', tier: 'diamond', tierLabel: 'Diamond',
+      company: 'Vacant',
+      role: 'Reserved for the next team',
+      when: 'Available now', span: 'open',
+      headline: 'The one you can fill',
+      blurb: 'Empty desk, working monitor, nothing on the walls yet. This is the room where whatever I build next goes — and it stays empty until somebody hires me to furnish it.',
+      stack: ['React', 'Next.js', 'TypeScript', 'React Native', 'Node.js'],
+      learned: [
+        'Frontend roles where the UI is the product, not a wrapper',
+        'Teams that write down API contracts before building either side',
+        'Somewhere I can keep one foot in the backend',
+        'Remote, hybrid or Ahmedabad / Gandhinagar'
+      ]
+    }
+     ========================================================================= */
 ];
 
 /* What I'm looking for — shown on the empty desk behind the Diamond door */
