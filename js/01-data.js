@@ -100,7 +100,7 @@ const DATA = {
     {
       "id": "ws04",
       "station": "Workstation 04",
-      "clickable": true,
+      "clickable": false,
       "name": "",
       "company": "",
       "role": "",
@@ -118,7 +118,7 @@ const DATA = {
     {
       "id": "ws05",
       "station": "Workstation 05",
-      "clickable": true,
+      "clickable": false,
       "name": "",
       "company": "",
       "role": "",
@@ -154,7 +154,7 @@ const DATA = {
     {
       "id": "evision-d1-3",
       "station": "Evision floor · desk 03",
-      "clickable": true,
+      "clickable": false,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -172,7 +172,7 @@ const DATA = {
     {
       "id": "evision-d1-4",
       "station": "Evision floor · desk 04",
-      "clickable": true,
+      "clickable": false,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -190,7 +190,7 @@ const DATA = {
     {
       "id": "evision-d1-5",
       "station": "Evision floor · desk 05",
-      "clickable": true,
+      "clickable": false,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -208,7 +208,7 @@ const DATA = {
     {
       "id": "evision-d1-6",
       "station": "Evision floor · desk 06",
-      "clickable": true,
+      "clickable": false,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -276,7 +276,7 @@ const DATA = {
     {
       "id": "evision-d1-8",
       "station": "Evision floor · desk 08",
-      "clickable": true,
+      "clickable": false,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -294,7 +294,7 @@ const DATA = {
     {
       "id": "evision-d2-1",
       "station": "Evision floor · desk 09",
-      "clickable": true,
+      "clickable": false,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -312,7 +312,7 @@ const DATA = {
     {
       "id": "evision-d2-2",
       "station": "Evision floor · desk 10",
-      "clickable": true,
+      "clickable": false,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -330,7 +330,7 @@ const DATA = {
     {
       "id": "evision-d2-3",
       "station": "Evision floor · desk 11",
-      "clickable": true,
+      "clickable": false,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -348,7 +348,7 @@ const DATA = {
     {
       "id": "evision-d2-4",
       "station": "Evision floor · desk 12",
-      "clickable": true,
+      "clickable": false,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -367,19 +367,44 @@ const DATA = {
       "id": "evision-d2-5",
       "station": "Evision floor · desk 13",
       "clickable": true,
-      "name": "Untitled workstation",
+      "name": "HRMS - Backend APIs (Java Spring Boot)",
       "company": "",
-      "role": "",
+      "role": "Frontend Developer - Backend API Contribution",
       "duration": "",
       "screen": "code",
-      "tech": [],
-      "description": "Write what you worked on at this desk.",
-      "responsibilities": [],
-      "features": [],
-      "apis": [],
-      "challenge": "",
-      "solution": "",
-      "impact": ""
+      "tech": [
+        "Java",
+        "Spring Boot",
+        "Spring Data JPA",
+        "Hibernate",
+        "REST APIs",
+        "MySQL",
+        "Postman",
+        "Git"
+      ],
+      "description": "Built some of the backend REST APIs for the same HRMS I was working on from the frontend side, using Java Spring Boot. These were straightforward endpoints - entity models, controller, service and repository layers, and the database mappings behind them - but building them meant I was on both sides of the same product rather than only consuming what someone else had written.",
+      "responsibilities": [
+        "Built REST endpoints for HRMS modules using Java Spring Boot",
+        "Designed entity models and database mappings with Spring Data JPA",
+        "Followed a layered structure separating controller, service and repository responsibilities",
+        "Implemented request validation and appropriate HTTP status codes",
+        "Returned responses in the structure the frontend screens actually needed",
+        "Tested every endpoint in Postman before wiring it into the UI",
+        "Integrated the same endpoints on the frontend side after building them"
+      ],
+      "features": [
+        "REST endpoints supporting HRMS module operations",
+        "Layered controller, service and repository structure",
+        "Request validation with clear error responses",
+        "Consistent JSON response format across endpoints",
+        "Database persistence through Spring Data JPA and Hibernate"
+      ],
+      "apis": [
+        "CRUD endpoints for HRMS module data"
+      ],
+      "challenge": "Most API friction on the frontend comes from responses being shaped around how data is stored rather than how a screen needs to render it. Building these endpoints myself meant that gap was mine to close the response had to be designed for the screen consuming it, not just returned in whatever shape the entity happened to have.",
+      "solution": "Designed the response structure against the screen that would consume it rather than mirroring the entity directly, so the frontend did not need a reshaping layer for these endpoints. Kept the layers properly separated with logic in the service rather than the controller, validation at the request level, and every endpoint verified in Postman before it was integrated.",
+      "impact": "Worked on both ends of the same product writing the APIs and then consuming them on the frontend which meant the contract was settled while building rather than negotiated afterwards. It also made discussions with backend developers on other projects easier, since I understood what was being asked for from their side."
     },
     {
       "id": "evision-d2-6",
@@ -548,7 +573,7 @@ const DATA = {
     {
       "id": "evision-d3-1",
       "station": "Evision floor · desk 17",
-      "clickable": true,
+      "clickable": false,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -566,7 +591,7 @@ const DATA = {
     {
       "id": "evision-d3-2",
       "station": "Evision floor · desk 18",
-      "clickable": true,
+      "clickable": false,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -584,7 +609,7 @@ const DATA = {
     {
       "id": "evision-d3-3",
       "station": "Evision floor · desk 19",
-      "clickable": true,
+      "clickable": false,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -602,7 +627,7 @@ const DATA = {
     {
       "id": "evision-d3-4",
       "station": "Evision floor · desk 20",
-      "clickable": true,
+      "clickable": false,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -620,7 +645,7 @@ const DATA = {
     {
       "id": "evision-d3-5",
       "station": "Evision floor · desk 21",
-      "clickable": true,
+      "clickable": false,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -638,7 +663,7 @@ const DATA = {
     {
       "id": "evision-d3-6",
       "station": "Evision floor · desk 22",
-      "clickable": true,
+      "clickable": false,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -656,7 +681,7 @@ const DATA = {
     {
       "id": "evision-d3-7",
       "station": "Evision floor · desk 23",
-      "clickable": true,
+      "clickable": false,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -674,7 +699,7 @@ const DATA = {
     {
       "id": "evision-d3-8",
       "station": "Evision floor · desk 24",
-      "clickable": true,
+      "clickable": false,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -692,7 +717,7 @@ const DATA = {
     {
       "id": "evision-d4-1",
       "station": "Evision floor · desk 25",
-      "clickable": true,
+      "clickable": false,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -710,7 +735,7 @@ const DATA = {
     {
       "id": "evision-d4-2",
       "station": "Evision floor · desk 26",
-      "clickable": true,
+      "clickable": false,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -728,7 +753,7 @@ const DATA = {
     {
       "id": "evision-d4-3",
       "station": "Evision floor · desk 27",
-      "clickable": true,
+      "clickable": false,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -746,7 +771,7 @@ const DATA = {
     {
       "id": "evision-d4-4",
       "station": "Evision floor · desk 28",
-      "clickable": true,
+      "clickable": false,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -764,7 +789,7 @@ const DATA = {
     {
       "id": "evision-d4-5",
       "station": "Evision floor · desk 29",
-      "clickable": true,
+      "clickable": false,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -841,7 +866,7 @@ const DATA = {
     {
       "id": "evision-d4-7",
       "station": "Evision floor · desk 31",
-      "clickable": true,
+      "clickable": false,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -859,7 +884,7 @@ const DATA = {
     {
       "id": "evision-d4-8",
       "station": "Evision floor · desk 32",
-      "clickable": true,
+      "clickable": false,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -877,7 +902,7 @@ const DATA = {
     {
       "id": "evision-d5-1",
       "station": "Evision floor · desk 33",
-      "clickable": true,
+      "clickable": false,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -895,7 +920,7 @@ const DATA = {
     {
       "id": "evision-d5-2",
       "station": "Evision floor · desk 34",
-      "clickable": true,
+      "clickable": false,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -913,7 +938,7 @@ const DATA = {
     {
       "id": "evision-d5-3",
       "station": "Evision floor · desk 35",
-      "clickable": true,
+      "clickable": false,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -931,7 +956,7 @@ const DATA = {
     {
       "id": "evision-d5-4",
       "station": "Evision floor · desk 36",
-      "clickable": true,
+      "clickable": false,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -949,7 +974,7 @@ const DATA = {
     {
       "id": "evision-d5-5",
       "station": "Evision floor · desk 37",
-      "clickable": true,
+      "clickable": false,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -967,7 +992,7 @@ const DATA = {
     {
       "id": "evision-d5-6",
       "station": "Evision floor · desk 38",
-      "clickable": true,
+      "clickable": false,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -985,7 +1010,7 @@ const DATA = {
     {
       "id": "evision-d5-7",
       "station": "Evision floor · desk 39",
-      "clickable": true,
+      "clickable": false,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -1003,7 +1028,7 @@ const DATA = {
     {
       "id": "evision-d5-8",
       "station": "Evision floor · desk 40",
-      "clickable": true,
+      "clickable": false,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -1021,7 +1046,7 @@ const DATA = {
     {
       "id": "evision-d6-1",
       "station": "Evision floor · desk 41",
-      "clickable": true,
+      "clickable": false,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -1039,7 +1064,7 @@ const DATA = {
     {
       "id": "evision-d6-2",
       "station": "Evision floor · desk 42",
-      "clickable": true,
+      "clickable": false,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
@@ -1057,7 +1082,7 @@ const DATA = {
     {
       "id": "evision-d6-3",
       "station": "Evision floor · desk 43",
-      "clickable": true,
+      "clickable": false,
       "name": "Untitled workstation",
       "company": "",
       "role": "",
